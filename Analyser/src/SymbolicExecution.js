@@ -251,10 +251,12 @@ class SymbolicExecution {
         };
     }
 
+    // TODO add set field for arrays!
     getField(iid, base, offset, val, isComputed, isOpAssign, isMethodCall) {
         this.state.coverage.touch(iid);
         Log.logHigh('Get field ' + ObjectHelper.asString(base) + '.' + ObjectHelper.asString(offset) + ' at ' + this._location(iid));
-
+        
+        // Explore other potential offsets i.e. if we're getting a['Foo'], try a['Bar'] and a['Baz']
         if (this.state.isSymbolic(offset) && typeof this.state.getConcrete(offset) == 'string') {
             const base_c = this.state.getConcrete(base);
             const offset_c = this.state.getConcrete(offset);

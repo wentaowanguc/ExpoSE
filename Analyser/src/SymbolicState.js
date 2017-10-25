@@ -29,6 +29,7 @@ class SymbolicState {
         this.boolSort = this.ctx.mkBoolSort();
         this.stringSort = this.ctx.mkStringSort();
         this.realSort = this.ctx.mkRealSort();
+        this.seqSort = this.ctxx.mkSeqSort();
 
         this.coverage = new Coverage(sandbox);
 
@@ -169,8 +170,12 @@ class SymbolicState {
     createSymbolicValue(name, concrete) {
 
         let sort;
+        if (concrete instanceof Array && (concrete.length === 0 || concrete.every(i => typeof i === 'number'))) {
+            sort = this.seqSort(this.realSort);
+        }
+        else {
+            switch (typeof concrete) {
 
-        switch (typeof concrete) {
             case 'boolean':
                 sort = this.boolSort;
                 break;
@@ -182,10 +187,9 @@ class SymbolicState {
             case 'string':
                 sort = this.stringSort;
                 break;
-
-            default:
-                Log.log("Symbolic input variable of type " + typeof val + " not yet supported.");
+            }
         }
+        Log.log("Symbolic input variable of type " + typeof val + " not yet supported.");
 
         let symbol = this.ctx.mkStringSymbol(name);
         let symbolic = this.ctx.mkConst(symbol, sort);
@@ -266,78 +270,78 @@ class SymbolicState {
         let result;
 
         switch (op) {
-            case "===":
-            case "==":
-                result = this.ctx.mkEq(left_s, right_s);
-                break;
-            case "!==":
-            case "!=":
-                result = this.ctx.mkNot(this.ctx.mkEq(left_s, right_s));
-                break;
-            case "&&":
-                result = this.ctx.mkAnd(left_s, right_s);
-                break;
-            case "||":
-                result = this.ctx.mkOr(left_s, right_s);
-                break;
-            case ">":
-                result = this.ctx.mkGt(left_s, right_s);
-                break;
-            case ">=":
-                result = this.ctx.mkGe(left_s, right_s);
-                break;
-            case "<=":
-                result = this.ctx.mkLe(left_s, right_s);
-                break;
-            case "<":
-                result = this.ctx.mkLt(left_s, right_s);
-                break;
-            case "+":
-                if (typeof left_c == "string") {
-                    result = this.ctx.mkSeqConcat([left_s, right_s]);
-                } else {
+        case "===":
+        case "==":
+            result = this.ctx.mkEq(left_s, right_s);
+            break;
+        case "!==":
+        case "!=":
+            result = this.ctx.mkNot(this.ctx.mkEq(left_s, right_s));
+            break;
+        case "&&":
+            result = this.ctx.mkAnd(left_s, right_s);
+            break;
+        case "||":
+            result = this.ctx.mkOr(left_s, right_s);
+            break;
+        case ">":
+            result = this.ctx.mkGt(left_s, right_s);
+            break;
+        case ">=":
+            result = this.ctx.mkGe(left_s, right_s);
+            break;
+        case "<=":
+            result = this.ctx.mkLe(left_s, right_s);
+            break;
+        case "<":
+            result = this.ctx.mkLt(left_s, right_s);
+            break;
+        case "+":
+            if (typeof left_c == "string") {
+                result = this.ctx.mkSeqConcat([left_s, right_s]);
+            } else {
             	    result = this.ctx.mkAdd(left_s, right_s);
-                }
-                break;
-            case "-":
-                result = this.ctx.mkSub(left_s, right_s);
-                break;
-            case "*":
-                result = this.ctx.mkMul(left_s, right_s);
-                break;
-            case "/":
-                result = this.ctx.mkDiv(left_s, right_s);
-                break;
-            case "%":
-                result = this.ctx.mkMod(left_s, right_s);
-                break;
-            default:
-                Log.log("Symbolic execution does not support operand \"" + op + "\", concretizing.");
-                return undefined;
+            }
+            break;
+        case "-":
+            result = this.ctx.mkSub(left_s, right_s);
+            break;
+        case "*":
+            result = this.ctx.mkMul(left_s, right_s);
+            break;
+        case "/":
+            result = this.ctx.mkDiv(left_s, right_s);
+            break;
+        case "%":
+            result = this.ctx.mkMod(left_s, right_s);
+            break;
+        default:
+            Log.log("Symbolic execution does not support operand \"" + op + "\", concretizing.");
+            return undefined;
         }
 
         return result;
     }
 
-    _symbolicFieldStrLookup(base_c, base_s, field_c, field_s) {
+    _symbolicFieldSeqLookup(base_c, base_s, field_c, field_s) {
         return this.ctx.mkSeqAt(base_s, this.ctx.mkRealToInt(field_s));
     }
 
     symbolicField(base_c, base_s, field_c, field_s) {
 
-        if (typeof base_c === "string" && typeof field_c === "number") {
-            return this._symbolicFieldStrLookup(base_c, base_s, field_c, field_s);
+        if ((typeof base_c === "string" || base_c instanceof  Array)  && typeof field_c === "number") {
+            return this._symbolicFieldSeqLookup(base_c, base_s, field_c, field_s);
         }
     	
         switch (field_c) {
     		case 'length':                
-                if (typeof base_c == "string") {
-                    //TODO: This is a stupid solution to a more fundamental problem in Z3
-                    //Remove ASAP
-                    let res = this.ctx.mkSeqLength(base_s);
-                    //res.FORCE_EQ_TO_INT = true;
-                    return res;
-                }
+            if (typeof base_c == "string" || base_c instanceof  Array) {
+                //TODO: This is a stupid solution to a more fundamental problem in Z3
+                //Remove ASAP
+                let res = this.ctx.mkSeqLength(base_s);
+                //res.FORCE_EQ_TO_INT = true;
+                return res;
+            }
     		default:
     			Log.log('Unsupported symbolic field - concretizing' + base_c + ' and field ' + field_c);
         }
@@ -363,49 +367,49 @@ class SymbolicState {
 
     symbolicUnary(op, left_c, left_s) {
         switch (op) {
-            case "!": {
-                let bool_s = this.symbolicCoerceToBool(left_c, left_s);
-                return bool_s ? this.ctx.mkNot(bool_s) : undefined;
-            }
-            case "+": {
+        case "!": {
+            let bool_s = this.symbolicCoerceToBool(left_c, left_s);
+            return bool_s ? this.ctx.mkNot(bool_s) : undefined;
+        }
+        case "+": {
 
-                switch (typeof left_c) {
-                    case 'string':
-                        return this.ctx.mkStrToInt(left_s);
-                }
-
-                //For numeric types, +N => N
-                //I don't see this being done often, generally only used to coerce
-                //But some tit might write var x = +5;
-                return left_s;
+            switch (typeof left_c) {
+            case 'string':
+                return this.ctx.mkStrToInt(left_s);
             }
-            case "-":
+
+            //For numeric types, +N => N
+            //I don't see this being done often, generally only used to coerce
+            //But some tit might write var x = +5;
+            return left_s;
+        }
+        case "-":
                 
-                switch (typeof left_c) {
-                    case 'string':
-                        Log.log('Casting string to int, if its a real you will get incorrect result');
-                        return this.ctx.mkStrToInt(left_s);
-                }
+            switch (typeof left_c) {
+            case 'string':
+                Log.log('Casting string to int, if its a real you will get incorrect result');
+                return this.ctx.mkStrToInt(left_s);
+            }
 
-                return this.ctx.mkUnaryMinus(left_s);
-            case "typeof":
-                return undefined;
-            default:
-                Log.logMid("Unsupported operand: " + op);
-                return undefined;
+            return this.ctx.mkUnaryMinus(left_s);
+        case "typeof":
+            return undefined;
+        default:
+            Log.logMid("Unsupported operand: " + op);
+            return undefined;
         }
     }
 
     wrapConstant(val) {
         switch (typeof val) {
-            case 'boolean':
-                return val ? this.ctx.mkTrue() : this.ctx.mkFalse();
-            case 'number':
-                return Math.round(val) === val ? this.ctx.mkReal(val, 1) : this.ctx.mkNumeral(String(val), this.realSort);
-            case 'string':
-                return this.ctx.mkString(val.toString());
-            default:
-                Log.log("Symbolic expressions with " + typeof val + " literals not yet supported.");
+        case 'boolean':
+            return val ? this.ctx.mkTrue() : this.ctx.mkFalse();
+        case 'number':
+            return Math.round(val) === val ? this.ctx.mkReal(val, 1) : this.ctx.mkNumeral(String(val), this.realSort);
+        case 'string':
+            return this.ctx.mkString(val.toString());
+        default:
+            Log.log("Symbolic expressions with " + typeof val + " literals not yet supported.");
         }
     }
 }
