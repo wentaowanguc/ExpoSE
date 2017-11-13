@@ -29,7 +29,7 @@ class SymbolicState {
         this.boolSort = this.ctx.mkBoolSort();
         this.stringSort = this.ctx.mkStringSort();
         this.realSort = this.ctx.mkRealSort();
-        this.seqSort = this.ctxx.mkSeqSort();
+        this.seqSort = this.ctx.mkSeqSort();
 
         this.coverage = new Coverage(sandbox);
 
@@ -171,7 +171,7 @@ class SymbolicState {
 
         let sort;
         if (concrete instanceof Array && (concrete.length === 0 || concrete.every(i => typeof i === 'number'))) {
-            sort = this.seqSort(this.realSort);
+            sort = this.ctx.mkSeqSort(this.realSort);
         }
         else {
             switch (typeof concrete) {
