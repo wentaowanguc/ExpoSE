@@ -29,7 +29,6 @@ class SymbolicState {
         this.boolSort = this.ctx.mkBoolSort();
         this.stringSort = this.ctx.mkStringSort();
         this.realSort = this.ctx.mkRealSort();
-        this.seqSort = this.ctx.mkSeqSort();
 
         this.coverage = new Coverage(sandbox);
 
