@@ -4,10 +4,6 @@
 
 var q = symbolic UnderTest initial [0, 1];
 
-if (q[5] == 19) {
-	console.log('Dontcrahs');
-}
-
 if (q.length === 3) {
 	console.log('YES');
 }
