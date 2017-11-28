@@ -6,27 +6,27 @@ When Brendan was initially recruited by Netscape he was recruited with the aim o
 
 Despite targeting a different audience Mocha, the language that would later evolve into JavaScript, was required by management to "look like Java", according to Eich, ruling out the existing languages Perl, Python, and Scheme. Eventually Eich settled on "Scheme-ish first-class functions and Self-ish (albeit singular) prototypes as the main ingredients" [^16] . Mocha also inherited a number of confusing Java language features such as the distinction between primitives and objects (e.g. `string` vs. `String` ) and the `Date` constructor which is a port of Java's `java.util.Date`, complete with the Y2K bug [^19]. Perl and Python are also credited to influencing Mocha's string handling and regular expressions and AWK inspired the use of the `function` keyword [^18]. These various influences 
 
-After JavaScript (abandoning its previous names, Mocha and LiveScript names) was released in Netscape Navigator 2 Microsoft began work on JScript, an equivalent language which shipped with Internet Explorer 3. Eich says that "At some point in late summer or early fall 1996, it became clear to me that JS was going to be standardized. Bill Gates was bitching about us changing JS all the time."[^20], which lead to JavaScript being standardised by Ecma International, an industry group that produces information standards, as ECMAScript in 1997. ECMAScript is also an ISO/IEC standard (16262)[^21].
+After JavaScript (abandoning its previous names, Mocha and LiveScript) was released in Netscape Navigator 2 Microsoft began work on JScript, an equivalent language which shipped with Internet Explorer 3. Eich says that "At some point in late summer or early fall 1996, it became clear to me that JS was going to be standardized. Bill Gates was bitching about us changing JS all the time."[^20], which lead to JavaScript being standardised by Ecma International, an industry group that produces information standards, as ECMAScript in 1997. ECMAScript is also an ISO/IEC standard (16262)[^21].
 
 A key moment in JavaScript's history occurred in when web developers became fascinated with Ajax, a set of techniques and technologies for making interactive websites, popularised by Google Suggest and Google Maps, spurring on an advancement in interactivity of modern websites [^22]. To alleviate the pain of manipulating the Document Object Model (DOM), the hierarchy of objects that make up a HTML web page, and to deal with the problem that  'writing JavaScript should be fun' jQuery was released in 2006[^23] and commanded immediate popularity. In 2007, large tech companies including Digg, Google, Intel, Amazon, and the BBC all reported using jQuery [^23] and in the 12 months between Sept 2007 and 2008 jquery.com received 13.5 million unique visitors[^24]. As early as 2006 it's clear that although JavaScript is a powerful and popular language, in part due to it's low barrier of entry and its unique place as the default language of the web, there are frustrations with the difficulty in reasoning about and writing JavaScript.
 
 Google Chrome launched in 2008, with a new open source JavaScript engine named V8. When it launched V8 initially outperformed other browsers JavaScript engines on benchmarks[^25] in part due to its hidden classes, which reduces the cost of looking up properties on objects that share prototypes via inline caching, its use of a just-in time compiler (JIT) to produce assembly code rather than running an interpreter, as well as its efficient memory management [^26][^27]. The launch of the V8 engine created a so called 'browser war' during which the performance of JavaScript vastly increased across all browsers [^28].
 
-In 2009, Node.js was launched - a JavaScript runtime based on V8 used to build asynchronous applications, popularising JavaScript as a language outside of the browser. Node.js was quickly adopted, with production applications at companies such as Uber and LinkedIn rolling out by 2011[^29]. 
+In 2009, Node.js was launched - a JavaScript runtime based on V8 used to build asynchronous applications, popularising JavaScript as a language outside of the browser. Node.js was quickly adopted, with production applications at companies such as Uber and LinkedIn rolling out by 2011[^29][^30]. Due in part to popularity of Node, JavaScript is now one of the most popular languages for software development[^4][^5] with npm, Node's package manager, hosting over 475,000 packages[^31].
 
-Due in part to popularity of Node, JavaScript is now one of the most popular languages for software development[^4][^5] with npmjs, Node's package manager, hosting over 475,000 packages[^30].
+Despite its popularity, writing correct JavaScript code remains a relatively difficult problem. Due largely to its dynamic types, its tendency to silently fail, and a number of quirks inherited from early versions of the language.
 
 # 1.1 JavaScript Design
 
-JavaScript is not a traditional object-oriented language instead it features a unique mix of functional and prototypical-inheritance programming paradigms as well as a dynamic type system.
+JavaScript is not a traditional object-oriented language. Instead it features a unique mix of functional and prototypical-inheritance programming paradigms as well as a dynamic type system.
 
 ## 1.1.1 Type System
 
 JavaScript has six types.[^8]  
 
-* Undefined, is the type of the value assigned to variables before a value is assigned. 
+* Undefined, is the type of variables before they have been assigned a value
 
-  * Null, which is the type of the assignable value null. 
+* Null, which is the type of the assignable value null. 
 
 
 * 	Boolean, a standard representation of true and false. 
@@ -51,17 +51,17 @@ JavaScript has six types.[^8]
 
 JavaScript features implicit type coercion between most operators, for instance `'3' * 2.0 === 6.0`. 
 
-Boolean expressions are evaluated with an abstract `ToBoolean` operation which converts a value into a Boolean result. `Undefined`, `Null`, `false`, the empty string, `NaN`, `+0`, and `-0` return false while `true`, all other numbers, all other strings, and all Objects return true. [^12]
+Boolean expressions are evaluated with an abstract `ToBoolean` operation which converts a value into a Boolean result. `Undefined`, `Null`, `false`, the empty string, `NaN`, `+0`, and `-0` return false while `true`, all other numbers, all other strings, and all Objects return true. [^8]
 
 ## Objects and Prototypical Inheritance
 
-Typical object-oriented languages define classes which guarantee the exact sets of fields and methods an instance of the class will possess.[^9] JavaScript instead uses prototypical inheritance, in which classes act as a constructor functions act as a template or prototype which initially define the sets of fields an object should have but can later be replaced or added to. A prototype may itself have a prototype, the sequence of prototypes which define the properties of a given object are referred to as a prototype chain. [^10][^11] 
+Typical object-oriented languages define classes which guarantee the exact sets of fields and methods an instance of the class will possess.[^9] JavaScript instead uses prototypical inheritance, in which classes act as a constructor functions act as a template or prototype which initially define the sets of fields an object should have but can later be replaced or added to. A prototype may itself have a prototype, the sequence of prototypes which define the properties of a given object are referred to as a prototype chain. [^8]
 
 ## Arrays
 
-Unlike other languages JavaScript does not model arrays as continuously indexed tuples, instead arrays are special form of object where array elements are properties that satisfy the following test for a key `k`, `ToString(ToUint32(k)) === k && ToUint32(k) !== 2^32 - 1`. Consequently, arrays are neither necessarily homogenous or contiguous, `let array = ['a', 2.0, {}, new ClassA()]` and `let array = [, , , 4]` are all valid arrays [^13].
+Unlike other languages JavaScript does not model arrays as continuously indexed tuples, instead arrays are special form of object where array elements are properties that satisfy the following test for a key `k`, `ToString(ToUint32(k)) === k && ToUint32(k) !== 2^32 - 1`. Consequently, arrays are neither necessarily homogenous or contiguous, `let array = ['a', 2.0, {}, new ClassA()]` and `let array = [, , , 4]` are all valid arrays [^8].
 
-The length of an array can be accessed as a property of the array. The length property only tracks the highest index in the array and a result will include holes. The length property is not read-only, increasing the length will add empty elements to the end of the array and decreasing the length will truncate the array to satisfy the new length. Arrays are indexed using square bracket notation and can be indexed multidimensionally, for instance `a[1][0]`[^13] . Array indices _i_  that do not meet the criteria of being in the range 0 ≤ _i_ < 232−1 are treated as regular object properties, leading to the confusing situation outlined below.
+The length of an array can be accessed as a property of the array. The length property only tracks the highest index in the array and a result will include holes. The length property is not read-only, increasing the length will add empty elements to the end of the array and decreasing the length will truncate the array to satisfy the new length. Arrays are indexed using square bracket notation and can be indexed multidimensionally, for instance `a[1][0]`[^8] . Array indices _i_  that do not meet the criteria of being in the range 0 ≤ _i_ < 232−1 are treated as regular object properties, leading to the confusing situation outlined below.
 
 ```javascript
 var arr = []
@@ -80,7 +80,7 @@ arr[-1]
 
 ### Prototype Methods
 
-One of the distinguishing features of arrays from regular objects is the large number of array specific prototype functions [^14]. Below are some of the more commonly used and interesting functions.
+One of the distinguishing features of arrays from regular objects is the large number of array specific prototype functions [^8]. Below are some of the more commonly used and interesting functions.
 
 *        `indexOf(element)` returns the first index of the array that contains *element* or returns -1 if `element` is not in the array
 
@@ -123,13 +123,13 @@ ExpoSE is a tool for symbolic execution of JavaScript. The target program is ins
 [^5]: https://www.tiobe.com/tiobe-index/
 [^6]: https://code.facebook.com/posts/597378980427792/react-native-a-year-in-review/
 [^7]: https://developer.telerik.com/topics/web-development/javascript-2017-beyond-browser/
-[^8]: https://www.ecma-international.org/ecma-262/5.1/#sec-8
+[^8]: https://www.ecma-international.org/ecma-262/
 [^9]: A. H. Borning. 1986. Classes versus prototypes in object-oriented languages. In *Proceedings of 1986 ACM Fall joint computer conference* (ACM '86). IEEE Computer Society Press, Los Alamitos, CA, USA, 36-40.
-[^10]: https://www.ecma-international.org/ecma-262/5.1/#sec-4.2.1
-[^11]: https://www.ecma-international.org/ecma-262/5.1/#sec-15.2.4
-[^12]: https://www.ecma-international.org/ecma-262/5.1/#sec-9.2
-[^13]: https://www.ecma-international.org/ecma-262/5.1/#sec-15.4
-[^14]: https://www.ecma-international.org/ecma-262/5.1/#sec-15.4.3
+[^10]: 
+[^11]: 
+[^12]: 
+[^13]: 
+[^14]: 
 [^15]: Andreasen, E., Feldthaus, A., Jensen, S. H., Jensen, C. S., Jonsson, P. A., Madsen, M., & Møller, A. (2012). Improving Tools for JavaScript Programmers. In *Proc. of International Workshop on Scripts to Programs. Beijing, China:[sn]* (pp. 67-82).
 [^16]: https://brendaneich.com/2008/04/popularity/
 [^17]: Dybvig, R. K. (1996). *The SCHEME programming language: ANSI SCHEME*. Upper Saddle, NJ: Prentice-Hall.
@@ -144,4 +144,6 @@ ExpoSE is a tool for symbolic execution of JavaScript. The target program is ins
 [^26]: https://www.youtube.com/watch?v=hWhMKalEicY
 [^27]: https://www.youtube.com/watch?v=JxUvULKf6A4
 [^28]: https://cdn.oreillystatic.com/en/assets/1/event/60/Know%20Your%20Engines_%20How%20to%20Make%20Your%20JavaScript%20Fast%20Presentation%201.pdf
-[^29]: https://www.npmjs.com/
+[^29]: https://venturebeat.com/2011/08/16/linkedin-node/
+[^30]: https://www.joyent.com/blog/node-js-office-hours-curtis-chambers-uber
+[^31]: https://www.npmjs.com/
