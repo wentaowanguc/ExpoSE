@@ -10,7 +10,7 @@ After JavaScript (abandoning its previous names, Mocha and LiveScript names) was
 
 A key moment in JavaScript's history occurred in when web developers became fascinated with Ajax, a set of techniques and technologies for making interactive websites, popularised by Google Suggest and Google Maps [^22]. To alleviate the pain of manipulating the Document Object Model (DOM), the hierarchy of objects that make up a HTML web page, and to deal with the problem that  'writing JavaScript should be fun' jQuery was released in 2006[^23] and commanded immediate popularity. In 2007, large tech companies including Digg, Google, Intel, Amazon, and the BBC all reported using jQuery [^23] and in the 12 months between Sept 2007 and 2008 jquery.com received 13.5 million unique visitors[^24]. As early as 2006 it's clear that although JavaScript is a powerful and popular language, in part due to it's low barrier of entry and its unique place as the default language of the web there are frustrations with the difficulty in reasoning about and writing JavaScript.
 
-_V8_
+Google Chrome launched in 2008, with a new open source JavaScript engine named V8. When it launched V8 initially outperformed other browsers JavaScript engines on benchmarks[^25]
 
 *Node*
 
@@ -142,3 +142,4 @@ ExpoSE is a tool for symbolic execution of JavaScript. The target program is ins
 [^22]: http://adaptivepath.org/ideas/ajax-new-approach-web-applications/
 [^23]: https://www.slideshare.net/jeresig/history-of-jquery
 [^24]: https://www.slideshare.net/jeresig/state-of-jquery-08-presentation/2-Growth_Huge_growth_in_2008
+[^25]: https://web.archive.org/web/20080903125550/http://community.zdnet.co.uk/blog/0%2C1000000567%2C10009139o-2000331777b%2C00.htm
