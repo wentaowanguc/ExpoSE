@@ -6,7 +6,7 @@ When Brendan was initially recruited by Netscape he was recruited with the aim o
 
 Despite targeting a different audience Mocha, the language that would later evolve into JavaScript, was required by management to "look like Java", according to Eich, ruling out the existing languages Perl, Python, and Scheme. Eventually Eich settled on "Scheme-ish first-class functions and Self-ish (albeit singular) prototypes as the main ingredients" [^16] . Mocha also inherited a number of confusing Java language features such as the distinction between primitives and objects (e.g. `string` vs. `String` ) and the `Date` constructor which is a port of Java's `java.util.Date`, complete with the Y2K bug [^19]. Perl and Python are also credited to influencing Mocha's string handling and regular expressions and AWK inspired the use of the `function` keyword [^18]. The first version of the language had an incredibly short development period, Eich claims he spent "about ten days" developing the first JavaScript interpreter [^2].
 
-After JavaScript (abandoning its previous names, Mocha and LiveScript) was released in Netscape Navigator 2 Microsoft began work on JScript, an equivalent language which shipped with Internet Explorer 3. Eich says that "At some point in late summer or early fall 1996, it became clear to me that JS was going to be standardized. Bill Gates was bitching about us changing JS all the time."[^20], which lead to JavaScript being standardised by Ecma International, an industry group that produces information standards, as ECMAScript in 1997. ECMAScript is also an ISO/IEC standard (16262)[^21].
+After JavaScript (abandoning its previous names, Mocha and LiveScript) was released in Netscape Navigator 2 Microsoft began work on JScript, an equivalent language which shipped with Internet Explorer 3. Eich says that "At some point in late summer or early fall 1996, it became clear to me that JS was going to be standardized. Bill Gates was bitching about us changing JS all the time."[^20], which lead to JavaScript being standardised by Ecma International, an industry group that produces information standards, as ECMAScript in 1997. Since 1997 ECMAScript, now in its sixth version, has also been adopted as an ISO/IEC standard[^21].
 
 A key moment in JavaScript's history occurred in when web developers became fascinated with Ajax, a set of techniques and technologies for making interactive websites, popularised by Google Suggest and Google Maps, spurring on an advancement in interactivity of modern websites [^22]. To alleviate the pain of manipulating the Document Object Model (DOM), the hierarchy of objects that make up a HTML web page, and to deal with the problem that  'writing JavaScript should be fun' jQuery was released in 2006[^23] and commanded immediate popularity. In 2007, large tech companies including Digg, Google, Intel, Amazon, and the BBC all reported using jQuery [^23] and in the 12 months between Sept 2007 and 2008 jquery.com received 13.5 million unique visitors[^24]. As early as 2006 it's clear that although JavaScript is a powerful and popular language, in part due to it's low barrier of entry and its unique place as the default language of the web, there are frustrations with the difficulty in reasoning about and writing JavaScript.
 
@@ -18,7 +18,7 @@ Due in part to popularity of Node, JavaScript is now one of the most popular lan
 
 # 1.1 JavaScript Design
 
-Despite its popularity, writing correct JavaScript code remains a relatively difficult problem. Due largely to its dynamic type system, its tendency to silently fail, and a number of quirks inherited from early versions of the language as a result of its short development cycle. Additionally, there are a number of inconsistencies in the EMCAScript standard itself which cause interpreter implementations to differ in the approach leading to unspecified behaviours. [^10] Below I'll briefly outline the semantics of JavaScript and the different approaches taken to analysing JavaScript code.
+Despite its popularity, writing correct JavaScript code remains a relatively difficult problem. Due largely to its dynamic type system, its tendency to silently fail, and a number of quirks inherited from early versions of the language as a result of its short development cycle. Additionally, there are a number of inconsistencies in the EMCAScript standard itself which cause interpreter implementations to differ in the approach leading to unspecified behaviours. [^10] Below I'll briefly outline the semantics of JavaScript, including arrays which are the focus of this project,  and the different approaches taken to analysing JavaScript code.
 
 _The design of the language is incomplete - heck there aren't even a full set of semantics. It's inconsistent and dynamic. Not only is it a scripting language it's a got additional baggage, strict mode, non-homogenous arrays, etc._ 
 
@@ -37,15 +37,15 @@ _Runtime field lookup_
 | Boolean   | A standard representation of true and false |
 | String    | An ordered sequence of zero or more 16-bit unsigned integers, these are intended to represent UTF-16 characters but are not required to be |
 | Number    | Represents the IEE 754 double precision numbers in the range 2 ^-253^ to 2 ^253^ as well as the special cases NaN, $\infty$ , and $ -\infty$. JavaScript's implementation of numbers includes both a positive and negative 0. Whilst most languages have multiple representations of numbers (typically split into integers and floating point numbers) all JavaScript numbers are floating point |
-| Object    | Represents a collection of properties, each of which has a name and a value, as well as optionally a setter and/or getter function used to manipulate the value. To a first approximation, Objects can be thought of as a hash map. |
+| Object    | Represents a collection of properties, each of which has a name and a value, as well as optionally a setter and/or getter function used to manipulate the value. To a first approximation, Objects can be thought of as a hash map |
 
 JavaScript has six types that variables can be [^8] but the types of variables are not explicitly declared at compile time. Instead, types are dynamic and can change over the course of a program. Consider the program below.
 
 ```javascript
-var foo = '1';
+let foo = '1';
 foo = foo * 2
 foo
-> 2
+< 2
 ```
 
 Initially `foo` is of type string but the type is implicitly coerced into a number by the `*` operator. Coercion between types occurs when the type of an operand is not the type the operator is expecting. For instance, as shown in the example above the `*` operator coerces all operands to numbers. This coercion is a source of error in programs as inputs of an invalid type can be coerced in unexpected ways.
@@ -57,31 +57,129 @@ function increment (x) {
   return x + 1
 }
 
-var a = '1'
-var b = increment(y)
+let a = '1'
+let b = increment(y)
 b
-> 11
+< 11
 ```
 
-Although the previous examples have used strings and numbers, type coercion extends to booleans as well. Non-boolean expressions are coerced with the following rules `undefined`, `null`, `false`, the empty string, `NaN`, `+0`, and `-0` return false while `true`, all other numbers, all other strings, and all Objects return true [^8]. These coercion rules allow shortcuts like `if (x)` to check for both undefined and null values.
+Although the previous examples have used strings and numbers, type coercion extends to booleans as well. Non-boolean expressions are coerced with the following rules `undefined`, `null`, `false`, the empty string, `NaN`, `+0`, and `-0` return false while `true`, all other numbers, all other strings, and all Objects return true [^8]. These coercion rules, whilst a common source of error, can be taken advantage of to allow shortcuts like `if (x)` to check for both undefined and null values.
 
-## Objects and Prototypical Inheritance
+JavaScript also has some idiosyncrasies for testing equality which are underpinned by its type system. There are two operators for testing equality, `==` and `===`.  The `==` operator, the 'standard' equality operator, uses coercion to test the equality of values of differing types. However the standard equality operator doesn't necessarily use the same coercion rules as other operators. For instance, whilst boolean coercion would typically any non-zero and non-NaN number to true  `5 == true` is false. This inconsistency also extends to strings, typically all non-empty strings would coerce to true but `'3' == 1` is false. Additionally, if you compare an object to any other type standard equality converts the object to a primitive which can lead to some unexpected results such as `['7'] == 7`  being true. The strict operator, `===`, by comparison has much saner behaviour - any two values not of the same type are not equal.
 
-Typical object-oriented languages define classes which guarantee the exact sets of fields and methods an instance of the class will possess.[^9] JavaScript instead uses prototypical inheritance, in which classes act as a constructor functions act as a template or prototype which initially define the sets of fields an object should have but can later be replaced or added to. A prototype may itself have a prototype, the sequence of prototypes which define the properties of a given object are referred to as a prototype chain. [^8]
+## 1.1.2 Objects and Prototypical Inheritance
 
-## Arrays
+Typical object-oriented languages define classes which guarantee the exact sets of fields and methods an instance of the class will possess. Instances of the class can be thought of as clones or replicas of the class which mimic the class' behaviour. JavaScript instead uses prototypical inheritance, in which objects have a template or prototype which define a set of properties an object has, but objects are also free to declare their own set of properties and even overwrite their prototype's properties. 
 
-Unlike other languages JavaScript does not model arrays as continuously indexed tuples, instead arrays are special form of object where array elements are properties that satisfy the following test for a key `k`, `ToString(ToUint32(k)) === k && ToUint32(k) !== 2^32 - 1`. Consequently, arrays are neither necessarily homogenous or contiguous, `let array = ['a', 2.0, {}, new ClassA()]` and `let array = [, , , 4]` are all valid arrays [^8].
-
-The length of an array can be accessed as a property of the array. The length property only tracks the highest index in the array and a result will include holes. The length property is not read-only, increasing the length will add empty elements to the end of the array and decreasing the length will truncate the array to satisfy the new length. Arrays are indexed using square bracket notation and can be indexed multidimensionally, for instance `a[1][0]`[^8] . Array indices _i_  that do not meet the criteria of being in the range 0 ≤ _i_ < 2^232^−1 are treated as regular object properties, leading to the confusing situation outlined below.
+Consider the example below, in which we create a prototype, define a new object of that prototype, and then overwrite one of the values of the prototype.
 
 ```javascript
-var arr = []
+// This is a constructor, color and weight will be values that belong the constructed object
+function Fruit (color, weight) {
+  this.color = color
+  this.weight = weight
+}
+
+// This is the set of values all fruit will inherit from the prototype
+Fruit.prototype = {
+  print: function () {
+    console.log(`Color: ${this.color} Weight: ${this.weight}`)
+  }
+}
+
+var orange = new Fruit('orange', 100)
+orange instanceof Fruit // orange.prototype === Fruit.prototype
+< true
+orange.print()
+< Color: orange Weight: 100
+
+// hasOwnProperty checks whether a property belongs to the object or to its prototype
+orange.hasOwnProperty('color') 
+< true
+orange.hasOwnProperty('print') // print is inherited from orange.prototype
+< false
+orange.print = () => console.log('A Orange')
+orange.print()
+< A Orange
+orange.hasOwnProperty('print') // print is now defined in orange as well
+< true
+```
+
+ A prototype may itself have a prototype, the sequence of prototypes which define the properties of a given object are referred to as a prototype chain[^8][^9].  By default, all created objects inherit from `Object.prototype` and functions, as a special class of object, inherit from `Function.prototype` which inherits from `Object.prototype`. These prototypes are part of the EMCAScript standard and provide utilities to make working with objects of that prototype easier. For example, `Object.prototype` provides functions for iterating over all the values of an object or all the keys in the object.
+
+Consider the prototype chain of the example below.
+
+````javascript
+function Food (calories, portions) {
+  this.calories = calories
+  this.portionsPerDay = portions
+}
+
+Food.prototype = {
+	caloriesPerDay: function () {
+		return this.calories * this.portionsPerDay
+	}
+}
+
+function Fruit (color, weight, calories, portions) {
+  Food.call(this, calories, portions) // Call the food constructor
+  this.color = color
+  this.weight = weight
+}
+
+// The prototype of Fruit is Food, but we want to use the Fruit constructor
+Fruit.prototype = Object.create(Food.prototype);
+Fruit.prototype.constructor = Fruit;
+
+// Let's add our print function to the Fruit prototype
+Fruit.prototype.print = function () {
+  console.log(`Color: ${this.color} Weight: ${this.weight}`)
+}
+
+let orange = new Fruit('orange', 100, 47, 5)
+orange.print()
+< Color: orange Weight: 100
+orange.caloriesPerDay()
+< 235
+orange instanceof Fruit
+< true
+orange instanceof Food
+< true
+orange instanceof Object
+< true
+````
+
+In the example above we have a prototype chain length of three. Our `orange` object has a prototype of `Fruit`, which has a prototype of `Food`, which has a prototype of `Object` .
+
+![prototypechain](C:\Users\arran\Documents\Github\FullUnit_1718_ArranFrance\Report\prototypechain.svg)
+
+## 1.1.3 Arrays
+
+Unlike other languages, JavaScript does not model arrays as continuously indexed tuples. Instead arrays are  a special form of object where array elements are properties that satisfy the following test for a key `k`, `ToString(ToUint32(k)) === k && ToUint32(k) !== 2^32 - 1`. Put more simply, an array is a special case of an object where the array elements are any value where the property can be coerced to a a positive integer number less than 2^32^ - 1. These array elements are treated differently to regular properties by array prototypes and the length property. 
+
+The length of an array is a property of the array prototype which tracks the highest index in the array. Note, that the highest index of the array does not necessarily track the number of elements in the array as arrays do not enforce any kind of ordering on their properties making it possible to create a non-contiguous array, an array with 'holes' in it, as shown in the example below. The length product is not read-only as you might expect. If you increase the, the length empty elements will be added to the end of the array and decreasing the length will truncate the array to satisfy the new length.
+
+```javascript
+let arr = [] // an empty array
+arr[0] = 0
+arr[2] = 2
+arr
+< [0, , 2]
+arr.length 
+< 3
+```
+
+Another by-product of arrays being special form of object is that arrays are not homogenously typed. Whilst most languages require arrays to only hold values of a single type, JavaScript objects and by extension arrays can contain multiple types of value as shown by the following example `let array = ['a', 2.0, {}, new Fruit()]` . 
+
+As described to above, arrays can have both properties and array elements. If the property fails the array element test described above, then the value is stored as a regular object value. This can lead to subtle bugs when working with numbers if bounds are not checked as values smaller than 0 and greater than 2^32^ - 1 will not be stored as an array element, as demonstrated below.
+
+```javascript
+let arr = []
 arr[0] = 'foo' // array element
 arr.length
 > 1
-arr[4294967296] = 'bar' // 2^32-1, property not an element
-arr[-1] = 'baz' // property not an element
+arr[4294967296] = 'bar' // 4294967296 === 2^32-1, property not an element
+arr[-1] = 'baz' // -1 < 0, property not an element
 arr.length
 > 1
 arr[4294967296]
@@ -92,35 +190,24 @@ arr[-1]
 
 ### Prototype Methods
 
-One of the distinguishing features of arrays from regular objects is the large number of array specific prototype functions [^8]. Below are some of the more commonly used and interesting functions.
+The array prototype has a large number of helper functions that are frequently taken advantage of by developers, a number of which were added in the latest version of the EMCAScript standard [^8]. Below are some of the more commonly used and interesting functions.
 
-*        `indexOf(element)` returns the first index of the array that contains *element* or returns -1 if `element` is not in the array
-
-
-*        `lastIndexOf(element) ` returns the last index of the array that contains element or returns -1 if element is not in the array
-
-
-*        `slice(begin, end)`, `slice(begin)` returns a copy of the array with the elements from the index `begin` up to the `end` index. If `end` is not provided it will slice from `begin` to the end of the array.
-
-
-*        `push(element) `increases the length of the array by one and adds *element * to the end of the array
-*        `pop()` removes the last element in the array and returns it
-
-  * `unShift(elementA, elementB, ...) ` adds one or more elements to the beginning of an array and returns the new length
-
-
-* 	`includes(element)`, `includes(element, startIndex)` returns true if the array contains element either starting from `startIndex` or the start of the array if no` startIndex` is provided
-  * `reverse()` reverses the array in place and returns a reference to the array
-  * `forEach(func) `calls `func` on each element in the array. Calls `func` with `(value, index, array)`
-  * `filter(func)` returns a new array that contains elements that return true when `func` is called on them. `func` is called with `currentElement`
-  * `map(func)` returns a new array with the results of calling func on each element in the array. func is called with (value, index, array)
-  * `reduce(func)` `reduce(func, initialValue)` Calls `func(accumulator, value, index, array)` on every element in the array and returns the value of accumulator. If `initialValue` is provided then the first time `func` is called then `accumulator` is set to the value of `initialValue`. 
-
-
-* 	`some(func)` Calls `func(element, index, array)` for every element in the array. Returns true if `func` returns true for at least one element in the array.
-
-
-* 	`every(func)` Calls` func(element, index, array)` for every element in the array. Returns true if `func` returns true for all elements in the array. 
+| Function Name | Signature                           | Description                              |
+| ------------- | ----------------------------------- | ---------------------------------------- |
+| indexOf       | `indexOf(element)`                  | Returns the first index of the array that contains `element` or  -1 if `element` is not in the array |
+| lastIndexOf   | `lastIndexOf(element) `             | Returns the last index of the array that contains `element` or -1 if element is not in the array |
+| slice         | `slice(begin, end)`                 | Returns a copy of the array with the elements from the index `begin` up to the `end` index. If `end` is not provided it will slice from `begin` to the last element of the array |
+| push          | `push(element) `                    | Increases the length of the array by one and adds `element` to the end of the array |
+| pop           | `pop()`                             | Removes the last element in the array and returns it |
+| unShift       | `unShift(elementA, elementB, ...) ` | Adds one or more elements to the beginning of an array and returns the new length |
+| includes      | `includes(element, startIndex)`     | Returns true if the array contains element either starting from `startIndex` or the start of the array if no` startIndex` is provided |
+| reverse       | `reverse()`                         | Reverses the array in place and returns a reference to the array |
+| forEach       | `forEach(func) `                    | Calls `func` on each element in the array. Calls `func` with `(value, index, array)` |
+| filter        | `filter(func)`                      | Returns a new array that contains elements that return true when `func` is called on them. `func` is called with `currentElement` |
+| map           | `map(func)`                         | Returns a new array with the results of calling `func` on each element in the array. `func` is called with `(value, index, array)` |
+| reduce        | `reduce(func, initialValue)`        | Calls `func(accumulator, value, index, array)` on every element in the array and returns the value of accumulator. If `initialValue` is provided then the first time `func` is called then `accumulator` is set to the value of `initialValue` |
+| some          | `some(func)`                        | Calls `func(element, index, array)` for every element in the array. Returns true if `func` returns true for at least one element in the array |
+| every         | `every(func)`                       | Calls` func(element, index, array)` for every element in the array. Returns true if `func` returns true for all elements in the array |
 
 # Correctness of JavaScript 
 
