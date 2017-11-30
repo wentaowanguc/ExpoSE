@@ -1,0 +1,1 @@
+(cd Analyser/node_modules/z3javascript && ./scripts/build_wrapper)

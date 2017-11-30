@@ -1,0 +1,3 @@
+./scripts/refresh
+#NO_COMPILE=1 
+EXPOSE_LOG_LEVEL=2 EXPOSE_PRINT_PATHS=1 expoSE tests/arrays/array_length_numbers.js 

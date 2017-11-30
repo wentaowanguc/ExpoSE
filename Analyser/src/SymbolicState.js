@@ -168,11 +168,13 @@ class SymbolicState {
 
     createSymbolicValue(name, concrete) {
 
-        let sort;
+        let symbolic
         if (concrete instanceof Array && (concrete.length === 0 || concrete.every(i => typeof i === 'number'))) {
-            sort = this.ctx.mkArray(name, this.realSort);
+            symbolic = this.ctx.mkArray(name, this.realSort);
         }
         else {
+            let sort;
+            let symbol = this.ctx.mkStringSymbol(name);
             switch (typeof concrete) {
 
             case 'boolean':
@@ -187,11 +189,11 @@ class SymbolicState {
                 sort = this.stringSort;
                 break;
             }
+
+            symbolic = this.ctx.mkConst(symbol, sort);
         }
         Log.log("Symbolic input variable of type " + typeof val + " not yet supported.");
 
-        let symbol = this.ctx.mkStringSymbol(name);
-        let symbolic = this.ctx.mkConst(symbol, sort);
 
         // Use generated input if available
         if (name in this.input) {
@@ -346,9 +348,8 @@ class SymbolicState {
                 let res = this.ctx.mkSeqLength(base_s);
                 //res.FORCE_EQ_TO_INT = true;
                 return res;
-            }
-            if (base_c instanceof  Array) {
-                // TODO Handle array length as uninterpreted function
+            } else if (base_c instanceof  Array) {
+                return this.length; 
             }
     		default:
     			Log.log('Unsupported symbolic field - concretizing' + base_c + ' and field ' + field_c);
