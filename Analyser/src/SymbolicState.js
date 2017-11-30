@@ -168,11 +168,10 @@ class SymbolicState {
 
     createSymbolicValue(name, concrete) {
 
-        let symbolic
+        let symbolic;
         if (concrete instanceof Array && (concrete.length === 0 || concrete.every(i => typeof i === 'number'))) {
             symbolic = this.ctx.mkArray(name, this.realSort);
-        }
-        else {
+        } else {
             let sort;
             let symbol = this.ctx.mkStringSymbol(name);
             switch (typeof concrete) {
@@ -188,12 +187,11 @@ class SymbolicState {
             case 'string':
                 sort = this.stringSort;
                 break;
+            default:
+                Log.log("Symbolic input variable of type " + typeof val + " not yet supported.");
             }
-
             symbolic = this.ctx.mkConst(symbol, sort);
         }
-        Log.log("Symbolic input variable of type " + typeof val + " not yet supported.");
-
 
         // Use generated input if available
         if (name in this.input) {
@@ -335,10 +333,20 @@ class SymbolicState {
         }
 
         // TODO (AF) Unify the behaviour of sequences and arrays, this is stupid
-        // TODO (AF) Double check this behaviour should be enforced here
-        if (base_c instanceof Array && typeof field_c === "number" && field_c < 4294967295) {
-            return base_s.selectFromIndex(field_s)
+        // TODO (AF) Double check the max and min length behaviour should be enforced here
+        if (base_c instanceof Array && typeof field_c === "number" && Number.isInteger(field_c) && field_c && field_c >= 0 && field_c < 4294967295) {
+            Log.logMid(`Get from Array Index ${field_c}`)
+            if (field_c >= base_c.length) {
+                this.pushCondition(this.ctx.mkGe(field_s, base_s.length))
+                return undefined
+            } else {
+                this.pushCondition(this.ctx.mkLt(field_s, base_s.length))
+                // Make sure our symbolic value is an integer if our concrete is
+                return base_s.selectFromIndex(this.ctx.mkRealToInt(field_s))
+            }
         }
+        
+
     	
         switch (field_c) {
     		case 'length':                
