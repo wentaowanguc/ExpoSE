@@ -170,7 +170,7 @@ class SymbolicState {
 
         let sort;
         if (concrete instanceof Array && (concrete.length === 0 || concrete.every(i => typeof i === 'number'))) {
-            sort = this.ctx.mkSeqSort(this.realSort);
+            sort = this.ctx.mkArray(name, this.realSort);
         }
         else {
             switch (typeof concrete) {
@@ -322,24 +322,33 @@ class SymbolicState {
         return result;
     }
 
+    
     _symbolicFieldSeqLookup(base_c, base_s, field_c, field_s) {
         return this.ctx.mkSeqAt(base_s, this.ctx.mkRealToInt(field_s));
     }
 
     symbolicField(base_c, base_s, field_c, field_s) {
-
-        if ((typeof base_c === "string" || base_c instanceof  Array)  && typeof field_c === "number") {
+        if (typeof base_c === "string" && typeof field_c === "number") {
             return this._symbolicFieldSeqLookup(base_c, base_s, field_c, field_s);
+        }
+
+        // TODO (AF) Unify the behaviour of sequences and arrays, this is stupid
+        // TODO (AF) Double check this behaviour should be enforced here
+        if (base_c instanceof Array && typeof field_c === "number" && field_c < 4294967295) {
+            return base_s.selectFromIndex(field_s)
         }
     	
         switch (field_c) {
     		case 'length':                
-            if (typeof base_c == "string" || base_c instanceof  Array) {
+            if (typeof base_c === "string") {
                 //TODO: This is a stupid solution to a more fundamental problem in Z3
                 //Remove ASAP
                 let res = this.ctx.mkSeqLength(base_s);
                 //res.FORCE_EQ_TO_INT = true;
                 return res;
+            }
+            if (base_c instanceof  Array) {
+                // TODO Handle array length as uninterpreted function
             }
     		default:
     			Log.log('Unsupported symbolic field - concretizing' + base_c + ' and field ' + field_c);
