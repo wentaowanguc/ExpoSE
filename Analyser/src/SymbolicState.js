@@ -193,7 +193,6 @@ class SymbolicState {
             // TODO (AF) Fix this to defer array reasoning for empty arrays
             let sort = concrete.length > 0 ? this._getSort(concrete[0]) : this.realSort;
             symbolic = this.ctx.mkArray(name, sort);
-            console.log(symbolic.length)
         } else {
             let sort = this._getSort(concrete);
             let symbol = this.ctx.mkStringSymbol(name);
@@ -228,7 +227,7 @@ class SymbolicState {
     }
 
     _checkSat(clause, checks) {
-        console.log('Checks length ' + checks.length);
+        Log.log('Checks length ' + checks.length);
         let model = (new Z3.Query([clause], checks)).getModel(this.slv);
         return model ? this.getSolution(model) : undefined;
     }
@@ -339,10 +338,6 @@ class SymbolicState {
         if (typeof base_c === "string" && typeof field_c === "number") {
             return this._symbolicFieldSeqLookup(base_c, base_s, field_c, field_s);
         }
-
-        console.log('Symbolic Field')
-        console.log(`Concrete Base: ${base_c}, Field: ${field_c}`)
-        console.log(`Symbolic Base: ${base_s}, Field: ${field_s}`)
 
         // TODO (AF) Unify the behaviour of sequences and arrays, this is stupid
         // TODO (AF) Double check the max and min length behaviour should be enforced here
