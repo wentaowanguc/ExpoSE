@@ -1,4 +1,4 @@
-# 1. Overview of JavaScript
+# 4. Overview of JavaScript
 
 JavaScript was initially created by a team at Netscape in 1996 with the goal of bringing interactivity to the web via a scripting language. According to Brendan Eich (the creator of JavaScript), up to this point the web was "static, text-heavy, with at best images in tables or floating on the right or left"[^2]. 
 
@@ -14,21 +14,13 @@ Google Chrome launched in 2008, with a new open source JavaScript engine named V
 
 In 2009, Node.js was launched - a JavaScript runtime based on V8 used to build asynchronous applications, popularising JavaScript as a language outside of the browser. Node.js was quickly adopted, with production applications at companies such as Uber and LinkedIn rolling out by 2011[^29][^30]. 
 
-Due in part to popularity of Node, JavaScript is now one of the most popular languages for software development[^4][^5] with npm, Node's package manager, hosting over 475,000 packages[^31].
+Due in part to popularity of Node, JavaScript is now one of the most popular languages for software development[^4][^5] with npm, Node's package manager, hosting over 475,000 packages[^15].
 
-# 1.1 JavaScript Design
+# 4.1 JavaScript Design
 
 Despite its popularity, writing correct JavaScript code remains a relatively difficult problem due largely to its dynamic type system, its tendency to silently fail, and a number of quirks inherited from early versions of the language as a result of its short development cycle. Additionally, there are a number of inconsistencies in the EMCAScript standard itself which cause interpreter implementations to differ in their approach leading to unspecified behaviours. [^10] Below I'll briefly outline the semantics of JavaScript, including arrays which are the focus of this project, and the different approaches taken to analysing JavaScript code to ensure correctness.
 
-_The design of the language is incomplete - heck there aren't even a full set of semantics. It's inconsistent and dynamic. Not only is it a scripting language it's a got additional baggage, strict mode, non-homogenous arrays, etc._ 
-
-_Equality_
-
-_Non-deterministic_
-
-_Runtime field lookup_
-
-## 1.1.1 Type System
+## 4.1.1 Type System
 
 | Type      | Details                                  |
 | --------- | ---------------------------------------- |
@@ -67,7 +59,7 @@ Although the previous examples have used strings and numbers, type coercion exte
 
 JavaScript also has some idiosyncrasies for testing equality which are underpinned by its type system. There are two operators for testing equality, `==` and `===`.  The `==` operator, the 'standard' equality operator, uses coercion to test the equality of values of differing types. However the standard equality operator doesn't necessarily use the same coercion rules as other operators. For instance, whilst boolean coercion would typically any non-zero and non-NaN number to true  `5 == true` is false. This inconsistency also extends to strings, typically all non-empty strings would coerce to true but `'3' == 1` is false. Additionally, if you compare an object to any other type standard equality converts the object to a primitive which can lead to some unexpected results such as `['7'] == 7`  being true. The strict operator, `===`, by comparison has much saner behaviour - any two values not of the same type are not equal.
 
-## 1.1.2 Objects and Prototypical Inheritance
+## 4.1.2 Objects and Prototypical Inheritance
 
 Typical object-oriented languages define classes which guarantee the exact sets of fields and methods an instance of the class will possess. Instances of the class can be thought of as clones or replicas of the class which mimic the class' behaviour. JavaScript instead uses prototypical inheritance, in which objects have a template or prototype which define a set of properties an object has, but objects are also free to declare their own set of properties and even overwrite their prototype's properties. 
 
@@ -153,7 +145,7 @@ In the example above we have a prototype chain length of three. Our `orange` obj
 
 ![Prototype Chain](C:\Users\arran\Documents\Github\FullUnit_1718_ArranFrance\Report\prototypechain.svg)
 
-## 1.1.3 Arrays
+## 4.1.3 Arrays
 
 Unlike other languages, JavaScript does not model arrays as continuously indexed tuples. Instead arrays are  a special form of object where array elements are properties that satisfy the following test for a key `k`, `ToString(ToUint32(k)) === k && ToUint32(k) !== 2^32 - 1`. Put more simply, an array is a special case of an object where the array elements are any value where the property can be coerced to a a positive integer number less than 2^32^ - 1. These array elements are treated differently to regular properties by array prototypes and the length property. 
 
@@ -209,41 +201,43 @@ The array prototype has a large number of helper functions that are frequently t
 | some          | `some(func)`                        | Calls `func(element, index, array)` for every element in the array. Returns true if `func` returns true for at least one element in the array |
 | every         | `every(func)`                       | Calls ` func(element, index, array)` for every element in the array. Returns true if `func` returns true for all elements in the array |
 
-# 1.2 Ensuring the Correctness of JavaScript 
+# 4.2 Ensuring the Correctness of JavaScript 
 
 As described in 1.1, assuring the correctness of JavaScript code is an unsolved problem - in part due to the fact JavaScript is a dynamically typed scripting language but also due to legacy design decisions. Efforts have been made to make the language itself safer to use, ECMAScript 5 introduced a strict mode (later made the default mode in ECMAScript 6) which restricts the use of certain language features and also defines additional circumstances that exceptions should be thrown in but there are still many errors that can occur even within the safer subset of JavaScript.
 
-Tools like Eslint and Flow are commonly used by developers to statically analyse code and identify bugs but are limited in their scope. Eslint uses a narrow set of rules to identify possibly dangerous behaviour and Flow is constrained to reasoning about types and in some cases requires additional annotating of code to allow Flow to identify possible errors. These limited set of warnings don't fully reflect the dynamic nature of JavaScript and the subtle interactions that can occur.
+Tools like Eslint and Flow are commonly used by developers to statically analyse code and identify bugs but are limited in their scope. Eslint uses a narrow set of rules to identify possibly dangerous behaviour and Flow is constrained to reasoning about types and in some cases requires additional annotating of code to allow Flow to identify possible errors. These limited set of warnings don't fully reflect the dynamic nature of JavaScript and the subtle interactions that can occur due to prototypical inheritance, dynamic property access, and dynamic dispatch. There have been an number of attempts to analyse JavaScript statically however most approaches fall short of useful due to their inability to reason about functions like `call()` and `apply()` [^11] with the best results requiring an element of dynamic analysis as well. [^12] [^13]
 
-Although there have been a number of attempts to produce a formal semantics for JavaScript, to allow for a more complete analysis
+Consequently there has been a shift in interest towards analysing safer (and less dynamic) targets which compile to JavaScript, the most popular of which is Typescript. Typescript is a superset of ECMAScript 6 which includes optional types to enable errors to be caught statically before compilation. Although TypeScript makes it easier to reason about potential errors caused by coercion, TypeScript itself provides no guarantees of static soundness - it's still possible for a TypeScript program to compile to JavaScript successfully and encounter a run-time error as a result of type coercion when executed [^1]. Extensions to TypeScript have been suggested to provide soundness [^7] [^3] although these approaches require a modified interpreter or runtime enforcement. Regardless of soundness or not, whilst TypeScript and its derivatives provide a way of reducing or eliminating type based errors they don't help identify or eliminate errors that occur due to other dynamic features of JavaScript such as prototypical inheritance, dynamic property access, or dynamic dispatch.
 
-Generally, I believe that static analysis is insufficiently capable of 
+There most have been a number of attempts to produce formal semantics for JavaScript, to allow for better reasoning about JavaScript code however no attempts can be considered completely successful. One approach taking by Phillippa Gardner et al. (JaVerT) [^11] [^12] is to translate a subset of the JavaScript language (targeting ECMAScript 5 in strict mode) to an intermediate language, JSL, and then performing analysis on JSL. Although the results of their analysis their translated code is promising, their process and toolchain requires an expert level understanding of the semantics of JavaScript and developers to annotate their code pre and post-conditions. Although, this approach may be suited for smaller programs (or critical subsets of programs) its approach does not scale well to large applications. Other approaches such a KJS [^10] and λJS [^14] support even less of the language than JaVerT and crucially none of the three approaches target the ECMAScript 6 specification.
 
-_Approaches to understand the semantics of the language are incomplete or difficult to use_
+Symbolic execution provides an ideal way to test JavaScript code. By concretely executing the program you avoid having to reason about the dynamic nature of JavaScript and instead defer this to the interpreter. The use of an interpreter for testing also provides flexibility, if you want to test JavaScript in another environment you're able to switch interpreters. Additionally, by using concrete execution to back analysis symbolic execution avoids having to model the entire language specification. Finally, symbolic execution is also able to test any JavaScript underlying library code.
 
-_Talk about dynamic types, how this makes reasoning about JS as a language hard (reasoning about invariants when you don't know the type and having to handle type coercion)_ 
+ExpoSE is a tool for symbolic execution of JavaScript. The target program is instrumented with Jalangi2, a tool that provides hooks before and after each statement is executed, which is used to build a symbolic representation of the program. ExpoSE uses a harness to randomly generate inputs for public functions in a target JavaScript program. It then uses a DART[^?] based directed search to attempt to explore all feasible paths in the program up to a maximum path count. Constraints are solved using Z3, a Microsoft Research theorem prover.
 
-_Typescript_
+#5 Array Encoding  
 
-JavaScript is an ideal candidate for symbolic execution due to the difficult nature of analysing JavaScript statically. It’s runtime dynamic typing and environment specific interactions make it hard to reason precisely about JavaScript outside of execution[^15].  Symbolic execution allows us to reason about the behaviour of a program in a more concrete fashion.
+# 6 Results
 
-ExpoSE is a tool for symbolic execution of JavaScript. The target program is instrumented with Jalangi2, a tool that provides hooks before and after each statement is executed, which is used to build a symbolic representation of the program in Z3. Whenever program execution forks, for instance at an if statement, the negation of the current conditions of the current execution path are used to explore the next path, ensuring that all feasible paths are explored.
+# 7 Conclusion
 
-[^1]: 
+# Bibliography
+
+[^1]: Bierman, G., Abadi, M., & Torgersen, M. (2014, July). Understanding typescript. In *European Conference on Object-Oriented Programming* (pp. 257-281). Springer, Berlin, Heidelberg.
 [^2]: https://www.computerworld.com.au/article/255293/a-z_programming_languages_javascript/
-[^3]: 
+[^3]: Rastogi, A., Swamy, N., Fournet, C., Bierman, G., & Vekris, P. (2015, January). Safe & efficient gradual typing for TypeScript. In *ACM SIGPLAN Notices* (Vol. 50, No. 1, pp. 167-180). ACM.
 [^4]: https://insights.stackoverflow.com/survey/2017#most-popular-technologies
 [^5]: https://www.tiobe.com/tiobe-index/
 [^6]: Gardner, P. A., Maffeis, S., & Smith, G. D. (2012). Towards a program logic for JavaScript. *ACM SIGPLAN Notices*, *47*(1), 31-44.
-[^7]: 
+[^7]: Richards, G., Zappa Nardelli, F., & Vitek, J. (2015). Concrete types for TypeScript. In *LIPIcs-Leibniz International Proceedings in Informatics* (Vol. 37). Schloss Dagstuhl-Leibniz-Zentrum fuer Informatik.
 [^8]: https://www.ecma-international.org/ecma-262/
 [^9]: A. H. Borning. 1986. Classes versus prototypes in object-oriented languages. In *Proceedings of 1986 ACM Fall joint computer conference* (ACM '86). IEEE Computer Society Press, Los Alamitos, CA, USA, 36-40.
 [^10]: Park, D., Stefănescu, A., & Roşu, G. (2015, June). KJS: A complete formal semantics of JavaScript. In *ACM SIGPLAN Notices* (Vol. 50, No. 6, pp. 346-356). ACM.
-[^11]: 
-[^12]: 
-[^13]: 
-[^14]: 
-[^15]: Andreasen, E., Feldthaus, A., Jensen, S. H., Jensen, C. S., Jonsson, P. A., Madsen, M., & Møller, A. (2012). Improving Tools for JavaScript Programmers. In *Proc. of International Workshop on Scripts to Programs. Beijing, China:[sn]* (pp. 67-82).
+[^11]: Sridharan, M., Dolby, J., Chandra, S., Schäfer, M., & Tip, F. (2012). Correlation tracking for points-to analysis of JavaScript. *ECOOP 2012–Object-Oriented Programming*, 435-458.
+[^12]: Logozzo, F., & Venter, H. (2010). RATA: rapid atomic type analysis by abstract interpretation–application to javascript optimization. In *Compiler Construction* (pp. 66-83). Springer Berlin/Heidelberg.
+[^13]: Wei, S., & Ryder, B. G. (2013, July). Practical blended taint analysis for JavaScript. In *Proceedings of the 2013 International Symposium on Software Testing and Analysis* (pp. 336-346). ACM.
+[^14]: Guha, A., Saftoiu, C., & Krishnamurthi, S. (2010, June). The essence of JavaScript. In *European conference on Object-oriented programming* (pp. 126-150). Springer, Berlin, Heidelberg.
+[^15]: https://www.npmjs.com/
 [^16]: https://brendaneich.com/2008/04/popularity/
 [^17]: Dybvig, R. K. (1996). *The SCHEME programming language: ANSI SCHEME*. Upper Saddle, NJ: Prentice-Hall.
 [^18]: https://brendaneich.com/2010/07/a-brief-history-of-javascript/
@@ -259,4 +253,3 @@ ExpoSE is a tool for symbolic execution of JavaScript. The target program is ins
 [^28]: https://cdn.oreillystatic.com/en/assets/1/event/60/Know%20Your%20Engines_%20How%20to%20Make%20Your%20JavaScript%20Fast%20Presentation%201.pdf
 [^29]: https://venturebeat.com/2011/08/16/linkedin-node/
 [^30]: https://www.joyent.com/blog/node-js-office-hours-curtis-chambers-uber
-[^31]: https://www.npmjs.com/
