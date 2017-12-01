@@ -3,11 +3,11 @@
 # 1. Introduction 
 
 # 2. Symbolic Execution
-## 2.1 History of Symbolic Execution
+## 2.1 Introduction to Symbolic Execution
 
-Symbolic execution is a technique for testing program correctness initially proposed in the 1970s. Classically, it's the process of executing a program by representing its variables as arbitrary symbols rather than concrete values. Execution of the program occurs using these symbolic inputs by extending the basic operators and semantics of the program's language to use symbols and produce symbolic formulas rather than concrete values. In doing so, each symbolic execution tests many actual instances of execution. If statements, and language features that cause execution to diverge, are represented as a branch condition, a conjunction of conditions on symbols that must be satisfied. Evaluating the constraint allows you to identify whether a path is feasible and if so, the satisfied constraint provides the set of concrete inputs that the path could be run under[^1].  In the trivial case, if only one path is feasible, then execution occurs down that path. In the case where both paths are feasible, then parallel execution occurs, which causes the program state to diverge. At the end of execution the path condition, the conjunction of branch conditions taken to the current point of execution, provides a unique representation of a path tested through the program and when solved using a constraint solver produces a set of inputs that when run take the same path through the program as the symbolic execution [^3][^39]. By exploring a program's paths exhaustively (or as thoroughly as possible within either a time or path count constraint) combining symbolic execution with techniques to compare symbolic output with expected values it's possible to test program correctness. [^31]
+Symbolic execution is a technique for testing program correctness initially proposed in the 1970s [^31][^41]. Classically, it's the process of executing a program by representing its variables as arbitrary symbols rather than concrete values. Execution of the program occurs using these symbolic inputs by extending the basic operators and semantics of the program's language to use symbols and produce symbolic formulas rather than concrete values. In doing so, each symbolic execution tests many actual instances of execution. `If` statements and language features that cause execution to diverge are represented as a path condition, a conjunction of conditions on symbols that must be satisfied. Evaluating the constraint allows you to identify whether a path is feasible and if so, the satisfied constraint provides the set of concrete inputs that the path could be run under [^1]. At the end of execution the path condition, the conjunction of branch conditions taken to the current point of execution, provides a unique representation of a path tested through the program and when solved using a constraint solver produces a set of inputs that when run take the same path through the program as the symbolic execution [^32], [^33]. By exploring a program's paths exhaustively (or as thoroughly as possible within either a time or path count constraint) combining symbolic execution with techniques to compare symbolic output with expected values it's possible to test program correctness [^31].
 
-For example, consider the program below which returns the sum of the absolute values of two values. There are four possible paths that can be taken through the program. The first is where neither if branches are entered, the second is where the value of `x` is less than zero, the third is where the value of `y` is less than zero, and the fourth is where both `x` and `y` is less than zero. Symbolic execution would explore each of these paths and produce concrete values for each path.
+*Figure 1: Absolute Sum Function*
 
 ```javascript
 1 function abs_sum (x, y){
@@ -19,23 +19,39 @@ For example, consider the program below which returns the sum of the absolute va
 7 }
 ```
 
-Historically, this technique has been impractical due to the limitations on computing resources and the capabilities of automated theorem provers[^31] however in the 2000s there was a a number of advancements in the technique by DART, EXE, and Microsoft's SAGE, made feasible due to the improvements in computer hardware and the improvement of solvers[^35][^38].
+ For example, consider the program above (fig. 1) which returns the sum of the absolute values of two values. There are four possible paths that can be taken through the program. The first is where neither if branches are entered, the second is where the value of `x` is less than zero, the third is where the value of `y` is less than zero, and the fourth is where both `x` and `y` is less than zero. The process for symbolically executing this program classically is as follows. The function is executed with two symbolic values $x'$ and $y'$ and a path condition $pc$, "the accumulator of properties which inputs must satisfy ... to follow ... a particular path" [^31], is initialised to $true$. When a branching statement (line 2 or 4) is reached the constraint solver is queried to see if the branch condition is feasible given the current path condition. If condition is satisfiable then execution forks to explore the new path and $pc$ becomes $pc \land bc$ , where $bc$ is the branch condition. This process repeats until the program terminates and every path is explored. The table below shows the path condition, symbolic results, and the constraint solver queries and results for the execution.
 
-In these modern implementations, the program is run both concretely and symbolically in so called concolic execution. In concolic execution, the program is instrumented to run concretely whilst the program state is shadowed by symbolic variables allowing the concrete execution to 'drive' the symbolic execution. Unlike pure symbolic execution, concolic execution requires its initial input to be concrete, this input can be random or crafted to fit the target program[^34][^39]. As concolic execution concretely executes programs, rather than just modelling the semantics of the language you can be sure that any bugs found are actual bugs. Additionally, when a constraint cannot be solved concolic execution allows concrete values to be substituted for unsolvable elements of constraints[^36][^37].
+| $pc$                | Result  | Constraint Solver Queries | Query Result |
+| ------------------- | ------- | ------------------------- | ------------ |
+| $x >= \land y >= 0$ | $x+y$   | $x >=0 \land y < 0 $      | SAT          |
+| $x >= \land y < 0$  | $x - y$ | $x <0 $                   | SAT          |
+| $x < \land y >= 0$  | $-x+y$  | $x<0 \land y < 0 $        | SAT          |
+| $x < \land y < 0$   | $-x-y$  |                           |              |
 
-## 2.2 Limitations 
+Historically, this technique has been impractical due to the limitations on computing resources and the capabilities of automated theorem provers[^31] however in the 2000s there was a a number of advancements in the technique by DART[^33] and EXE [^35] made feasible due to the improvements in computer hardware and the improvement of solvers[^38] .
 
-### 2.2.1 Finding and Choosing Paths
+In these modern implementations, the program is run both concretely and symbolically in so called concolic execution. In concolic execution, the program is instrumented to run concretely whilst the program state is shadowed by symbolic variables allowing the concrete execution to 'drive' the symbolic execution. Unlike pure symbolic execution, concolic execution requires its initial input to be concrete, this input can be random or crafted to fit the target program[^34], [^39]. As concolic execution concretely executes programs, rather than just modelling the semantics of the language you can be sure that any bugs found are actual bugs. Additionally, when a constraint cannot be solved concolic execution allows concrete values to be substituted for unsolvable elements of constraints [^36], [^37].
 
-Although in theory symbolic execution will exhaustively search through all feasible paths, as the complexity of the program under test increases the number of paths in the program increases roughly exponentially[^39]. As these symbolic execution tools are bounded by real world time constraint, paths must be chosen carefully in order to prioritise exploring 'interesting' cases in the time available.
+Consider the following example of concolic execution testing the program described in figure 1. Inputs for `x` and `y` are randomly generated, for instance `x=217` and `y=931`. These then guide the execution to not visit any branches, producing the $pc$ of $x >= 0 \land y >=0$, this path condition can then be negated to produce further paths. Using the DART[^33] style directed symbolic execution the following paths are generated.
 
-In EXE, and other more traditional methods, paths are found by building a control flow graph and then exploring the graph using a form of breadth-first search (BFS) or depth-first search base. Neither BFS or DFS are particularly well suited for the problem, DFS is especially flawed due to its ability to get 'stuck' in a symbolically bounded loop [^35]. 
+| Input (x, y) | $pc$                | Result  | Constraint Solver Queries | Query Result |
+| ------------ | ------------------- | ------- | ------------------------- | ------------ |
+| 0, 0         | $x >= \land y >= 0$ | $x+y$   | $x >=0 \land y < 0 $      | SAT          |
+| 0, -3        | $x >= \land y < 0$  | $x - y$ | $x <0 $                   | SAT          |
+| -2, 1        | $x < \land y >= 0$  | $-x+y$  | $x<0 \land y < 0 $        | SAT          |
+| -2, -7       | $x < \land y < 0$   | $-x-y$  |                           |              |
 
-DART and SAGE, by contrast, uses a directed search strategy. Following the initial input, paths are generated by repeated negating the conditions in the path condition that was explored. Then paths are prioritised using a priority queue [^33].
+### 2.2 Finding and Choosing Paths
 
-In detail the algorithm for finding new test inputs is as follows, starting with an initial input *i* which has an attribute, _bound_ of 0, and a priority queue _pq_ the program executes symbolically and returns the path condition for its execution, _pc_, in the form of a sequence of predicates _c~1~ ^ c~2~ ^ ... c~n~_.  To explore alternatives to the branches that were chosen in the last execution, for _j = i.bound ... n_ where _n_ is the number of predicates in _pc_,  new inputs are generated by negating the _c~j~_ and solving the new constraint [^33][^34].  Each new input is pushed to _pq_ with a bound of _j_.  _bound_ is used to prevent path conditions being explored multiple times. The paths in the priority queue can then be prioritised using a chosen heuristic [^39]. 
+Although in theory symbolic execution will exhaustively search through all feasible paths, as the length of the program under test increases the number of paths in the program increases roughly exponentially [^39]. As these symbolic execution tools are bounded by real world time constraint, paths must be chosen carefully in order to prioritise exploring 'interesting' cases in the time available.
 
-### 2.2.2 Constraint Solving
+In EXE, and other more traditional methods, paths are found by building a control flow graph and then exploring the graph using a form of breadth-first search (BFS) or depth-first search base. Neither BFS or DFS are particularly well suited for the problem as neither is able to prioritise 'interesting paths', they simple try to exhaustively explore all the paths in a program. DFS is especially flawed due to its ability to get 'stuck' in a symbolically bounded loop [^35]. 
+
+SAGE by contrast uses a 'generational search'. Following the initial input, paths are generated by repeatedly negating the conditions in the path condition that was explored. Then paths are prioritised using a priority queue [^33].
+
+In detail the algorithm for finding new test inputs is as follows, starting with an initial input $i$ which has an attribute, $bound$ of 0, and a priority queue $pq$ the program executes symbolically and returns the path condition for its execution, $pc$, in the form of a sequence of predicates $c_1 \land c_2 \land ... c_n $.  To explore alternatives to the branches that were chosen in the last execution, for $j = i.bound ... n$ where $n$ is the number of predicates in $pc$,  new inputs are generated by negating the $c_j$ and solving the new constraint [^33], [^34].  Each new input is pushed to $pq$ with a bound of $j$. $bound$ is used to prevent path conditions being explored multiple times. The paths in the priority queue can then be prioritised using a chosen heuristic [^39]. 
+
+### 2.3 Constraint Solving
 
 Constraint solvers are used for two purposes in symbolic execution: determining the satisfiability of branch/path constraints and producing concrete input for satisfiable conditions. Despite continual improvements in the performance of constraint solvers, calls to solvers are typically the bottleneck is symbolic execution - fortunately there are a number of possible optimisations that can be done to reduce the burden on constraint solvers and achieve better performance [^39].
 
@@ -43,11 +59,11 @@ Constraint solvers are used for two purposes in symbolic execution: determining 
 
 Frequently constraints will need to be solved multiple times throughout the course of execution. Instead of calling the constraint solver multiple times for the same constraint, satisfying results can be stored in a map of constraints to satisfying results. Then, instead of directly calling the constraint solver directly, a cache lookup can be performed first to see if there is a satisfying result [^40].
 
-This caching process can be extended to evaluate the strength of formulas. If there is a satisfying result for a stronger constraint than the one being queried then that satisfying result will be valid for the weak constraint. For instance, if the cache contains the following mapping `(x > 3 ^ y < 1) ^ x < 10 -> {x: 5, y: -214} ` then the satisfying result will be valid for the condition `x > 3 ^ y < 1`. This caching scheme can also be used to cache unsatisfiable constraints [^40].
+This caching process can be extended to evaluate the strength of formulas. If there is a satisfying result for a stronger constraint than the one being queried then that satisfying result will be valid for the weak constraint. For instance, if the cache contains the following mapping $ (x > 3 ^ y <1) \land (x < 10) \implies x = 5 \land y =  -214$ then the satisfying result will be valid for the condition $x > 3 \land y < 1 $ . This caching scheme can also be used to cache unsatisfiable constraints [^40].
 
 ### Removing Redundant Constraints
 
-The majority of queries to the constraint solver in concolic execution are to determine the feasibility of a given branch. In most cases a branch's condition will not depend on all of the variables in a path constraint allowing redundant constraints to be eliminated before passing the constraint to constraint solver. Although if this technique is applied the constraint solver will only return satisfiable values for non-eliminated variables, the existing concrete values of the other variables can be used to produce a full set inputs [^39].
+The majority of queries to the constraint solver in concolic execution are to determine the feasibility of a given branch. In most cases a branch's condition will not depend on all of the variables in a path constraint allowing redundant constraints to be eliminated before passing the constraint to constraint solver. Although if this technique is applied the constraint solver will only return satisfiable values for non-eliminated variables, the existing concrete values of the other variables can be used to produce a full set of inputs [^39].
 
 For instance, consider the following function.
 
@@ -65,7 +81,7 @@ function unlikely_function (x, y, z){
 }
 ```
 
-If the existing path constraint is (_x_ < 0) ^ (_z_ > 5) ^ (_y_ < 13) ^ (_y_ + _x_ > 15) and I'm negating the last path condition to explore a new path:   (_x_ < 0) ^ (_z_ > 5) ^ (_y_ < 13) ^ ¬(_y_ + _x_ > 15) then the _z_ > 5 constraint can be eliminated as _z_ does not influence the _y_ + _x_ > 15 branch.
+If the existing path constraint is  $(x < 0 ) \land ( z  > 5) \land (y < 13) \land (y + x > 15) $ and the symbolic execution negates the the last path condition to explore a new path:  $ (x < 0) \land (z > 5) \land (y < 13) \land \lnot(y + x > 15)$ then the  $z > 5$ constraint can be eliminated as $z$ does not influence the $y + x > 15$ branch.
 
 ## 2.3 Symbolic Execution for Bug Detection
 
@@ -77,7 +93,7 @@ Symbolic execution offers a number advantages over typical testing techniques. U
 
 Static analysis is much cheaper to run but at the cost of precision. Static analysis often produces false reports and consequently also requires a large amount of time spent to identify actual faults. Static analysis often may struggle to identify subtle bugs due to the lack of information available outside of runtime, and will typically perform worse on weakly typed languages.
 
-Symbolic execution, like static analysis, requires no additional effort on the part of the developer and has the advantage of not producing false positives and providing a valid test case for each bug found. Symbolic execution is also effective at finding edge case bugs and can also effectively analyse the behaviour of a program when it interacts with libraries.​
+Symbolic execution, like static analysis, requires no additional effort on the part of the developer and has the advantage of not producing false positives and providing a valid test case for each bug found. Symbolic execution is also effective at finding edge case bugs and can also effectively analyse the behaviour of a program when it interacts with libraries.
 
 # 3. SMT Solvers
 
@@ -296,7 +312,7 @@ There most have been a number of attempts to produce formal semantics for JavaSc
 
 Symbolic execution provides an ideal way to test JavaScript code. By concretely executing the program you avoid having to reason about the dynamic nature of JavaScript and instead defer this to the interpreter. The use of an interpreter for testing also provides flexibility, if you want to test JavaScript in another environment you're able to switch interpreters. Additionally, by using concrete execution to back analysis symbolic execution avoids having to model the entire language specification. Finally, symbolic execution is also able to test any JavaScript underlying library code.
 
-ExpoSE is a tool for symbolic execution of JavaScript. The target program is instrumented with Jalangi2, a tool that provides hooks before and after each statement is executed, which is used to build a symbolic representation of the program. ExpoSE uses a harness to randomly generate inputs for public functions in a target JavaScript program. It then uses a DART[^?] based directed search to attempt to explore all feasible paths in the program up to a maximum path count. Constraints are solved using Z3, a Microsoft Research theorem prover.
+ExpoSE is a tool for symbolic execution of JavaScript. The target program is instrumented with Jalangi2, a tool that provides hooks before and after each statement is executed, which is used to build a symbolic representation of the program. ExpoSE uses a harness to randomly generate inputs for public functions in a target JavaScript program. It then uses a DART[^33] based directed search to attempt to explore all feasible paths in the program up to a maximum path count. Constraints are solved using Z3, a Microsoft Research theorem prover.
 
 #5 Array Encoding  
 
@@ -346,3 +362,4 @@ ExpoSE is a tool for symbolic execution of JavaScript. The target program is ins
 [^38]: De Moura, L., & Bjørner, N. (2011). Satisfiability modulo theories: introduction and applications. *Communications of the ACM*, *54*(9), 69-77.
 [^39]: Cadar, C., & Sen, K. (2013). Symbolic execution for software testing: three decades later. *Communications of the ACM*, *56*(2), 82-90.
 [^40]: Cadar, C., Dunbar, D., & Engler, D. R. (2008, December). KLEE: Unassisted and Automatic Generation of High-Coverage Tests for Complex Systems Programs. In *OSDI* (Vol. 8, pp. 209-224).
+[^41]: Boyer, R. S., Elspas, B., & Levitt, K. N. (1975). SELECT—a formal system for testing and debugging programs by symbolic execution. *ACM SigPlan Notices*, *10*(6), 234-245.
