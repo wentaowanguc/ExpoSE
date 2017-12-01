@@ -8,7 +8,7 @@
     "browserify": "^14.1.0",
     "jalangi": "git+https://github.com/Samsung/jalangi2.git",
     "jalangi2": "git+https://github.com/Samsung/jalangi2.git",
-    "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git"
+    "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git#af-array-support"
   },
   "scripts": {
     "postinstall": "./postinstall"
