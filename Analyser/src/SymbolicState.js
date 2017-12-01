@@ -166,32 +166,36 @@ class SymbolicState {
         return childInputs;
     }
 
+    _getSort(concrete) {
+        switch (typeof concrete) {
+            case 'boolean':
+                return this.boolSort;
+                break;
+
+            case 'number':
+                return this.realSort;
+                break;
+
+            case 'string':
+                return this.stringSort;
+                break;
+            default:
+                Log.log("Symbolic input variable of type " + typeof val + " not yet supported.");
+    }
+
     createSymbolicValue(name, concrete) {
 
         let symbolic;
         
         // Keep our arrays homogenous for now
         if (concrete instanceof Array && (concrete.length === 0 || concrete.every(i => typeof i === typeof concrete[0]))) {
-            symbolic = this.ctx.mkArray(name, this.realSort);
+            // TODO (AF) Fix this
+            let sort = concrete.length > 0 ? _getSort(concrete[0]) : this.realSort;
+            symbolic = this.ctx.mkArray(name, );
         } else {
-            let sort;
+            let sort = _getSort(concrete);
             let symbol = this.ctx.mkStringSymbol(name);
-            switch (typeof concrete) {
-
-            case 'boolean':
-                sort = this.boolSort;
-                break;
-
-            case 'number':
-                sort = this.realSort;
-                break;
-
-            case 'string':
-                sort = this.stringSort;
-                break;
-            default:
-                Log.log("Symbolic input variable of type " + typeof val + " not yet supported.");
-            }
+            
             symbolic = this.ctx.mkConst(symbol, sort);
         }
 
