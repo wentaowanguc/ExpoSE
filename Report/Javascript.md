@@ -4,7 +4,7 @@ JavaScript was initially created by a team at Netscape in 1996 with the goal of 
 
 When Brendan was initially recruited by Netscape he was recruited with the aim of implementing Scheme, a dialect of Lisp that supports first-class functions [^17], in the browser however by this time Sun and Netscape were negotiating to bring Java to Netscape Navigator[^16]. An internal debate occurred about the need for two languages but Eich and other influential developers at both Sun and Netscape believed that the two languages would serve different audiences. 'Professional' developers would veer towards Java for building logic heavy components and designers and amateurs would use the scripting language as a "glue" for joining together components[^2].
 
-Despite targeting a different audience Mocha, the language that would later evolve into JavaScript, was required by management to "look like Java", according to Eich, ruling out the existing languages Perl, Python, and Scheme. Eventually Eich settled on "Scheme-ish first-class functions and Self-ish (albeit singular) prototypes as the main ingredients" [^16] . Mocha also inherited a number of confusing Java language features such as the distinction between primitives and objects (e.g. `string` vs. `String` ) and the `Date` constructor which is a port of Java's `java.util.Date`, complete with the Y2K bug [^19]. Perl and Python are also credited to influencing Mocha's string handling and regular expressions and AWK inspired the use of the `function` keyword [^18]. The first version of the language had an incredibly short development period, Eich claims he spent "about ten days" developing the first JavaScript interpreter [^2].
+Despite targeting a different audience Mocha, the language that would later evolve into JavaScript, was required by management to "look like Java", according to Eich, ruling out the existing languages Perl, Python, and Scheme. Eventually Eich settled on "Scheme-ish first-class functions and Self-ish (albeit singular) prototypes as the main ingredients" [^16]. Mocha also inherited a number of confusing Java language features such as the distinction between primitives and objects (e.g. `string` vs. `String` ) and the `Date` constructor which is a port of Java's `java.util.Date`, complete with the Y2K bug [^19]. Perl and Python are also credited to influencing Mocha's string handling and regular expressions and AWK inspired the use of the `function` keyword [^18]. The first version of the language had an incredibly short development period, Eich claims he spent "about ten days" developing the first JavaScript interpreter[^2].
 
 After JavaScript (abandoning its previous names, Mocha and LiveScript) was released in Netscape Navigator 2 Microsoft began work on JScript, an equivalent language which shipped with Internet Explorer 3. Eich says that "At some point in late summer or early fall 1996, it became clear to me that JS was going to be standardized. Bill Gates was bitching about us changing JS all the time."[^20], which lead to JavaScript being standardised by Ecma International, an industry group that produces information standards, as ECMAScript in 1997. Since 1997 ECMAScript, now in its sixth version, has also been adopted as an ISO/IEC standard[^21].
 
@@ -18,7 +18,7 @@ Due in part to popularity of Node, JavaScript is now one of the most popular lan
 
 # 1.1 JavaScript Design
 
-Despite its popularity, writing correct JavaScript code remains a relatively difficult problem. Due largely to its dynamic type system, its tendency to silently fail, and a number of quirks inherited from early versions of the language as a result of its short development cycle. Additionally, there are a number of inconsistencies in the EMCAScript standard itself which cause interpreter implementations to differ in the approach leading to unspecified behaviours. [^10] Below I'll briefly outline the semantics of JavaScript, including arrays which are the focus of this project,  and the different approaches taken to analysing JavaScript code.
+Despite its popularity, writing correct JavaScript code remains a relatively difficult problem due largely to its dynamic type system, its tendency to silently fail, and a number of quirks inherited from early versions of the language as a result of its short development cycle. Additionally, there are a number of inconsistencies in the EMCAScript standard itself which cause interpreter implementations to differ in their approach leading to unspecified behaviours. [^10] Below I'll briefly outline the semantics of JavaScript, including arrays which are the focus of this project, and the different approaches taken to analysing JavaScript code to ensure correctness.
 
 _The design of the language is incomplete - heck there aren't even a full set of semantics. It's inconsistent and dynamic. Not only is it a scripting language it's a got additional baggage, strict mode, non-homogenous arrays, etc._ 
 
@@ -151,7 +151,7 @@ orange instanceof Object
 
 In the example above we have a prototype chain length of three. Our `orange` object has a prototype of `Fruit`, which has a prototype of `Food`, which has a prototype of `Object` .
 
-![prototypechain](C:\Users\arran\Documents\Github\FullUnit_1718_ArranFrance\Report\prototypechain.svg)
+![Prototype Chain](C:\Users\arran\Documents\Github\FullUnit_1718_ArranFrance\Report\prototypechain.svg)
 
 ## 1.1.3 Arrays
 
@@ -193,7 +193,7 @@ arr[-1]
 The array prototype has a large number of helper functions that are frequently taken advantage of by developers, a number of which were added in the latest version of the EMCAScript standard [^8]. Below are some of the more commonly used and interesting functions.
 
 | Function Name | Signature                           | Description                              |
-| ------------- | ----------------------------------- | ---------------------------------------- |
+| ------------- | :---------------------------------- | ---------------------------------------- |
 | indexOf       | `indexOf(element)`                  | Returns the first index of the array that contains `element` or  -1 if `element` is not in the array |
 | lastIndexOf   | `lastIndexOf(element) `             | Returns the last index of the array that contains `element` or -1 if element is not in the array |
 | slice         | `slice(begin, end)`                 | Returns a copy of the array with the elements from the index `begin` up to the `end` index. If `end` is not provided it will slice from `begin` to the last element of the array |
@@ -207,15 +207,23 @@ The array prototype has a large number of helper functions that are frequently t
 | map           | `map(func)`                         | Returns a new array with the results of calling `func` on each element in the array. `func` is called with `(value, index, array)` |
 | reduce        | `reduce(func, initialValue)`        | Calls `func(accumulator, value, index, array)` on every element in the array and returns the value of accumulator. If `initialValue` is provided then the first time `func` is called then `accumulator` is set to the value of `initialValue` |
 | some          | `some(func)`                        | Calls `func(element, index, array)` for every element in the array. Returns true if `func` returns true for at least one element in the array |
-| every         | `every(func)`                       | Calls` func(element, index, array)` for every element in the array. Returns true if `func` returns true for all elements in the array |
+| every         | `every(func)`                       | Calls ` func(element, index, array)` for every element in the array. Returns true if `func` returns true for all elements in the array |
 
-# Correctness of JavaScript 
+# 1.2 Ensuring the Correctness of JavaScript 
 
-_Flow and EsLint enforce the use of the subset of the language and constrain the developer_
+As described in 1.1, assuring the correctness of JavaScript code is an unsolved problem - in part due to the fact JavaScript is a dynamically typed scripting language but also due to legacy design decisions. Efforts have been made to make the language itself safer to use, ECMAScript 5 introduced a strict mode (later made the default mode in ECMAScript 6) which restricts the use of certain language features and also defines additional circumstances that exceptions should be thrown in but there are still many errors that can occur even within the safer subset of JavaScript.
+
+Tools like Eslint and Flow are commonly used by developers to statically analyse code and identify bugs but are limited in their scope. Eslint uses a narrow set of rules to identify possibly dangerous behaviour and Flow is constrained to reasoning about types and in some cases requires additional annotating of code to allow Flow to identify possible errors. These limited set of warnings don't fully reflect the dynamic nature of JavaScript and the subtle interactions that can occur.
+
+Although there have been a number of attempts to produce a formal semantics for JavaScript, to allow for a more complete analysis
+
+Generally, I believe that static analysis is insufficiently capable of 
 
 _Approaches to understand the semantics of the language are incomplete or difficult to use_
 
-_Talk about dynamic types, how this makes reasoning about JS as a language hard (reasoning about invariants when you don't know the type and having to handle type coercion)_
+_Talk about dynamic types, how this makes reasoning about JS as a language hard (reasoning about invariants when you don't know the type and having to handle type coercion)_ 
+
+_Typescript_
 
 JavaScript is an ideal candidate for symbolic execution due to the difficult nature of analysing JavaScript statically. It’s runtime dynamic typing and environment specific interactions make it hard to reason precisely about JavaScript outside of execution[^15].  Symbolic execution allows us to reason about the behaviour of a program in a more concrete fashion.
 
