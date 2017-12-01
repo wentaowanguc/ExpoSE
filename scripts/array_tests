@@ -1,3 +1,12 @@
 ./scripts/refresh
-#NO_COMPILE=1 
-EXPOSE_LOG_LEVEL=2 EXPOSE_PRINT_PATHS=1 expoSE tests/arrays/array_length_numbers.js 
+#!/bin/bash -e
+./scripts/build/build_tester
+
+if [ $? -ne 0 ]; then
+	exit 1
+fi
+
+node --version
+node ./Tester/bin/TestRunner.js ./tests/ array_tests
+
+exit $?
