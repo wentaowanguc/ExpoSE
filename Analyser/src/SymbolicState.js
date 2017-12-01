@@ -181,6 +181,7 @@ class SymbolicState {
                 break;
             default:
                 Log.log("Symbolic input variable of type " + typeof val + " not yet supported.");
+        }
     }
 
     createSymbolicValue(name, concrete) {
@@ -189,11 +190,12 @@ class SymbolicState {
         
         // Keep our arrays homogenous for now
         if (concrete instanceof Array && (concrete.length === 0 || concrete.every(i => typeof i === typeof concrete[0]))) {
-            // TODO (AF) Fix this
-            let sort = concrete.length > 0 ? _getSort(concrete[0]) : this.realSort;
-            symbolic = this.ctx.mkArray(name, );
+            // TODO (AF) Fix this to defer array reasoning for empty arrays
+            let sort = concrete.length > 0 ? this._getSort(concrete[0]) : this.realSort;
+            symbolic = this.ctx.mkArray(name, sort);
+            console.log(symbolic.length)
         } else {
-            let sort = _getSort(concrete);
+            let sort = this._getSort(concrete);
             let symbol = this.ctx.mkStringSymbol(name);
             
             symbolic = this.ctx.mkConst(symbol, sort);
@@ -353,6 +355,7 @@ class SymbolicState {
             } else {
                 this.pushCondition(this.ctx.mkLt(field_s, base_s.length))
                 // Make sure our symbolic value is an integer if our concrete is
+                // TODO (AF) Find a way to coerce this to unsigned
                 return base_s.selectFromIndex(this.ctx.mkRealToInt(field_s))
             }
         } else {           
@@ -365,7 +368,7 @@ class SymbolicState {
                     //res.FORCE_EQ_TO_INT = true;
                     return res;
                 } else if (base_c instanceof Array) {
-                    return this.length; 
+                    return base_s.length; 
                 }
                 default:
                     Log.log('Unsupported symbolic field - concretizing' + base_c + ' (type:' + typeof base_c + ') and field ' + field_c);
