@@ -166,32 +166,39 @@ class SymbolicState {
         return childInputs;
     }
 
-    createSymbolicValue(name, concrete) {
-
-        let sort;
-        if (concrete instanceof Array && (concrete.length === 0 || concrete.every(i => typeof i === 'number'))) {
-            sort = this.ctx.mkSeqSort(this.realSort);
-        }
-        else {
-            switch (typeof concrete) {
-
+    _getSort(concrete) {
+        switch (typeof concrete) {
             case 'boolean':
-                sort = this.boolSort;
+                return this.boolSort;
                 break;
 
             case 'number':
-                sort = this.realSort;
+                return this.realSort;
                 break;
 
             case 'string':
-                sort = this.stringSort;
+                return this.stringSort;
                 break;
-            }
+            default:
+                Log.log("Symbolic input variable of type " + typeof val + " not yet supported.");
         }
-        Log.log("Symbolic input variable of type " + typeof val + " not yet supported.");
+    }
 
-        let symbol = this.ctx.mkStringSymbol(name);
-        let symbolic = this.ctx.mkConst(symbol, sort);
+    createSymbolicValue(name, concrete) {
+
+        let symbolic;
+        
+        // Keep our arrays homogenous for now
+        if (concrete instanceof Array && (concrete.length === 0 || concrete.every(i => typeof i === typeof concrete[0]))) {
+            // TODO (AF) Fix this to defer array reasoning for empty arrays
+            let sort = concrete.length > 0 ? this._getSort(concrete[0]) : this.realSort;
+            symbolic = this.ctx.mkArray(name, sort);
+        } else {
+            let sort = this._getSort(concrete);
+            let symbol = this.ctx.mkStringSymbol(name);
+            
+            symbolic = this.ctx.mkConst(symbol, sort);
+        }
 
         // Use generated input if available
         if (name in this.input) {
@@ -211,7 +218,7 @@ class SymbolicState {
 
         for (let name in this.inputSymbols) {
             let solutionAst = model.eval(this.inputSymbols[name]);
-            solution[name] = solutionAst.asConstant();
+            solution[name] = solutionAst.asConstant(model);
             solutionAst.destroy();
         }
 
@@ -220,7 +227,7 @@ class SymbolicState {
     }
 
     _checkSat(clause, checks) {
-        console.log('Checks length ' + checks.length);
+        Log.log('Checks length ' + checks.length);
         let model = (new Z3.Query([clause], checks)).getModel(this.slv);
         return model ? this.getSolution(model) : undefined;
     }
@@ -322,27 +329,47 @@ class SymbolicState {
         return result;
     }
 
+    
     _symbolicFieldSeqLookup(base_c, base_s, field_c, field_s) {
         return this.ctx.mkSeqAt(base_s, this.ctx.mkRealToInt(field_s));
     }
 
     symbolicField(base_c, base_s, field_c, field_s) {
-
-        if ((typeof base_c === "string" || base_c instanceof  Array)  && typeof field_c === "number") {
+        if (typeof base_c === "string" && typeof field_c === "number") {
             return this._symbolicFieldSeqLookup(base_c, base_s, field_c, field_s);
         }
-    	
-        switch (field_c) {
-    		case 'length':                
-            if (typeof base_c == "string" || base_c instanceof  Array) {
-                //TODO: This is a stupid solution to a more fundamental problem in Z3
-                //Remove ASAP
-                let res = this.ctx.mkSeqLength(base_s);
-                //res.FORCE_EQ_TO_INT = true;
-                return res;
+
+        // TODO (AF) Unify the behaviour of sequences and arrays, this is stupid
+        // TODO (AF) Double check the max and min length behaviour should be enforced here
+        // 4294967295 is 2^32 - 1 which the spec forbids
+        if (base_c instanceof Array && typeof field_c === "number" && Number.isInteger(field_c) && field_c >= 0 && field_c < 4294967295) {
+            Log.logMid(`Get from Array Index ${field_c}`)
+            this.pushCondition(this.ctx.mkLe(field_s, this.ctx.mkIntVal(0)))
+            this.pushCondition(this.ctx.mkGt(field_s, this.ctx.mkIntVal(4294967295)))
+            if (field_c >= base_c.length) {
+                this.pushCondition(this.ctx.mkGe(field_s, base_s.length))
+                return undefined
+            } else {
+                this.pushCondition(this.ctx.mkLt(field_s, base_s.length))
+                // Make sure our symbolic value is an integer if our concrete is
+                // TODO (AF) Find a way to coerce this to unsigned integer
+                return base_s.selectFromIndex(this.ctx.mkRealToInt(field_s))
             }
-    		default:
-    			Log.log('Unsupported symbolic field - concretizing' + base_c + ' and field ' + field_c);
+        } else {           
+                switch (field_c) {
+                case 'length':                
+                if (typeof base_c === "string") {
+                    //TODO: This is a stupid solution to a more fundamental problem in Z3
+                    //Remove ASAP
+                    let res = this.ctx.mkSeqLength(base_s);
+                    //res.FORCE_EQ_TO_INT = true;
+                    return res;
+                } else if (base_c instanceof Array) {
+                    return base_s.length; 
+                }
+                default:
+                    Log.log('Unsupported symbolic field - concretizing' + base_c + ' (type:' + typeof base_c + ') and field ' + field_c);
+            }
         }
 
     	return undefined;
