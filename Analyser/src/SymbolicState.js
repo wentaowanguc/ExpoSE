@@ -169,7 +169,9 @@ class SymbolicState {
     createSymbolicValue(name, concrete) {
 
         let symbolic;
-        if (concrete instanceof Array && (concrete.length === 0 || concrete.every(i => typeof i === 'number'))) {
+        
+        // Keep our arrays homogenous for now
+        if (concrete instanceof Array && (concrete.length === 0 || concrete.every(i => typeof i === typeof concrete[0]))) {
             symbolic = this.ctx.mkArray(name, this.realSort);
         } else {
             let sort;
@@ -332,9 +334,14 @@ class SymbolicState {
             return this._symbolicFieldSeqLookup(base_c, base_s, field_c, field_s);
         }
 
+        console.log('Symbolic Field')
+        console.log(`Concrete Base: ${base_c}, Field: ${field_c}`)
+        console.log(`Symbolic Base: ${base_s}, Field: ${field_s}`)
+
         // TODO (AF) Unify the behaviour of sequences and arrays, this is stupid
         // TODO (AF) Double check the max and min length behaviour should be enforced here
-        if (base_c instanceof Array && typeof field_c === "number" && Number.isInteger(field_c) && field_c && field_c >= 0 && field_c < 4294967295) {
+        // 4294967295 is 2^32 - 1 which the spec forbids
+        if (base_c instanceof Array && typeof field_c === "number" && Number.isInteger(field_c) && field_c >= 0 && field_c < 4294967295) {
             Log.logMid(`Get from Array Index ${field_c}`)
             if (field_c >= base_c.length) {
                 this.pushCondition(this.ctx.mkGe(field_s, base_s.length))
@@ -344,23 +351,21 @@ class SymbolicState {
                 // Make sure our symbolic value is an integer if our concrete is
                 return base_s.selectFromIndex(this.ctx.mkRealToInt(field_s))
             }
-        }
-        
-
-    	
-        switch (field_c) {
-    		case 'length':                
-            if (typeof base_c === "string") {
-                //TODO: This is a stupid solution to a more fundamental problem in Z3
-                //Remove ASAP
-                let res = this.ctx.mkSeqLength(base_s);
-                //res.FORCE_EQ_TO_INT = true;
-                return res;
-            } else if (base_c instanceof  Array) {
-                return this.length; 
+        } else {           
+                switch (field_c) {
+                case 'length':                
+                if (typeof base_c === "string") {
+                    //TODO: This is a stupid solution to a more fundamental problem in Z3
+                    //Remove ASAP
+                    let res = this.ctx.mkSeqLength(base_s);
+                    //res.FORCE_EQ_TO_INT = true;
+                    return res;
+                } else if (base_c instanceof Array) {
+                    return this.length; 
+                }
+                default:
+                    Log.log('Unsupported symbolic field - concretizing' + base_c + ' (type:' + typeof base_c + ') and field ' + field_c);
             }
-    		default:
-    			Log.log('Unsupported symbolic field - concretizing' + base_c + ' and field ' + field_c);
         }
 
     	return undefined;
