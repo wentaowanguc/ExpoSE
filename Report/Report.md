@@ -59,7 +59,7 @@ Constraint solvers are used for two purposes in symbolic execution: determining 
 
 Frequently constraints will need to be solved multiple times throughout the course of execution. Instead of calling the constraint solver multiple times for the same constraint, satisfying results can be stored in a map of constraints to satisfying results. Then, instead of directly calling the constraint solver directly, a cache lookup can be performed first to see if there is a satisfying result [^40].
 
-This caching process can be extended to evaluate the strength of formulas. If there is a satisfying result for a stronger constraint than the one being queried then that satisfying result will be valid for the weak constraint. For instance, if the cache contains the following mapping $ (x > 3 ^ y <1) \land (x < 10) \implies x = 5 \land y =  -214$ then the satisfying result will be valid for the condition $x > 3 \land y < 1 $ . This caching scheme can also be used to cache unsatisfiable constraints [^40].
+This caching process can be extended to evaluate the strength of formulas. If there is a satisfying result for a stronger constraint than the one being queried then that satisfying result will be valid for the weak constraint. For instance, if the cache contains the following mapping $ (x > 3 \land y <1) \land (x < 10) \implies x = 5 \land y =  -214$ then the satisfying result will be valid for the condition $x > 3 \land y < 1 $ . This caching scheme can also be used to cache unsatisfiable constraints [^40].
 
 ### Removing Redundant Constraints
 
