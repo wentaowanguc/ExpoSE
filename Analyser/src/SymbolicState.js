@@ -344,8 +344,7 @@ class SymbolicState {
         // 4294967295 is 2^32 - 1 which the spec forbids
         if (base_c instanceof Array && typeof field_c === "number" && Number.isInteger(field_c) && field_c >= 0 && field_c < 4294967295) {
             Log.logMid(`Get from Array Index ${field_c}`)
-            this.pushCondition(this.ctx.mkLe(field_s, this.ctx.mkIntVal(0)))
-            this.pushCondition(this.ctx.mkGt(field_s, this.ctx.mkIntVal(4294967295)))
+            this.pushNot(this.ctx.mkGe(field_s, this.ctx.mkIntVal(0)))
             if (field_c >= base_c.length) {
                 this.pushCondition(this.ctx.mkGe(field_s, base_s.length))
                 return undefined
