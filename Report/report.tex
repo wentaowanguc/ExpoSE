@@ -210,7 +210,6 @@ Due in part to popularity of Node, JavaScript is now one of the most popular lan
 
 Despite its popularity, writing correct JavaScript code remains a relatively difficult problem largely due to its dynamic type system, its tendency to silently fail, and a number of quirks inherited from early versions of the language as a result of its short development cycle. Additionally, there are a number of inconsistencies in the EMCAScript standard itself which cause interpreter implementations to differ in their approach leading to unspecified behaviours. ~\cite{park2015kjs} Below I'll briefly outline the semantics of JavaScript, including arrays which are the focus of this project, and the different approaches taken to analysing JavaScript code to ensure correctness.
 
-\iffalse
 \subsection{Type System}
 \begin{table}[h]
 \centering
@@ -220,14 +219,13 @@ Despite its popularity, writing correct JavaScript code remains a relatively dif
 \hline
 Type & Details \\ \hline
 Undefined & The type of variables before they are assigned a value. \\ \hline
-Null & The type of the assignable singleton value\lstinline{null}\\ \hline
+Null & The type of the assignable singleton value null\\ \hline
 Boolean & A standard representation of true and false \\ \hline
 String & An ordered sequence of zero or more 16-bit unsigned integers, these are intended to represent UTF-16 characters but are not required to be \\ \hline
 Number & Represents the IEE 754 double precision numbers in the range 2 \textasciicircum -253\textasciicircum  to 2 \textasciicircum 253\textasciicircum  as well as the special cases NaN, $\infty$ , and $ -\infty$. JavaScript's implementation of numbers includes both a positive and negative 0. Whilst most languages have multiple representations of numbers (typically split into integers and floating point numbers) all JavaScript numbers are floating point \\ \hline
 Object & Represents a collection of properties, each of which has a name and a value, as well as optionally a setter and/or getter function used to manipulate the value. To a first approximation, Objects can be thought of as a hash map \\ \hline
 \end{tabular}
 \end{table}
-\fi
 
 JavaScript has six types that variables can be ~\cite{EcmaScript} but the types of variables are not explicitly declared at compile time. Instead, types are dynamic and can change over the course of a program. Consider the program below.
 
