@@ -387,4 +387,84 @@
   publisher = {ACM},
 }
 
+@Misc{smtwheredowegofromhere,
+  author       = {Clark Barrett},
+  title        = {SMT: Where Do We Go From Here?},
+  howpublished = {Presenttation},
+  month        = jul,
+  year         = {2014},
+}
+
+@Misc{satin5mins,
+  title     = {The Boolean Satisfiability Problem [SAT] and SAT solvers in 5 mins* (or more)},
+  month     = aug,
+  year      = {2015},
+  timestamp = {2018-02-16},
+  url       = {http://0a.io/boolean-satisfiability-problem-or-sat-in-5-minutes/},
+}
+
+@Booklet{automatedreasoningbooklet2004,
+  title  = {Theory of Automated Reasoning: An Introduction},
+  author = {Antti-Juhani Kaijanaho},
+  year   = {2004},
+}
+
+@Misc{excapebarrettriseofsmt,
+  author = {Clark Barrett},
+  title  = {The Satisfiability Revolution and the Rise of SMT},
+  month  = mar,
+  year   = {2014},
+  url    = {https://excape.cis.upenn.edu/documents/ClarkBarrettSlides.pdf},
+}
+
+@Misc{turingchurchproof,
+  author = {Andrew Pitts},
+  title  = {Computation Theory},
+  url    = {https://www.cl.cam.ac.uk/teaching/0910/CompTheory/lectures/lecture-1.pdf},
+}
+
+@Article{gomes2008satisfiability,
+  author    = {Gomes, Carla P and Kautz, Henry and Sabharwal, Ashish and Selman, Bart},
+  title     = {Satisfiability solvers},
+  journal   = {Foundations of Artificial Intelligence},
+  year      = {2008},
+  volume    = {3},
+  pages     = {89--134},
+  publisher = {Elsevier},
+}
+
+@InProceedings{zhang2001efficient,
+  author       = {Zhang, Lintao and Madigan, Conor F and Moskewicz, Matthew H and Malik, Sharad},
+  title        = {Efficient conflict driven learning in a boolean satisfiability solver},
+  booktitle    = {Proceedings of the 2001 IEEE/ACM international conference on Computer-aided design},
+  year         = {2001},
+  pages        = {279--285},
+  organization = {IEEE Press},
+}
+
+@Misc{sattosmt,
+  author    = {Clark Barrett},
+  title     = {From SAT to SMT: The DPLL(T) Architecture},
+  timestamp = {2017-02-16},
+  url       = {https://web.stanford.edu/class/cs357/lectures/lec9.pdf},
+}
+
+@Misc{smtdpplt,
+  author    = {Albert Oliveras},
+  title     = {SMT Theory and DPLL(T)},
+  month     = jul,
+  year      = {2013},
+  timestamp = {2018-02-16},
+  url       = {http://sei.pku.edu.cn/~xiongyf04/SA/2014/5_SMT.pdf},
+}
+
+@InProceedings{ganzinger2004dpll,
+  author       = {Ganzinger, Harald and Hagen, George and Nieuwenhuis, Robert and Oliveras, Albert and Tinelli, Cesare},
+  title        = {DPLL (T): Fast decision procedures},
+  booktitle    = {International Conference on Computer Aided Verification},
+  year         = {2004},
+  pages        = {175--188},
+  organization = {Springer},
+}
+
 @Comment{jabref-meta: databaseType:bibtex;}
