@@ -179,14 +179,141 @@ Symbolic execution, like static analysis, requires no additional effort on the p
 
 \chapter{SMT}
 
-Your report will be structured as a collection of numbered sections at different levels of detail. For example, the heading to this section is a first-level heading and has been defined with a particular set of font and spacing characteristics. At the start of a new section, you need to select the appropriate \LaTeX{} command, \verb|\chapter| in this case.
-\section{Second Level Headings}
-Second level headings, like this one, are created by using the command \verb|\section|.
-\subsection{Third Level Headings}
-The heading for this subsection is a third level heading, which is obtained by using command \verb|\subsection|. In general, it is unlikely that fourth of fifth level headings will be required in your final report. Indeed it is more likely that if you do find yourself needing them, then your document structure is probably not ideal. So, try to stick to these three levels.
-\section{A Word on Numbering}
-You will notice that the main section headings in this document are all numbered in a hierarchical fashion. You don't have to worry about the numbering. It is all automatic as it has been built into the heading styles. Each time you create a new heading by selecting the appropriate style, the correct number will be assigned. 
+\section{A Short History of Automated Reasoning}
+The notion of automated reasoning has long existed, the most prominent early example being Gottfied Leibniz's dream of a machine which could automatically determine the truth of any assertion, "If controversies were to arise, there would be no more need of dispute between two philosophers than between two accountants". Leibniz's dream was later echoed in in David Hilbert's challenge to the 1928 International Congress of Mathematicians, known now as the _Entscheidungsproblem_ or *decision problem*, in which he posed the question (paraphrased here) "Is there a mechanical procedure which when fed any mathematical proposition determines in a finite number of steps whether or not the statement is provable from a set of axioms, using first-order logic?" 
 
+At the time Hilbert proposed his challenge no formal notion of a mechanical procedure, or algorithm, existed. In 1935/6 Alonzo Church and Alan Turing independently defined equivalent notions of an algorithm, lambda calculus and Turing machines, and found a negative result for the _Entscheidungsproblem_  by proving that first-order logic is undecidable. 
+
+*Johannes - should I expand this with an informal proof of why the Entscheidungsproblem is infeasible in terms in terms of the halting problem?*
+
+Despite first-order being generally undecidable, there are some first order theories which are. In 1954, Martin Davis implemented a decision procedure for Presburger arithmetic, a decidable first-order theory of arithmetic - more limited than the general undecidable Peano's arithmetic, producing the first computed mathematical proof. He remarked later, "Its great triumph was to prove that the sum of two even numbers is even," a acknowledgement of the achievement of the program but also its limitations.
+
+From the 1950s onwards there was a steady increase in the body of work related to automated reasoning including work by Davis and Putman, John Robinson's proof of the soundness and completeness of first order resolution, and Simon and Newell's Logic Theorist however the field took off in 2001 following the publication of the Chaff SAT solver.
+
+\section{SAT}
+One of the simplest problems in the realm of automated reasoning is the the SAT problem. The SAT problem asks the question "Given a formula of Boolean variables is there an assignment of true/false values that makes the formula true?". 
+
+For instance, given for the following formula, the answer would be 'no',  $(a \lor b) \land (b \land \lnot a) \land \lnot b $.
+
+In the 1970s Stephen Cook and Leonid Levin, showed the SAT problem was NP-complete seeming to make automated reasoning infeasible for efficient algorithms. However, although random SAT problems exhibit worst-case performance real-world problems tend not to due to their tendency to have structure. 
+
+Most SAT solvers, automated tools to produce solutions for a given SAT problem, use the Davis-Putnam-Logemann-Loveland (DPLL) backtracking search combined with Conflict-Driven-Clause-Learning (CDCL) to determine satisfiability.
+
+\subsection{DPLL}
+DPLL is a depth-first search complete systematic process for finding a satisfying assignment or proving unsatisfiability for a given SAT problem.  The algorithm, at first approximation, attempts to assign a variable a Boolean value, checks if the satisfiability of the problem (with the assigned values) - if the problem is not unsatisfiable then another variable has a value assigned, otherwise the previously assigned value is negated. This process is repeated until all variables are assigned a value and either the formula is satisfiable or no matter what variable is assigned a value the formula is unsatisfiable. 
+
+Typically SAT problems are expressed in conjunctive-normal form (CNF), as a conjunction of one or more clauses which consist of the disjunction of one or more literals. In CNF unsatisfiability is easier to detect as as if one or more clauses are unsatisfiable then the entire problem is unsatisfiable.
+
+It is possible to model the algorithm as a series of states and transitions. States are described in the form $M || F$, where $M$ is a sequence of literals which are assigned the value true and $F$ is the problem in CNF form. The initial state of the algorithm is as $\emptyset || F $ and the final is state is either a special state $unsat$ if $F$ is unsatisfiable or $M || G $, where $G$ is a CNF formula equivalent to the initial problem $F$ and $M$ satisfies $G$. 
+
+The transitions between states are described by a number of rules as described in \ref{table:dpll-rules}. $M \models C$  means that for every assignment $v$, $v(M) = true$ implies $v(C) = true$. These rules are applied to each state until a final state is achieved.
+
+\begin{table}[]
+\centering
+\caption{DPLL Transition Rules}
+\label{dpll-rules}
+\begin{tabular}{|l|l|}
+\hline
+Type & Details \\ \hline
+Undefined & The type of variables before they are assigned a value. \\ \hline
+Null & The type of the assignable singleton value `null` \\ \hline
+Boolean & A standard representation of true and false \\ \hline
+String & An ordered sequence of zero or more 16-bit unsigned integers, these are intended to represent UTF-16 characters but are not required to be \\ \hline
+Number & Represents the IEE 754 double precision numbers in the range 2 \textasciicircum -253\textasciicircum  to 2 \textasciicircum 253\textasciicircum  as well as the special cases NaN, $\infty$ , and $ -\infty$. JavaScript's implementation of numbers includes both a positive and negative 0. Whilst most languages have multiple representations of numbers (typically split into integers and floating point numbers) all JavaScript numbers are floating point \\ \hline
+Object & Represents a collection of properties, each of which has a name and a value, as well as optionally a setter and/or getter function used to manipulate the value. To a first approximation, Objects can be thought of as a hash map \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{CDCL}
+As variables are assigned Boolean values during the DPLL algorithm conflicts arise from the implications of such assignments.
+
+For instance consider the following problem in CNF:
+
+$(a \lor b \lor \lnot c) \land (a \lor \lnot d) \land (c \lor d \lor e) \land (\lnot e \lor \lnot f ) \land (g \lor \lnot e \lor \lnot h) \land (f \lor h)$
+
+With the assignments $g = false$, $a = false$, and $b = false$ the last clause, $ (f \lor h) $,  becomes unsatisfiable as $ f = false, h = false$ is implied.
+
+CDCL attempts to identify the reason for the conflict and then use that information to jump several decisions back in the search to try a new assignment that will avoid that conflict. This process avoids exploring search spaces where there cannot be a solution. 
+
+In DPLL with CDCL, each assignment has a 'decision level' which represents the number of assignments away from the start the algorithm is, as the procedure assigns values to variables a graph of the assignments and their implications can be built. When a conflict arises, a bipartition of the graph identifies the conflicting variables and the assignment that caused the implication. The way this information is stored and used for future assignments is implementation dependent but following the conflict, the algorithm will back track to the decision level before the assignment that caused the implication and will resume.
+
+\section{SMT}
+
+SMT solvers combine SAT solving with theory specific reasoning in order to tackle problems beyond simple Boolean formulas. While SAT solver problems are defined exclusively in Boolean logic, SMT problems can be defined using first-order logic for any theories that the SMT solver supports. Commonly supported theories include the theory of uninterpreted functions, equality, bit vectors,  arithmetic, and arrays. In practice these solvers look a lot like the automated reasoning machines that Hilbert and Leibniz imagined and can be applied to many domains such as program verification, scheduling, exploit generation, AI planning, and network analysis.
+
+SMT solvers can be classified into two distinct types: eager solvers and lazy solvers. Eager solvers attempt to transform the program into a Boolean formula that can be passed to the SMT solver's underlying SAT solver. Lazy solvers instead rely on their theory solvers and pass information between the theory solvers and the SAT solver. Although eager solvers, or bit blasters, are still commonly used for problems that manipulate bit-vectors most SMT solvers now use lazy solving. Lazy solvers attempt to take advantage of the domain specific strength of the theory solvers and rely only on the SAT solver for the skeleton Boolean formula reducing by avoiding reasoning about the entire formula. 
+
+The adjustments that must be made to the state transition model of DPPL are as follows. 
+
+The final state is either $unsat$ or $M || F$ and $Solv _T(M)$ is satisfiable, where $Solv_T$ is a theory solver that can check theory satisfiability for $F$.
+
+We also have to amend the Theory Learn and Forget rules to prevent being stuck in a state where $M || F, M \models F$, and $Solv_T(M)$ is not satisfiable by ensuring that the backtrack rule can be applied. The backtrack rule has a condition that $M \models \lnot C$. In this unsatisfiable state $T \models \lnot M$ so any clause for which $T \models C$ will enable backtracking. Finally, the pure literal rule needs to be removed. Although in Boolean logic literals are independent of each other in first-order this may not be the case.
+
+
+\begin{table}[h]
+\centering
+\caption{SMT Rules}
+\label{smt-rulesl}
+\begin{tabular}{|l|l|l|}
+\hline
+Name & Rule & Conditions \\ \hline
+Theory Learn & \$M & All atoms of $C$ occur in $F$$F \models _T C $ \\ \hline
+Theory Forget & \$M & $F \models _T C$ \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Example Lazy Approach}
+Consider the problem below which uses the theory of equality of uninterpreted functions (EUF).
+
+$ f(a) = b \land  (g(f(c)) \neq g(b) \lor g(a) = g(b)) \land a \neq c $
+
+The SAT solver runs on the Boolean skeleton of the formula $1 \land (2 \lor 3) \land 4$ and suggests a model $M$, $1 = true, 2 = false, 3 = true, 4 = true$. The theory solver then finds the theory inconsistent, and adds a negation of the inconsistent model to the model preventing that state from being explored again - this new model $ 1 = true, 2 = false, 3 = true, 4 = true, (\lnot 1 \lor 2 \lor \lnot 3 \lor 4 ) = true $  is then solved by the SAT solver to produce a new model $ 1 = true, 2 = true, 3 = false, 4 = true$. This model is then sent to the theory solver which finds the theory consistent producing a satisfiable result.
+
+This basic lazy approach works well as it focuses on the domain specific strengths of the SAT solver and theory solver and it allows the SMT solver to be built modularly as the SAT and theory solvers communicate via a simple interface. Replacing the theory or SAT solver can be done independently from each other. However this basic lazy approach, even optimised, doesn't use any theory information to guide the search. 
+
+\subsection{DPPL(T)}
+Rather than simply validating models suggested by the SAT solver DPLL(T) uses the theory solver to find T-consequences to guide the search. It produces explanations of inconstant states and is able to backtrack to known good states to continue search.
+
+DPLL(T) adds a new rule T-Propagate which is described as $M || F \implies M l || F $ under the conditions $M \models _T l$, $l$ or $\lnot l$ occurs in $F$, and $l$ is undefined in $M$. 
+
+When a non-Boolean conflict occurs then the theory solver provides a conjunction, $E$, of inconsistent literals were in the model when it was found to be inconsistent.  For each literal $e $ in a $E$, if $e_1$ was T-propagated then a reason for the inconsistency can be described as another set of literals $R$ where $r_1 \land ... \land r_n \models _T e$. 
+
+\subsection{Combining Theory Solvers}
+In many cases problems cannot be simply modelled by a single theory, for instance, in the of modelling arrays we require at least the theory of arrays and the theory of arithmetic. It may be possible to use the union of the theories using the Nelson-Oppen combination.
+
+Given two disjoint theories $T_1$ and $T_2$, where the theories are stably-infinite and convex, and a set of literals $S$ the deterministic Nelson-Oppen algorithm has the following steps.
+
+1. Purify each literal in $S$ so that it belongs to a single theory, $S_1$ or $S_2$ where $S = S_1 \bigcup S_2$
+2. Agree constants for each literal in $S$ and exchange equalities $E$, between $S_1$ and $S_2$
+3. Check the satisfiability of each equality $e$ in $E$ with the corresponding solver If any unsat, report unsat - else report sat.
+
+For instance consider the set of literals $f(a) - f(b) = c, c = a -5, f(0) = 3, a = b$ and the theories of arithmetic and equality of uninterpreted functions.
+
+Step 1 and 2
+
+$f(a) - f(b) = c \implies f(a) = t_1, f(b) = t_2, c = t1 - t2$
+
+$c = a - 5 \implies t_5 = a - 5 \implies t_5 = t_3, t_3 = a- 5$
+
+$f(0) =3 \implies f(t_4) = t_5, t_4 = 0, t_5$
+
+\begin{table}[]
+\centering
+\caption{My caption}
+\label{my-label}
+\begin{tabular}{|l|l|l|}
+\hline
+Name & Rule & Conditions \\ \hline
+Theory Learn & \$M & All atoms of $C$ occur in $F$$F \models _T C $ \\ \hline
+Theory Forget & \$M & $F \models _T C$ \\ \hline
+\end{tabular}
+\end{table}
+
+The solvers share constants: $t_1$ .... ,$t_5, a, b, c$.
+
+Step 3
+
+For each literal, its theory solver checks the satisfiability. In this example, each theory returns satisfiable.
 
 \chapter{JavaScript}
 
