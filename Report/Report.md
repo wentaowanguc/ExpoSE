@@ -314,7 +314,7 @@ Symbolic execution provides an ideal way to test JavaScript code. By concretely 
 
 ExpoSE is a tool for symbolic execution of JavaScript. The target program is instrumented with Jalangi2, a tool that provides hooks before and after each statement is executed, which is used to build a symbolic representation of the program. ExpoSE uses a harness to randomly generate inputs for public functions in a target JavaScript program. It then uses a DART[^33] based directed search to attempt to explore all feasible paths in the program up to a maximum path count. Constraints are solved using Z3, a Microsoft Research theorem prover.
 
-#5 Array Encoding  
+#5 SMT  
 
 # 6 Results
 

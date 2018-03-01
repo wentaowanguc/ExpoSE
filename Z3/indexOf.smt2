@@ -1,25 +1,19 @@
-(declare-const x Int)
-(assert (= x 5)) ; This is the value to be searched for 
-(declare-const r Int) ; This is the result, this should be 0
-(declare-const a (Array Int Int)) ; The array
-(assert (= a ((as const (Array Int Int)) 1))) ; The array is full of 1s
-
-(assert (= a (store a 3 5)))
-
-(assert 
-  (or (forall ((j Int)) (not (= (select a j) x)) ) 
-    (= r -1)
-    (exists ((i Int)) 
-      (and 
-        (and 
-          (and (= (select a i) x) (> i -1)) ; There exists an index where the stored value = x where the index >= 0
-          true ;(forall ((k Int)) (and (and (< k i) (> k -1)) (! (= (select a k) r)) )) ; and for all values less than than index, the stored value isn't x
-        )
-        (= r i) ; Set r as the index
-      )
-    )
-  )
-)
-
+(define-fun targetValue () Int 5) ;The value being searched for
+ 
+; The array is full of 1s and as a single 6
+(declare-const targetArray (Array Int Int))
+(assert (= targetArray (store (store ((as const (Array Int Int)) 0) 3 5) 10 5)))
+ 
+(declare-const matchingIndex Int)
+ 
+(assert (or (= (select targetArray matchingIndex) targetValue) (= matchingIndex -1)))
+(assert (>= matchingIndex 0))
+ 
+;Should make the problem unsat
+(assert (= matchingIndex 10))
+ 
+;Imply that if matchingIndex must be the min in the list
+(assert (=> (= (select targetArray matchingIndex) targetValue) (not (exists ((i Int)) (and (< i matchingIndex) (= (select targetArray i) targetValue))))))
+ 
 (check-sat)
 (get-model)

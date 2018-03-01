@@ -415,6 +415,31 @@ function BuildModels() {
         }
     );
 
+    let indexOfCtr = 0;
+
+    models[Array.prototype.indexOf] = symbolicHook(
+        (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[1]),
+        (c, _f, base, args, result) => {
+            const ctx = c.state.ctx;
+            const startIndex = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(0);
+            
+            const foundIndex = ctx.mkIntVar('__INDEX_OF_' + indexOfCtr);
+            
+            const matchInString = ctx.mkEq(ctx.mkSelect(c.state.asSymbolic(base), foundIndex), c.state.asSymbolic(args[0]));
+            const result_s = ctx.mkOr(ctx.mkEq(foundIndex, c.state.asSymbolic(-1)), matchInString);
+
+            const i = ctx.mkBound(0, ctx.mkIntSort());
+            
+            const body = ctx.mkEq(ctx.mkSelect(base, j), ctx.mkSelect(base, foundIndex));
+            const pattern = ctx.mkAnd(ctx.mkGt(i, 0), ctx.mkLt(i, foundIndex));
+            const exists = ctx.mkExists(i, pattern, body)
+
+            c.state.pushCondition(ctx.mkNot(exists), true);
+            
+            return new ConcolicValue(result, result_s);
+        }
+    );
+
     models[Array.prototype.push] = NoOp();
     models[Array.prototype.keys] = NoOp();
     models[Array.prototype.concat] = NoOp();

@@ -345,6 +345,7 @@ class SymbolicState {
         if (base_c instanceof Array && typeof field_c === "number" && Number.isInteger(field_c) && field_c >= 0 && field_c < 4294967295) {
             Log.logMid(`Get from Array Index ${field_c}`)
             this.pushNot(this.ctx.mkGe(field_s, this.ctx.mkIntVal(0)))
+            // this.pushNot(this.ctx.mkLt(field_s, this.ctx.mkIntVal(4294967295)))
             if (field_c >= base_c.length) {
                 this.pushCondition(this.ctx.mkGe(field_s, base_s.length))
                 return undefined

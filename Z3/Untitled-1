@@ -1,0 +1,12 @@
+Either
+    - (forall ((j Int)) (and (not (= (select a j) x)) (< j length)))
+    - (exists ((i Int)) 
+        (and 
+            (and 
+                (= (select a i) x) 
+                (and 
+                  (and (> i -1) (< i length))  ; There exists an index where the stored value = x (within the array bounds)
+                ) 
+            )
+        )
+    )
