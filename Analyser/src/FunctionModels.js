@@ -415,24 +415,30 @@ function BuildModels() {
         }
     );
 
-    let indexOfCtr = 0;
+    let indexOfCounter = 0;
 
     models[Array.prototype.indexOf] = symbolicHook(
         (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[1]),
         (c, _f, base, args, result) => {
             const ctx = c.state.ctx;
-            const startIndex = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(0);
-            
-            const foundIndex = ctx.mkIntVar('__INDEX_OF_' + indexOfCtr);
-            
-            const matchInString = ctx.mkEq(ctx.mkSelect(c.state.asSymbolic(base), foundIndex), c.state.asSymbolic(args[0]));
-            const result_s = ctx.mkOr(ctx.mkEq(foundIndex, c.state.asSymbolic(-1)), matchInString);
 
-            const i = ctx.mkBound(0, ctx.mkIntSort());
+            // TODO AF Alter this SMT to use the second optional arg
+            // const startIndex = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(0);
+            const startIndex = c.state.asSymbolic(0);
+            const searchTarget = c.state.asSymbolic(args[0]);
+            const foundIndex = ctx.mkIntVar('__INDEX_OF_' + indexOfCounter);
             
-            const body = ctx.mkEq(ctx.mkSelect(base, j), ctx.mkSelect(base, foundIndex));
-            const pattern = ctx.mkAnd(ctx.mkGt(i, 0), ctx.mkLt(i, foundIndex));
-            const exists = ctx.mkExists(i, pattern, body)
+            // result_s is either a resulting index where the value is found or -1
+            const matchInArray = ctx.mkEq(ctx.mkSelect(c.state.asSymbolic(base), foundIndex), searchTarget);
+            const result_s = ctx.mkOr(ctx.mkEq(foundIndex, c.state.asSymbolic(-1)), matchInArray);
+            
+            // check that if the resulting index is the lowest index using a quantifier
+            const intSort = ctx.mkIntSort();
+            const i = ctx.mkBound(0, intSort);
+            const body = ctx.mkEq(ctx.mkSelect(base, i), ctx.mkSelect(base, foundIndex));
+            // constraints on i
+            const pattern = ctx.mkPattern([ctx.mkAnd(ctx.mkGt(i, 0), ctx.mkLt(i, foundIndex))]);
+            const exists = ctx.mkExists([i], intSort, body, patterns = [pattern])
 
             c.state.pushCondition(ctx.mkNot(exists), true);
             
