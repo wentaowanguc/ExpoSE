@@ -452,15 +452,24 @@ function BuildModels() {
 
     let includesCounter = 0;
     models[Array.prototype.includes] = symbolicHook(
-        (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[1]),
+        (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
         (c, _f, base, args, result) => {
             const ctx = c.state.ctx;
-
-            const startIndex = c.state.asSymbolic(0);
+            // looking for
             const searchTarget = c.state.asSymbolic(args[0]);
-            const foundIndex = ctx.mkRealVar('__INCLUDES_' + includesCounter);
 
-            const result_s = ctx.mkEq(ctx.mkSelect(c.state.asSymbolic(base), foundIndex), searchTarget);
+            const intSort = ctx.mkIntSort();
+            const i = ctx.mkBound(0, intSort);
+            const lengthBounds = ctx.mkAnd(ctx.mkGe(i, ctx.mkIntVal(0)), ctx.mkLt(i, c.state.asSymbolic(base).length));
+            const body = ctx.mkAnd(lengthBounds, ctx.mkEq(
+                                ctx.mkSelect(c.state.asSymbolic(base), i), searchTarget
+                            ));
+
+            // constraints on i
+            // const pattern = ctx.mkPattern([ctx.mkAnd(ctx.mkGt(i, ctx.mkIntVal(0)), ctx.mkLt(i, foundIndex))]);
+            const func_decl_name = ctx.mkStringSymbol('i__INCLUDES_INDEX_' + includesCounter);
+            const result_s = ctx.mkExists([func_decl_name], intSort, body, []);
+            
             return new ConcolicValue(result, result_s);
         }
     );

@@ -3,6 +3,8 @@
 "use strict";
 
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
-if (q.includes(0)) {
-	console.log('YES');
+if (q.includes(9)) {
+	throw 'Yes';
 }
+
+throw 'No';
