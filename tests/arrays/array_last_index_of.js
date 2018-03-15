@@ -4,7 +4,7 @@
 
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
 
-if (q.indexOf(5)) {
+if (q.lastIndexOf(32)) {
 	throw 'Success';
 } else {
 	throw 'Fail';

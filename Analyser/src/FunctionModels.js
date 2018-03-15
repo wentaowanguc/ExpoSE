@@ -471,22 +471,34 @@ function BuildModels() {
             const startIndex = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(base).length;
             const searchTarget = c.state.asSymbolic(args[0]);
 
-            let result_s = ctx.mkIntVal('__LAST_INDEX_OF_' + lastIndexOfCounter); 
+            let result_s = ctx.mkIntVar('__INDEX_OF_' + indexOfCounter); 
             
-            // for all
+            c.state.pushCondition(ctx.mkGe(result_s, ctx.mkIntVal(-1)), true);
+            c.state.pushCondition(ctx.mkGt(c.state.asSymbolic(base).length, result_s), true);
+
+            // result_s should be in array length or -1
+            c.state.pushCondition(
+                ctx.mkImplies(ctx.mkLt(result_s, ctx.mkIntVal(-1)),
+                ctx.mkAnd(ctx.mkGe(result_s, startIndex), ctx.mkLe(result_s, c.state.asSymbolic(base).length))), true);
+            
+            // either result_s is a valid index for the searchtarget or -1
+            c.state.pushCondition(
+                ctx.mkOr(
+                    ctx.mkEq(
+                        ctx.mkSelect(c.state.asSymbolic(base),result_s), searchTarget), 
+                        ctx.mkEq(result_s ,ctx.mkIntVal(-1))), true);
+
+            // if not -1, the index where the search target is should be the lowest
+
+            // // for all
             const intSort = ctx.mkIntSort();
             const i = ctx.mkBound(0, intSort);
-            const match_func_decl_name = ctx.mkStringSymbol('i__LAST_INDEX_OF_' + lastIndexOfCounter);
+            const match_func_decl_name = ctx.mkStringSymbol('i__INDEX_OF_' + indexOfCounter);
             const matchInArrayBody = ctx.mkAnd(ctx.mkLt(i, result_s), ctx.mkNot(ctx.mkEq(
                                 ctx.mkSelect(c.state.asSymbolic(base), i), searchTarget
                             )));
             const forAllCheck = ctx.mkExists([match_func_decl_name], intSort, matchInArrayBody, []);
 
-            // result_s should be in search bounds or -1
-            c.state.pushCondition(ctx.mkImplies(ctx.mkNot(ctx.mkEq(result_s, ctx.mkIntVal(-1))), ctx.mkAnd(ctx.mkGe(result_s, startIndex), ctx.mkLe(result_s, c.state.asSymbolic(base).length))), true);
-            // either result_s is a valid index for the searchtarget or -1
-            c.state.pushCondition(ctx.mkOr(ctx.mkEq(ctx.mkSelect(c.state.asSymbolic(base), result_s), searchTarget), ctx.mkEq(result_s ,ctx.mkIntVal(-1))), true);
-            // if not -1, the index where the search target is should be the highest
             c.state.pushCondition(ctx.mkImplies(ctx.mkNot(ctx.mkEq(result_s, ctx.mkIntVal(-1))), forAllCheck), true);
             
             return new ConcolicValue(result, result_s);
