@@ -521,8 +521,6 @@ function BuildModels() {
                                 ctx.mkSelect(c.state.asSymbolic(base), i), searchTarget
                             ));
 
-            // constraints on i
-            // const pattern = ctx.mkPattern([ctx.mkAnd(ctx.mkGt(i, ctx.mkIntVal(0)), ctx.mkLt(i, foundIndex))]);
             const func_decl_name = ctx.mkStringSymbol('i__INCLUDES_INDEX_' + includesCounter);
             const result_s = ctx.mkExists([func_decl_name], intSort, body, []);
             
@@ -537,12 +535,11 @@ function BuildModels() {
             const array = c.state.asSymbolic(base);
             const value = c.state.asSymbolic(args[0]);
             const result_s = ctx.mkStore(array, array.length, value);
-            
+            array.length = ctx.mkAdd(array.length, ctx.mkIntVal(1));
             return new ConcolicValue(result, result_s);
         }
     );
 
-    models[Array.prototype.push] = NoOp();
     models[Array.prototype.keys] = NoOp();
     models[Array.prototype.concat] = NoOp();
     models[Array.prototype.forEach] = NoOp();

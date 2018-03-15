@@ -2,11 +2,14 @@
 
 "use strict";
 
+//
+
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
+// Clone the length
+var length = parseInt(JSON.stringify(JSON.parse(q.length)));
 q.push(99);
 
-if (q.includes(99)) {
+if (q.length === length+1) {
 	throw 'Success';
-} else {
-	throw 'Fail';
 }
+throw 'array_push_length_increases: This should never been thrown'
