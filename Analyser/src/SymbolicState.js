@@ -353,7 +353,6 @@ class SymbolicState {
             } else {
                 this.pushCondition(this.ctx.mkLt(field_s, base_s.length))
                 // Make sure our symbolic value is an integer if our concrete is
-                // TODO (AF) Find a way to coerce this to unsigned integer
                 return base_s.selectFromIndex(this.ctx.mkRealToInt(field_s))
             }
         } else {           
