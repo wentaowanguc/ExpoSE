@@ -16,6 +16,7 @@ import Log from './Utilities/Log';
 import Z3 from 'z3javascript';
 import fs from 'fs';
 
+Error.stackTraceLimit = Infinity;
 /**
  * Set up the methods and classes which ObjectHelper considers safe to string
  */

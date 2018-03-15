@@ -193,6 +193,7 @@ class SymbolicState {
             // TODO (AF) Fix this to defer array reasoning for empty arrays
             let sort = concrete.length > 0 ? this._getSort(concrete[0]) : this.realSort;
             symbolic = this.ctx.mkArray(name, sort);
+            this.pushCondition(this.ctx.mkGe(symbolic.length, this.ctx.mkIntVal(0)));
         } else {
             let sort = this._getSort(concrete);
             let symbol = this.ctx.mkStringSymbol(name);
