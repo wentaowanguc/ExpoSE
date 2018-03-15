@@ -341,18 +341,17 @@ class SymbolicState {
         }
 
         // TODO (AF) Unify the behaviour of sequences and arrays, this is stupid
-        // TODO (AF) Double check the max and min length behaviour should be enforced here
-        // 4294967295 is 2^32 - 1 which the spec forbids
+        // 4294967295 is 2^32 - 1 which the spec forbids being an array index - anything outside of that would be an object property instead
         if (base_c instanceof Array && typeof field_c === "number" && Number.isInteger(field_c) && field_c >= 0 && field_c < 4294967295) {
             Log.logMid(`Get from Array Index ${field_c}`)
+            // length cannot be less than 0
             this.pushNot(this.ctx.mkGe(field_s, this.ctx.mkIntVal(0)))
-            // this.pushNot(this.ctx.mkLt(field_s, this.ctx.mkIntVal(4294967295)))
+
             if (field_c >= base_c.length) {
                 this.pushCondition(this.ctx.mkGe(field_s, base_s.length))
                 return undefined
             } else {
                 this.pushCondition(this.ctx.mkLt(field_s, base_s.length))
-                // Make sure our symbolic value is an integer if our concrete is
                 return base_s.selectFromIndex(this.ctx.mkRealToInt(field_s))
             }
         } else {           
