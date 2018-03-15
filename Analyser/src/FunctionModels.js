@@ -530,6 +530,18 @@ function BuildModels() {
         }
     );
 
+    models[Array.prototype.push] = symbolicHook(
+        (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
+        (c, _f, base, args, result) => {
+            const ctx = c.state.ctx;
+            const array = c.state.asSymbolic(base);
+            const value = c.state.asSymbolic(args[0]);
+            const result_s = ctx.mkStore(array, array.length, value);
+            
+            return new ConcolicValue(result, result_s);
+        }
+    );
+
     models[Array.prototype.push] = NoOp();
     models[Array.prototype.keys] = NoOp();
     models[Array.prototype.concat] = NoOp();
