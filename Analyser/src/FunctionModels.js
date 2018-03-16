@@ -534,19 +534,18 @@ function BuildModels() {
             const ctx = c.state.ctx;
             const array = c.state.asSymbolic(base);
             const value = c.state.asSymbolic(args[0]);
-            
-            const newArrayLength = ctx.mkAdd(array.length, ctx.mkIntVal(1));
-            // // new array
-            base.symbolic = ctx.mkStore(array, newArrayLength, value);
-            // // new array length
-            base.symbolic.length = ctx.mkIntVar(`${array.name}_LengthPushed`);
-            
-            c.state.pushCondition(ctx.mkAnd(
-                ctx.mkGe(base.symbolic.length, ctx.mkIntVal(0)), 
-                ctx.mkLt(base.symbolic.length, newArrayLength)
-            ), true);
 
-            return new ConcolicValue(args[0], value);
+            const oldLength = array.length;
+            const newLength = ctx.mkIntVar(`${array.name}_LengthPushed`);
+
+            c.state.pushCondition(ctx.mkGt(newLength, oldLength), true);
+
+            const newArray = ctx.mkStore(array, oldLength, value);
+            newArray.length = newLength;
+
+            base.symbolic = newArray;
+
+            return value;
         }
     );
 

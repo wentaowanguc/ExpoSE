@@ -3,7 +3,14 @@
 "use strict";
 
 var q = symbolic UnderTest initial [0, 1];
-q.push(12);
-if (q[2] === 12) {
-  throw 'Success';
+
+if (q.length == 1) {
+  console.log('Q is ' + q);
+  q.push(12);
+  if (q[1] == 12) {
+    throw 'Reached';
+  }
+  throw 'Unreachable';
 }
+
+throw 'Length not satisfiable'
