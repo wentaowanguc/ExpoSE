@@ -193,6 +193,7 @@ class SymbolicState {
             // TODO (AF) Fix this to defer array reasoning for empty arrays
             let sort = concrete.length > 0 ? this._getSort(concrete[0]) : this.realSort;
             symbolic = this.ctx.mkArray(name, sort);
+            // Array length is greater than 0
             this.pushCondition(this.ctx.mkGe(symbolic.length, this.ctx.mkIntVal(0)), true);
         } else {
             let sort = this._getSort(concrete);
@@ -343,16 +344,15 @@ class SymbolicState {
         // TODO (AF) Unify the behaviour of sequences and arrays, this is stupid
         // 4294967295 is 2^32 - 1 which the spec forbids being an array index - anything outside of that would be an object property instead
         if (base_c instanceof Array && typeof field_c === "number" && Number.isInteger(field_c) && field_c >= 0 && field_c < 4294967295) {
-            Log.logMid(`Get from Array Index ${field_c}`)
+            Log.logMid(`Get from Array Index ${field_c}`);
             // length cannot be less than 0
-            this.pushNot(this.ctx.mkGe(field_s, this.ctx.mkIntVal(0)))
-
+            this.pushNot(this.ctx.mkGe(field_s, this.ctx.mkIntVal(0)));
             if (field_c >= base_c.length) {
-                this.pushCondition(this.ctx.mkGe(field_s, base_s.length))
-                return undefined
+                this.pushCondition(this.ctx.mkGe(field_s, base_s.length));
+                return undefined;
             } else {
-                this.pushCondition(this.ctx.mkLt(field_s, base_s.length))
-                return base_s.selectFromIndex(this.ctx.mkRealToInt(field_s))
+                this.pushCondition(this.ctx.mkLt(field_s, base_s.length));
+                return base_s.selectFromIndex(this.ctx.mkRealToInt(field_s));
             }
         } else {           
                 switch (field_c) {
