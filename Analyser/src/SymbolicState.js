@@ -339,13 +339,10 @@ class SymbolicState {
     symbolicField(base_c, base_s, field_c, field_s) {
         if (typeof base_c === "string" && typeof field_c === "number") {
             return this._symbolicFieldSeqLookup(base_c, base_s, field_c, field_s);
-        }
-
-        // TODO (AF) Unify the behaviour of sequences and arrays, this is stupid
-        if (base_c instanceof Array) {
+        } else if (base_c instanceof Array && typeof field_c === "number") {
 
             // 4294967295 is 2^32 - 1 which the spec forbids being an array index - anything outside of that would be an object property instead
-            const isValidConcreteIndex = typeof field_c === "number" && Number.isInteger(field_c) && field_c >= 0 && field_c < 4294967295 && field_c >= base_c.length;
+            const isValidConcreteIndex = Number.isInteger(field_c) && field_c >= 0 && field_c < 4294967295 && field_c >= base_c.length;
             // If not within bounds, push a condition to make sure other bounds are explored!
             const isValidSymbolicIndex = this.ctx.mkAnd(
                 this.ctx.mkGe(field_s, this.ctx.mkIntVal(0)),
@@ -354,10 +351,10 @@ class SymbolicState {
             const withinArrayBounds = this.symbolicConditional(new ConcolicValue(isValidConcreteIndex, isValidSymbolicIndex));
             Log.logMid(`Get from Array Index ${field_c}`);
             if (withinArrayBounds) {
-                this.pushCondition(this.ctx.mkLt(field_s, base_s.length));
+                Log.logMid('Within Bounds: returning select from index');
                 return base_s.selectFromIndex(this.ctx.mkRealToInt(field_s));
             } else {
-                // Condition is pushed by symbolicConditional
+                Log.logMid('Within Bounds: returning undefined');
                 return undefined;
             }
         } else {           
