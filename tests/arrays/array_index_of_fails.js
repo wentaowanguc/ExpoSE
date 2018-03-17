@@ -5,7 +5,7 @@
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
 
 if (q.indexOf(5)) {
-	throw 'Success';
+	console.log('indexOf Success');
 } else {
-	throw 'Fail';
+	console.log('indexOf Fail');
 }

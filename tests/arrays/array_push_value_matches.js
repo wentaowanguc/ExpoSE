@@ -4,13 +4,12 @@
 
 var q = symbolic UnderTest initial [0, 1];
 
-if (q.length == 1) {
-  console.log('Q is ' + q);
+if (q.length === 1) {
   q.push(12);
-  if (q[1] == 12) {
-    throw 'Reached';
+  if (q[1] === 12) {
+    console.log('Reached');
+  } else {
+    throw 'Unreachable';
   }
-  throw 'Unreachable';
 }
-
-throw 'Length not satisfiable'
+console.log('Length not satisfiable');
