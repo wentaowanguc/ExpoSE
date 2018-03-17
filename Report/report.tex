@@ -9,6 +9,8 @@
 
 \usepackage{amsmath}
 
+\lstset{basicstyle=\ttfamily}
+
 %%%%%%%%%%%%%%%%%%%%%%
 %%% Input project details
 \def\studentname{Arran France}
@@ -90,7 +92,7 @@ Symbolic execution is a technique for testing program correctness initially prop
 \caption{\label{fig:abs-sum} Absolute Sum Function}
 \end{figure} 
 
-For example, consider the program above (figure 2.1) which returns the sum of the absolute values of two values. There are four possible paths that can be taken through the program. The first is where neither if branches are entered, the second is where the value of \lstinline{x} is less than zero, the third is where the value of \lstinline{y} is less than zero, and the fourth is where both \lstinline{x} and \lstinline{y} is less than zero. The process for symbolically executing this program classically is as follows. The function is executed with two symbolic values $x'$ and $y'$ and a path condition $pc$, "the accumulator of properties which inputs must satisfy ... to follow ... a particular path" ~\cite{king1976symbolic}, is initialised to $true$. When a branching statement (line 2 or 4) is reached the constraint solver is queried to see if the branch condition is feasible given the current path condition. If condition is satisfiable then execution forks to explore the new path and $pc$ becomes $pc \land bc$ , where $bc$ is the branch condition. This process repeats until the program terminates and every path is explored. The table 2.1 shows the path condition, symbolic results, and the constraint solver queries and results for the execution.
+For example, consider the program above (figure 2.1) which returns the sum of the absolute values of two values. There are four possible paths that can be taken through the program. The first is where neither if branches are entered, the second is where the value of \lstinline{x}  is less than zero, the third is where the value of \lstinline{y}  is less than zero, and the fourth is where both \lstinline{x}  and \lstinline{y}  is less than zero. The process for symbolically executing this program classically is as follows. The function is executed with two symbolic values $x'$ and $y'$ and a path condition $pc$, "the accumulator of properties which inputs must satisfy ... to follow ... a particular path" ~\cite{king1976symbolic}, is initialised to $true$. When a branching statement (line 2 or 4) is reached the constraint solver is queried to see if the branch condition is feasible given the current path condition. If condition is satisfiable then execution forks to explore the new path and $pc$ becomes $pc \land bc$ , where $bc$ is the branch condition. This process repeats until the program terminates and every path is explored. The table 2.1 shows the path condition, symbolic results, and the constraint solver queries and results for the execution.
 
 \begin{table}[]
 \centering
@@ -397,7 +399,7 @@ $ b
 \caption{\label{fig:js-bool-coercion} Example of Boolean Coercion}
 \end{figure} 
 
-Although the previous examples have used strings and numbers, type coercion extends to booleans as well. Non-boolean expressions are coerced with the following rules \lstinline{undefined}, \lstinline{null, \lstinline{false}, the empty string, \lstinline{NaN}, \lstinline{+0}, and \lstinline{-0} return false while \lstinline{true}, all other numbers, all other strings, and all Objects return \lstinline{true} ~\cite{EcmaScript}. These coercion rules, whilst a common source of error, can be taken advantage of to allow shortcuts like\lstinline{if (x)}to check for both undefined and null values.
+Although the previous examples have used strings and numbers, type coercion extends to booleans as well. Non-boolean expressions are coerced with the following rules \lstinline{undefined}, \lstinline{null, \lstinline{false}, the empty string, \lstinline{NaN}, \lstinline{+0}, and \lstinline{-0}  return false while \lstinline{true}, all other numbers, all other strings, and all Objects return \lstinline{true} ~\cite{EcmaScript}. These coercion rules, whilst a common source of error, can be taken advantage of to allow shortcuts like\lstinline{if (x)} to check for both undefined and null values.
 
 JavaScript also has some idiosyncrasies for testing equality which are underpinned by its type system. There are two operators for testing equality, \lstinline{==} and \lstinline{===}.  The \lstinline{==} operator, the 'standard' equality operator, uses coercion to test the equality of values of differing types. However the standard equality operator doesn't necessarily use the same coercion rules as other operators. For instance, whilst boolean coercion would typically any non-zero and non-\lstinline{NaN} number to true,  \lstinline{5 == true} is false. This inconsistency also extends to strings, typically all non-empty strings would coerce to true but \lstinline{'3' == 1} is false. Additionally, if you compare an object to any other type standard equality converts the object to a primitive which can lead to some unexpected results such as \lstinline{['7'] == 7}  being true. The strict operator, \lstinline{===}, by comparison has much saner behaviour - any two values not of the same type are not equal.
 
@@ -489,7 +491,7 @@ $ orange instanceof Object
 \caption{\label{fig:js-prototypical-inheritance} Example of Prototypical Inheritance}
 \end{figure} 
 
-In the example above we have a prototype chain length of three. Our \lstinline{orange}object has a prototype of \lstinline{Fruit}, which has a prototype of \lstinline{Food}, which has a prototype of \lstinline{Object}.
+In the example above we have a prototype chain length of three. Our \lstinline{orange} object has a prototype of \lstinline{Fruit}, which has a prototype of \lstinline{Food}, which has a prototype of \lstinline{Object}.
 
 \begin{figure}[h]
 \centering
@@ -578,7 +580,7 @@ every &every(func) & Calls func(element, index, array) for every element in the 
 \section{Ensuring the Correctness of JavaScript}
 As described in 1.1, assuring the correctness of JavaScript code is an unsolved problem - in part due to the fact JavaScript is a dynamically typed scripting language but also due to legacy design decisions. Efforts have been made to make the language itself safer to use, for example ECMAScript 5 introduced a strict mode (later made the default mode in ECMAScript 6) which restricts the use of certain language features and also defines additional circumstances that exceptions should be thrown. However there are still many subtle errors that can occur even within the safer subset of JavaScript.
 
-Tools like Eslint and Flow are commonly used by developers to statically analyse code and identify bugs but are limited in their scope. Eslint uses a narrow set of rules to identify possibly dangerous behaviour and Flow is constrained to reasoning about types and in some cases requires additional code annotation to allow Flow to identify possible errors. These limited sets of warnings do not fully reflect the dynamic nature of JavaScript and the subtle interactions that can occur due to prototypical inheritance, dynamic property access, and dynamic dispatch. There have been a number of attempts to analyse JavaScript statically however most approaches fall short of useful due to their inability to reason about functions like\lstinline{call()}and\lstinline{apply()}~\cite{sridharan2012correlation} with the best results requiring an element of dynamic analysis as well. ~\cite{logozzo2010rata} ~\cite{wei2013practical}
+Tools like Eslint and Flow are commonly used by developers to statically analyse code and identify bugs but are limited in their scope. Eslint uses a narrow set of rules to identify possibly dangerous behaviour and Flow is constrained to reasoning about types and in some cases requires additional code annotation to allow Flow to identify possible errors. These limited sets of warnings do not fully reflect the dynamic nature of JavaScript and the subtle interactions that can occur due to prototypical inheritance, dynamic property access, and dynamic dispatch. There have been a number of attempts to analyse JavaScript statically however most approaches fall short of useful due to their inability to reason about functions like\lstinline{call()} and \lstinline{apply()} ~\cite{sridharan2012correlation} with the best results requiring an element of dynamic analysis as well. ~\cite{logozzo2010rata} ~\cite{wei2013practical}
 
 Consequently there has been a shift in interest towards analysing safer (and less dynamic) targets which compile to JavaScript, the most popular of which is Typescript. Typescript is a superset of ECMAScript 6 which includes optional types to enable errors to be caught statically before compilation. Although TypeScript makes it easier to reason about potential errors caused by coercion, TypeScript itself provides no guarantees of static soundness - it's still possible for a TypeScript program to compile to JavaScript successfully and encounter a run-time error as a result of type coercion when executed. ~\cite{bierman2014understanding} Extensions to TypeScript have been suggested to provide soundness ~\cite{richards2015concrete} ~\cite{rastogi2015safe} although these approaches require a modified interpreter or runtime enforcement. Regardless, whilst TypeScript and its derivatives provide a way of reducing or eliminating type based errors they don't help identify or eliminate errors that occur due to other dynamic features of JavaScript such as prototypical inheritance, dynamic property access, or dynamic dispatch.
 
@@ -586,13 +588,71 @@ There have been a number of attempts to produce formal semantics for JavaScript,
 
 Symbolic execution provides an ideal way to test JavaScript code. By concretely executing the program, reasoning about the dynamic nature of JavaScript is deferred to the interpreter. The use of an interpreter for testing also provides flexibility. If JavaScript needs to be tested in another environment, switching interpreter is a relatively easy change to make. Additionally, concrete execution comes without the penalty of having to model the entire language specification as any non-modelled function can simply revert to concrete execution. Finally, symbolic execution is also able to test any JavaScript underlying library code.
 
-ExpoSE is a tool for symbolic execution of JavaScript. The target program is instrumented with Jalangi2, a tool that provides hooks before and after each statement is executed, which is used to build a symbolic representation of the program. ExpoSE uses a harness to randomly generate inputs for public functions in a target JavaScript program. It then uses a DART~\cite{godefroid2005dart} based directed search to attempt to explore all feasible paths in the program up to a maximum path count. Constraints are solved using Z3, a Microsoft Research theorem prover.
+ExpoSE is a tool for symbolic execution of JavaScript. The target program is instrumented with Jalangi2, a tool that provides hooks before and after each statement is executed, which is used to build a symbolic representation of the program. ExpoSE uses a harness to randomly generate inputs for public functions in a target JavaScript program. It then uses a DART~\cite{godefroid2005dart} based directed search to attempt to explore all feasible paths in the program up to a maximum path count.
 
-\chapter{Array Encoding}
-TODO
+\chapter{Implementation Details}
+Z3, the SMT solver used by ExpoSE, supports two array-like theories: the theory of arrays, and the theory of sequences which provided a choice for which theory to encode JavaScript arrays in. The Z3 offers a rich number of methods for sequences including obtaining the length, concatenating sequences, and checking whether an element is in a sequence. Contrasting, the theory of array support is limited to two operations: select and store. Consequently, sequences seemed like a more natural fit to encode JavaScript arrays as many array prototype methods map naturally to Z3 sequence functions. For instance,\lstinline{Z3_mk_seq_contains} is equivalent to \lstinline{Array.prototype.includes} and \lstinline{Z3_mk_seq_index} is equivalent to to \lstinline{Array.prototype.indexOf}. However after experimentation it became clear that concretising sequences was impossible as extracting single elements from a sequence produced a unit sequence rather than the value of the element. As a result of being unable to concretise sequences, JavaScript arrays are encoded using Z3’s array theory.
 
-How I use Z3 to encode JS arrays
-Limitations of the encoding
+
+Z3 arrays are one dimensional unbounded maps where the index and values are of any given sort. Read and write operations on the array are mapped to select and store axioms respectively. The SMT logic below demonstrates the basic relationship between store and select. Johannes: Does this need to be cited? Do I need to discuss any specific array theory?
+
+\begin{figure}[h]
+\begin{verbatim}
+(declare-const i Int)
+(declare-const v Int)
+(declare-const a (Array Int Int))
+(assert (= (store a i v) a))
+(assert (= (select a i) v))
+(check-sat)
+(get-model)
+\end{verbatim}
+\caption{\label{fig:z3-select-store} Example of Select and Store Axioms in Z3 Arrays}
+\end{figure}
+
+TODO REWRITE EVERYTHING BELOW THIS IN THIS CHAPTER AFTER SLICE IS IMPLEMENTED (INCLUDING CODE EXAMPLES!)
+
+Due to way Z3 models arrays as a unbounded homogeneously typed data structure, Z3 arrays do not directly correspond to JavaScript arrays. In order to encode the finite length of JavaScript arrays a separate Z3 integer variable is used which represent the the length of the symbolic array. When the array is created an assertion is made that the length is greater than or equal to 0. Whenever the concrete JavaScript array is accessed, if the index of the array is less than the concrete length of the array then an assertion is made that the symbolic length is less than the accessed index - else an assertion is made that length is greater than or equal to the accessed index.
+
+\begin{figure}[h]
+\begin{verbatim}
+// field_c is the concrete field accessed, base_c is the concrete array, base_s is the symbolic array, field_s is the symbolic field accessed
+ if (field_c >= base_c.length) {
+    this.pushCondition(this.ctx.mkGe(field_s, base_s.length))
+    return undefined
+ } else {
+    this.pushCondition(this.ctx.mkLt(field_s, base_s.length))
+     return base_s.selectFromIndex(this.ctx.mkRealToInt(field_s))
+}
+\end{verbatim}
+\caption{\label{fig:expose-get-field} Example of Array Constraints Enforcement}
+\end{figure}
+
+When the array is manipulated by push() and pop() operations the Z3 length variable is replaced by a new variable where the length is greater than or less than the previous array length respectively. As array values in Z3 can only be of one type and JavaScript arrays are non-homogenous only homogenously typed arrays can be symbolically represented.
+
+\section{Array Support Architecture}
+ExpoSE is architected as a number of distinct modules: Z3JS, a JavaScript interface to Z3’s C API, the Distributor, a highly parallelised dispatcher for symbolic execution paths and an aggregator of information, the Analyser, which performs the symbolic analysis for a given path, and the Tester, which automatically runs ExpoSE’s unit tests. The bulk of my work, outlined below, was done in the Analysers and Z3JS. I’ll briefly outline the modifications that were made to each.
+
+\subsection{Analyser}
+SymbolicState.js has a number of callbacks that are called when a symbolic value is used during execution. \lstinline{createSymbolicValue()} has been modified to check if the concrete type is either homogeneously typed or empty array, if so Z3JS’s \lstinline{context.mkArray()} is called to create the array, with the correct homogenous type, and assertions are made about the array’s length, as described above, to keep the array bounded. 
+
+\lstinline{symbolicField()} has been modified to check if the array is being accessed with a potentially valid array index - i.e. a number between 0 and 2\^32-1. If so, assertions are made about the length, as described above, and if the index is less than the array length Z3JS’s \lstinline{Expr.selectFromIndex()} is called. When an array’s length is accessed the expression for the array length is returned.
+
+In order to symbolically model the behaviour of prototype functions the Analyser has a module, Function Models, which contains a symbolic hook that concretely executes the function and then if a condition is met also symbolically executes a model function if it exists.  I’ve added prototype functions for a number of commonly used Array prototypes, such as a \lstinline{push()} and \lstinline{indexOf()}.
+
+TODO Expand on an individual prototype function (perhaps includes - SMT notation to Z3JS symbolic hook with a line by line breakdown of what’s actually going on
+
+\subsection{Z3JS}
+Z3JS provides an interface between the Z3’s C API and JavaScript. It’s main components are a Solver class, a Query class, a Model class, an Expr class, and a Context class. The context class wraps the Z3 context and acts as a facade for the Z3 API calls. The Expr class wraps constructed Z3 expressions and has helper functions for printing and creating a concrete value from the symbolic expression. The model class wraps Z3 model objects and the query class is used to request solutions for models from Z3.
+
+In order to be able to interface with Z3’s array functions I had to add a number of functions to the context class including \lstinline{mkArray}, \lstinline{mkSelect}, \lstinline{mkStore} as well as functions used to perform assertions using quantifiers, \lstinline{mkForAll} and \lstinline{mkExists}. The quantifier based functions expect arrays to be passed as parameters so I also had to change some helper functions \lstinline{_buildChecks()} and \lstinline{Z3Utils.astArray()} to work with arrays of parameters.
+
+The key function in Expr is asConstant() which turns the expression into a concrete value. I rewrote the function into a small switch statement which evaluates the sort of the expression. To be able to support turning array expressions into constants I had to be able to get a constant value for the expression which represents the length of the array. In order to do that I had to change the signature of the function to accept a model, using which I can call \lstinline{model.eval()} to get an interpretation for the expression. Using the concrete value for the length I can then iterate for the length of the array calling \lstinline{selectFromIndex()}, a helper function in Expr which calls context.mkSelect for a given index, to produce a concrete JavaScript array of values.
+
+I also use Expr to hold two properties which are specific to arrays, the length expression and the name of the array.
+
+\subsection{Other Interesting Engineering Techniques}
+Each array functionality is backed by one or more tests. Each test has an expected number of symbolic paths which should be produced an expected number of errors so regressions in behaviour can be identified. Array support can be disabled in the analyser through the use of an environment variable. This allows programs to be executed with and without array support so that behaviour and coverage can be compared.
+
 
 \chapter{Results}
 
