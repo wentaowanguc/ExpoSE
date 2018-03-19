@@ -339,20 +339,23 @@ class SymbolicState {
     symbolicField(base_c, base_s, field_c, field_s) {
         if (typeof base_c === "string" && typeof field_c === "number") {
             return this._symbolicFieldSeqLookup(base_c, base_s, field_c, field_s);
-        }
+        } else if (base_c instanceof Array && typeof field_c === "number") {
 
-        // TODO (AF) Unify the behaviour of sequences and arrays, this is stupid
-        // 4294967295 is 2^32 - 1 which the spec forbids being an array index - anything outside of that would be an object property instead
-        if (base_c instanceof Array && typeof field_c === "number" && Number.isInteger(field_c) && field_c >= 0 && field_c < 4294967295) {
+            // 4294967295 is 2^32 - 1 which the spec forbids being an array index - anything outside of that would be an object property instead
+            const isValidConcreteIndex = Number.isInteger(field_c) && field_c >= 0 && field_c < 4294967295 && field_c >= base_c.length;
+            // If not within bounds, push a condition to make sure other bounds are explored!
+            const isValidSymbolicIndex = this.ctx.mkAnd(
+                this.ctx.mkGe(field_s, this.ctx.mkIntVal(0)),
+                this.ctx.mkLt(field_s, base_s.length)
+            );
+            const withinArrayBounds = this.symbolicConditional(new ConcolicValue(isValidConcreteIndex, isValidSymbolicIndex));
             Log.logMid(`Get from Array Index ${field_c}`);
-            // length cannot be less than 0
-            this.pushNot(this.ctx.mkGe(field_s, this.ctx.mkIntVal(0)));
-            if (field_c >= base_c.length) {
-                this.pushCondition(this.ctx.mkGe(field_s, base_s.length));
-                return undefined;
-            } else {
-                this.pushCondition(this.ctx.mkLt(field_s, base_s.length));
+            if (withinArrayBounds) {
+                Log.logMid('Within Bounds: returning select from index');
                 return base_s.selectFromIndex(this.ctx.mkRealToInt(field_s));
+            } else {
+                Log.logMid('Within Bounds: returning undefined');
+                return undefined;
             }
         } else {           
                 switch (field_c) {

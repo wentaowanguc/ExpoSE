@@ -4,9 +4,9 @@
 
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
 
-// Expecting a path where indexOf succeeds and a path where indexOf fails
-if (q.indexOf(5)) {
-	console.log('indexOf Success');
+// Expecting: A single path
+if (q.lastIndexOf(1) > q.length) {
+  throw 'array_last_index_of_length: Unreachable index is greater than length';
 } else {
-	console.log('indexOf Fail');
+  // Initial path
 }

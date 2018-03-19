@@ -4,12 +4,13 @@
 
 var q = symbolic UnderTest initial [0, 1];
 
-if (q.length === 1) {
-  q.push(12);
-  if (q[1] === 12) {
-    console.log('Reached');
+// Expecting three paths: an array of [0], an array of [0] where the if branch cannot be flipped, and any other array
+if (q.length === 1 && q[0] === 1) {
+  if (q.indexOf(2) === -1) {
+    console.log('2 not found in array');
   } else {
-    throw 'Unreachable';
+    throw 'array_index_of_fails.js: Unreachable path';
   }
+} else {
+  console.log('Else branch');
 }
-console.log('Length not satisfiable');

@@ -4,8 +4,9 @@
 
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
 
-if (q.lastIndexOf(32)) {
-	throw 'Success';
+// Expecting a path where lastIndexOf succeeds and a path where lastIndexOf fails
+if (q.lastIndexOf(5)) {
+	console.log('lastIndexOf Success');
 } else {
-	throw 'Fail';
+	console.log('lastIndexOf Fail');
 }

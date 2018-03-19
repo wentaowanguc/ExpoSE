@@ -3,10 +3,9 @@
 "use strict";
 
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
-
-// Expecting a path where indexOf succeeds and a path where indexOf fails
-if (q.indexOf(5)) {
-	console.log('indexOf Success');
+// Expecting one path
+if (q.indexOf(1) === 2 && (q[0] === 1 || q[1] === 1)) {
+  throw 'array_index_of_lowest: Unreachable';
 } else {
-	console.log('indexOf Fail');
+  // This is the expected path
 }

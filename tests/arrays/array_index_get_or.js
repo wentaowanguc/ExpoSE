@@ -4,9 +4,9 @@
 
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
 
-// Expecting a path where indexOf succeeds and a path where indexOf fails
-if (q.indexOf(5)) {
-	console.log('indexOf Success');
+// Expecting two paths: q[0] and q[1] are not 5, followed by a single path where q[0] or q[1] is 5
+if (q[0] === 5 || q[1] == 5) {
+	console.log('q[0] or q[1] is 5');
 } else {
-	console.log('indexOf Fail');
+	console.log('q[0] and q[1] are not 5');
 }

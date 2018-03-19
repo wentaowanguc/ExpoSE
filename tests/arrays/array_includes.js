@@ -2,9 +2,10 @@
 
 "use strict";
 
+// Expecting a test case where array includes 9 and the initial case where it doesn't
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
 if (q.includes(9)) {
-	throw 'Yes';
+	console.log('Includes 9');
+} else {
+	console.log('Doesn\'t Include 9');
 }
-
-throw 'No';

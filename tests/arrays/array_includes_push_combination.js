@@ -4,9 +4,14 @@
 
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
 
-// Expecting a path where indexOf succeeds and a path where indexOf fails
-if (q.indexOf(5)) {
-	console.log('indexOf Success');
+// Expecting: 2 paths: initial path and a path where q initial doesn't contain 1 and then does after the pop
+if (!q.includes(1)) {
+  q.push(1);
+	if (!q.includes(1)) {
+		throw 'array_index_of_push_combination: Unreachable';
+	} else {
+		console.log('Array includes 1')
+	}
 } else {
-	console.log('indexOf Fail');
+  // Initial path
 }
