@@ -3,10 +3,9 @@
 "use strict";
 
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
-
-// Expecting: A single path
-if (q.indexOf(1) > q.length) {
-  throw 'array_index_of_length: Unreachable index is greater than length';
+// Expecting one path
+if (q.length === 3 && q.lastIndexOf(5) === 0 && (q[1] === 5 || q[2] === 5)) {
+  throw 'array_last_index_of: Unreachable';
 } else {
-  // Initial path
+  // This is the expected path
 }

@@ -27,9 +27,12 @@ function buildTestList() {
     buildTest('arrays/array_index_of_negative.js', 1, 0);
     buildTest('arrays/array_index_of.js', 2, 0);
     buildTest('arrays/array_indexof_includes_combination.js', 4, 0);
-    buildTest('arrays/array_last_index_of.js', 2, 0);
+    buildTest('arrays/array_last_index_of_highest.js', 1, 0);
+    buildTest('arrays/array_last_index_of_length.js', 1, 0);
+    buildTest('arrays/array_last_index_of_negative.js', 1, 0);
+    buildTest('arrays/array_last_index_of.js', 1, 0);
     buildTest('arrays/array_length_numbers.js', 2, 0);
-    buildTest('arrays/arra_push_index_of_combination.js', 2, 0);
+    buildTest('arrays/array_push_index_of_combination.js', 2, 0);
     buildTest('arrays/array_push_length_increases.js', 2, 0);
     buildTest('arrays/array_push_value_matches.js', 3, 0);
     return testList;
