@@ -444,17 +444,15 @@ function BuildModels() {
             
             
             // if not -1, the index where the search target is should be the lowest
-
-            // // for all
             const intSort = ctx.mkIntSort();
             const i = ctx.mkBound(0, intSort);
             const match_func_decl_name = ctx.mkStringSymbol('i__INDEX_OF_' + indexOfCounter);
-            const matchInArrayBody = ctx.mkAnd(ctx.mkLt(i, result_s), ctx.mkNot(ctx.mkEq(
+            const matchInArrayBody = ctx.mkAnd(ctx.mkLt(i, result_s), ctx.mkEq(
                                 ctx.mkSelect(c.state.asSymbolic(base), i), searchTarget
-                            )));
-            const forAllCheck = ctx.mkExists([match_func_decl_name], intSort, matchInArrayBody, []);
+                            ));
+            const existsCheck = ctx.mkExists([match_func_decl_name], intSort, matchInArrayBody, []);
 
-            c.state.pushCondition(ctx.mkImplies(ctx.mkNot(ctx.mkEq(result_s, ctx.mkIntVal(-1))), forAllCheck), true);
+            c.state.pushCondition(ctx.mkImplies(ctx.mkNot(ctx.mkEq(result_s, ctx.mkIntVal(-1))), ctx.mkNot(existsCheck), true));
             
             return new ConcolicValue(result, result_s);
         }
@@ -462,7 +460,6 @@ function BuildModels() {
 
 
     let lastIndexOfCounter = 0;
-
     models[Array.prototype.lastIndexOf] = symbolicHook(
         (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[1]),
         (c, _f, base, args, result) => {
@@ -488,18 +485,17 @@ function BuildModels() {
                         ctx.mkSelect(c.state.asSymbolic(base),result_s), searchTarget), 
                         ctx.mkEq(result_s ,ctx.mkIntVal(-1))), true);
 
-            // if not -1, the index where the search target is should be the lowest
-
-            // // for all
+            
+            // if not -1, the index where the search target is should be the highest
             const intSort = ctx.mkIntSort();
             const i = ctx.mkBound(0, intSort);
-            const match_func_decl_name = ctx.mkStringSymbol('i__INDEX_OF_' + indexOfCounter);
-            const matchInArrayBody = ctx.mkAnd(ctx.mkLt(i, result_s), ctx.mkNot(ctx.mkEq(
+            const match_func_decl_name = ctx.mkStringSymbol('i__LAST_INDEX_OF_' + indexOfCounter);
+            const matchInArrayBody = ctx.mkAnd(ctx.mkGt(i, result_s), ctx.mkEq(
                                 ctx.mkSelect(c.state.asSymbolic(base), i), searchTarget
-                            )));
-            const forAllCheck = ctx.mkExists([match_func_decl_name], intSort, matchInArrayBody, []);
+                            ));
+            const existsCheck = ctx.mkExists([match_func_decl_name], intSort, matchInArrayBody, []);
 
-            c.state.pushCondition(ctx.mkImplies(ctx.mkNot(ctx.mkEq(result_s, ctx.mkIntVal(-1))), forAllCheck), true);
+            c.state.pushCondition(ctx.mkImplies(ctx.mkNot(ctx.mkEq(result_s, ctx.mkIntVal(-1))), ctx.mkNot(existsCheck)), true);
             
             return new ConcolicValue(result, result_s);
         }
