@@ -2,10 +2,15 @@
 
 "use strict";
 
-var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
+var q = symbolic UnderTest initial [0, 1];
 
-if (q.indexOf(5)) {
-	console.log('indexOf Success');
+// Expecting three paths: an array of [0], an array of [0] where the if branch cannot be flipped, and any other array
+if (q.length === 1 && q[0] === 1) {
+  if (q.indexOf(2) === -1) {
+    console.log('2 not found in array');
+  } else {
+    throw 'array_index_of_fails.js: Unreachable path';
+  }
 } else {
-	console.log('indexOf Fail');
+  console.log('Else branch');
 }
