@@ -524,6 +524,8 @@ function BuildModels() {
         }
     );
 
+    let lengthCounter = 0;
+
     models[Array.prototype.push] = symbolicHook(
         (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
         (c, _f, base, args, result) => {
@@ -532,7 +534,8 @@ function BuildModels() {
             const value = c.state.asSymbolic(args[0]);
 
             const oldLength = array.length;
-            const newLength = ctx.mkIntVar(`${array.name}_LengthPushed`);
+            const newLength = ctx.mkIntVar(`${array.name}_Length_${lengthCounter}`);
+            lengthCounter++;
 
             c.state.pushCondition(ctx.mkGt(newLength, oldLength), true);
 
@@ -540,6 +543,23 @@ function BuildModels() {
             newArray.length = newLength;
 
             base.symbolic = newArray;
+            return value;
+        }
+    );
+
+    models[Array.prototype.pop] = symbolicHook(
+        (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
+        (c, _f, base, args, result) => {
+            const ctx = c.state.ctx;
+            const array = c.state.asSymbolic(base);
+
+            const oldLength = array.length;
+            const newLength = ctx.mkIntVar(`${array.name}_Length_${lengthCounter}`);
+            lengthCounter++;
+
+            c.state.pushCondition(ctx.mkLt(newLength, oldLength), true);
+            const value = new ConcolicValue(result, array.selectFromIndex(oldLength));
+            base.length = newLength;
 
             return value;
         }

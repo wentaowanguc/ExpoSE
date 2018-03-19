@@ -354,7 +354,7 @@ class SymbolicState {
                 Log.logMid('Within Bounds: returning select from index');
                 return base_s.selectFromIndex(this.ctx.mkRealToInt(field_s));
             } else {
-                Log.logMid('Within Bounds: returning undefined');
+                Log.logMid('Not within bounds: returning undefined');
                 return undefined;
             }
         } else {           
