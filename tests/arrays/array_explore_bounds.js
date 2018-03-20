@@ -2,11 +2,16 @@
 
 "use strict";
  
-// Expecting a test case where q[i] is undefined and the initial case where it isn't
-var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
-var i = symbolic I initial 1;
-if (q[i]) {
-	console.log('If');
+/* 
+The only way that the else case is reachable is with an empty array but no condition in the previous branches would generate this without exploring alternate bounds.
+Expecting three paths, one for each case.
+*/
+var q = symbolic UnderTest initial ['a'];
+
+if (q[0] === 'a') {
+	// Empty
+} else if (typeof q[0] === 'string') {
+	console.log('Another string value');
 } else {
-	console.log('Else');
+	console.log('Out of bounds!');
 }
