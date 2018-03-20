@@ -251,7 +251,6 @@ class SymbolicExecution {
         };
     }
 
-    // TODO add set field for arrays!
     getField(iid, base, offset, val, isComputed, isOpAssign, isMethodCall) {
         this.state.coverage.touch(iid);
         Log.logHigh('Get field ' + ObjectHelper.asString(base) + '.' + ObjectHelper.asString(offset) + ' at ' + this._location(iid));
@@ -303,6 +302,19 @@ class SymbolicExecution {
 
     putField(iid, base, offset, val, isComputed, isOpAssign) {
         this.state.coverage.touch(iid);
+        Log.logHigh('Put field ' + ObjectHelper.asString(base) + '.' + ObjectHelper.asString(offset) + ' at ' + this._location(iid));
+        
+        if (base instanceof Array) {
+            let result_s = this.state.isSymbolic(base) ? this.state.symbolicSetField(this.state.getConcrete(base), this.state.asSymbolic(base), this.state.getConcrete(offset), this.state.asSymbolic(offset), val) : undefined;
+            let result_c = this.state.getConcrete(base)[this.state.getConcrete(offset)] = val;
+
+            let result = result_s ? new ConcolicValue(result_c, result_s) : result_c;
+
+            return {
+                result: result
+            };
+        }
+
         return {
             result: val
         };
