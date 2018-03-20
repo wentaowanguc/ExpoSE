@@ -535,12 +535,13 @@ function BuildModels() {
                 const ctx = c.state.ctx;
                 // looking for
                 const searchTarget = c.state.asSymbolic(args[0]);
+                const array = c.state.asSymbolic(base);
 
                 const intSort = ctx.mkIntSort();
                 const i = ctx.mkBound(0, intSort);
-                const lengthBounds = ctx.mkAnd(ctx.mkGe(i, ctx.mkIntVal(0)), ctx.mkLt(i, c.state.asSymbolic(base).length));
+                const lengthBounds = ctx.mkAnd(ctx.mkGe(i, ctx.mkIntVal(0)), ctx.mkLt(i, array.length));
                 const body = ctx.mkAnd(lengthBounds, ctx.mkEq(
-                                    ctx.mkSelect(c.state.asSymbolic(base), i), searchTarget
+                                    ctx.mkSelect(array, ctx.mkAdd(i, array.startIndex)), searchTarget
                                 ));
 
                 const func_decl_name = ctx.mkStringSymbol('i__INCLUDES_INDEX_' + includesCounter);
