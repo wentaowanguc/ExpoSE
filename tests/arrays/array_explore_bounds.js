@@ -13,5 +13,5 @@ if (q[0] === 'a') {
 } else if (typeof q[0] === 'string') {
 	console.log('Another string value');
 } else {
-	console.log('Out of bounds!');
+	throw 'Out of bounds!';
 }

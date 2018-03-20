@@ -13,13 +13,13 @@ function buildTestList() {
 
     //Core Javascript, no symbex / annotations
     buildTest('arrays/array_concrete_behaviour.js', 0, 0);
-    buildTest('arrays/array_explore_bounds.js', 2, 0);
+    buildTest('arrays/array_explore_bounds.js', 2, 1);
     buildTest('arrays/array_includes_push_combination.js', 2, 0);
     buildTest('arrays/array_includes.js', 2, 0);
     buildTest('arrays/array_index_get_or.js', 2, 0);
     buildTest('arrays/array_index_getter_is_symbolic.js', 2, 0);
     buildTest('arrays/array_index_matches_non_symbolic_value.js', 2, 0);
-    buildTest('arrays/array_index_matches_symbolic_value.js', 4, 2);
+    buildTest('arrays/array_index_matches_symbolic_value.js', 4, 0);
     buildTest('arrays/array_index_of.js', 2, 0);
     buildTest('arrays/array_index_of_fails.js', 3, 0);
     buildTest('arrays/array_index_of_length.js', 1, 0);
