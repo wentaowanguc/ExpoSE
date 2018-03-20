@@ -38,6 +38,9 @@ function buildTestList() {
     buildTest('arrays/array_push_index_of_combination.js', 2, 0);
     buildTest('arrays/array_push_length_increases.js', 2, 0);
     buildTest('arrays/array_push_value_matches.js', 3, 0);
+    buildTest('arrays/array_set_field_change_value.js', 3, 0);
+    buildTest('arrays/array_set_field_includes_combination.js', 4, 0);
+    buildTest('arrays/array_set_field_increase_length.js', 3, 0);
     return testList;
 }
 
