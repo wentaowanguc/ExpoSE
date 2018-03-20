@@ -337,8 +337,9 @@ class SymbolicState {
 
     
     symbolicSetField(base_c, base_s, field_c, field_s, value) {
-        if (base_c  instanceof Array && typeof field_c === "number" ) {
-            if (base_c.length === 0 && typeof value === "number" || typeof base_c[0] === typeof value) {
+        if (base_c  instanceof Array ) {
+            // TODO Consider how to handle making arrays non-homogenous
+            if (typeof field_c === "number" && base_c.length === 0 && typeof value === "number" || typeof base_c[0] === typeof value) {
                 const newArray = base_s.setAtIndex(field_s, value);
                 newArray.length = base_s.length;
                 base_s.symbolic = newArray;
@@ -346,8 +347,8 @@ class SymbolicState {
                 if (!withinArrayBounds) {
                     Log.logHigh('Setting outside existing known length, unmodeled holes may have been created within array');
                 }
-            } else {
-                // TODO this would make the array non-homogenous
+            } else if (field_c === "length" && typeof value === "number") {
+                this.ctx.pushCondition(this.ctx.mkLt(value, base_s.length))
             }
         }
     }
