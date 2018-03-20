@@ -415,6 +415,25 @@ function BuildModels() {
         }
     );
 
+    /**
+     * Model for the Array constructor: either Array(el0, el1, el2, ..., eln), Array(size), or Array()
+     */
+    models[Array] = symbolicHook(
+        (c, _f, _base, args, _result) => c.state.args.some(a => c.state.isSymbolic(a)),
+        (c, _f, _base, args, result) => {
+            const array = c.state.makeArray(base);
+            this.pushCondition(this.ctx.mkGe(array.length, this.ctx.mkIntVal(0)), true);
+
+            if (args.length > 1) {
+                args.forEach((a, index) => array.selectFromIndex(this.ctx.mkRealToInt(a)));
+                this.pushCondition(this.ctx.mkLt(array.length, c.state.isSymbolic(args.length)), true);
+            } else if (args.length === 1) {
+                this.pushCondition(this.ctx.mkLe(array.length, c.state.isSymbolic(args[0])), true);
+            }
+        }
+        return new ConcolicValue(result, array);
+    );
+
     let indexOfCounter = 0;
 
     models[Array.prototype.indexOf] = symbolicHook(
