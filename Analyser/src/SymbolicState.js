@@ -184,7 +184,7 @@ class SymbolicState {
         }
     }
 
-    makeArray(concrete) {
+    makeArray(concrete, name) {
         // TODO (AF) Fix this to defer array reasoning for empty arrays
         let sort = concrete.length > 0 ? this._getSort(concrete[0]) : this.realSort;
         return this.ctx.mkArray(name, sort);
@@ -196,7 +196,7 @@ class SymbolicState {
         
         // Keep our arrays homogenous for now
         if (concrete instanceof Array && (concrete.length === 0 || concrete.every(i => typeof i === typeof concrete[0]))) {
-            let symbolic = makeArray(concrete);
+            let symbolic = this.makeArray(concrete, name);
             // Array length is greater than 0
             this.pushCondition(this.ctx.mkGe(symbolic.length, this.ctx.mkIntVal(0)), true);
         } else {

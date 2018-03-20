@@ -418,11 +418,13 @@ function BuildModels() {
     /**
      * Model for the Array constructor: either Array(el0, el1, el2, ..., eln), Array(size), or Array()
      */
+    let arrayCounter = 0;
     models[Array] = symbolicHook(
         (c, _f, _base, args, _result) => typeof args === "number" || (args instanceof Array && args.some(a => c.state.isSymbolic(a))) || !args,
         (c, _f, _base, args, result) => {
-            const array = c.state.makeArray(base);
+            const array = c.state.makeArray(base, `CONSTRUCTOR_ARRAY_${arrayCounter}`);
             this.pushCondition(this.ctx.mkGe(array.length, this.ctx.mkIntVal(0)), true);
+            arrayCounter++;
             
             if (args instanceof Array && args.length > 1) {
                 let symbolicArgs = args.filter(a => c.state.isSymbolic(a));
