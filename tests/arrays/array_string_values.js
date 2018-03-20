@@ -5,10 +5,12 @@
 // Expecting three paths
 var q = symbolic UnderTest initial ['a', 'b', 'c'];
 
-if (q[0] === 'a') {
-	console.log('If');
-} else if (typeof q[0] === 'string') {
-	console.log('Another string value');
-} else {
-  console.log('Non string value')
+if (q.length > 0) {
+  if (q[0] === 'a') {
+    console.log('If');
+  } else if (typeof q[0] === 'string') {
+    console.log('Another string value');
+  } else {
+    throw 'Unreachable';
+  }
 }

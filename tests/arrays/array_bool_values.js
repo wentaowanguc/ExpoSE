@@ -5,10 +5,12 @@
 // Expecting three paths
 var q = symbolic UnderTest initial [false];
 
-if (q[0] === true) {
-	console.log('If');
-} else if (typeof q[0] === 'boolean') {
-	console.log('Another boolean value');
-} else {
-  console.log('Not a boolean value')
+if (q.length > 0) {
+  if (q[0] === true) {
+    console.log('If');
+  } else if (typeof q[0] === 'boolean') {
+    console.log('Another boolean value');
+  } else {
+    throw 'Unreachable';
+  }
 }
