@@ -415,183 +415,185 @@ function BuildModels() {
         }
     );
 
-    /**
-     * Model for the Array constructor: either Array(el0, el1, el2, ..., eln), Array(size), or Array()
-     */
-    let arrayCounter = 0;
-    models[Array] = symbolicHook(
-        (c, _f, _base, args, _result) => typeof args === "number" || (args instanceof Array && args.some(a => c.state.isSymbolic(a))) || !args,
-        (c, _f, _base, args, result) => {
-            const array = c.state.makeArray(base, `CONSTRUCTOR_ARRAY_${arrayCounter}`);
-            this.pushCondition(this.ctx.mkGe(array.length, this.ctx.mkIntVal(0)), true);
-            arrayCounter++;
-            
-            if (args instanceof Array && args.length > 1) {
-                let symbolicArgs = args.filter(a => c.state.isSymbolic(a));
-                symbolicArgs.forEach((a, index) => array.selectFromIndex(this.ctx.mkRealToInt(a)));
-                this.pushCondition(this.ctx.mkLt(array.length, c.state.isSymbolic(symbolicArgs.length)), true);
-            } else if (typeof args === "number") {
-                this.pushCondition(this.ctx.mkLe(array.length, c.state.isSymbolic(args[0])), true);
+    if (Config.arraysEnabled) {
+        /**
+         * Model for the Array constructor: either Array(el0, el1, el2, ..., eln), Array(size), or Array()
+         */
+        let arrayCounter = 0;
+        models[Array] = symbolicHook(
+            (c, _f, _base, args, _result) => typeof args === "number" || (args instanceof Array && args.some(a => c.state.isSymbolic(a))) || !args,
+            (c, _f, _base, args, result) => {
+                const array = c.state.makeArray(base, `CONSTRUCTOR_ARRAY_${arrayCounter}`);
+                this.pushCondition(this.ctx.mkGe(array.length, this.ctx.mkIntVal(0)), true);
+                arrayCounter++;
+                
+                if (args instanceof Array && args.length > 1) {
+                    let symbolicArgs = args.filter(a => c.state.isSymbolic(a));
+                    symbolicArgs.forEach((a, index) => array.selectFromIndex(this.ctx.mkRealToInt(a)));
+                    this.pushCondition(this.ctx.mkLt(array.length, c.state.isSymbolic(symbolicArgs.length)), true);
+                } else if (typeof args === "number") {
+                    this.pushCondition(this.ctx.mkLe(array.length, c.state.isSymbolic(args[0])), true);
+                }
+                return new ConcolicValue(result, array);
             }
-            return new ConcolicValue(result, array);
-        }
-    );
+        );
 
-    let indexOfCounter = 0;
+        let indexOfCounter = 0;
 
-    models[Array.prototype.indexOf] = symbolicHook(
-        (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[1]),
-        (c, _f, base, args, result) => {
-            const ctx = c.state.ctx;
-
-            const startIndex = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(0);
-            const searchTarget = c.state.asSymbolic(args[0]);
-
-            let result_s = ctx.mkIntVar('__INDEX_OF_' + indexOfCounter); 
-            
-            c.state.pushCondition(ctx.mkGe(result_s, ctx.mkIntVal(-1)), true);
-            c.state.pushCondition(ctx.mkGt(c.state.asSymbolic(base).length, result_s), true);
-
-            // result_s should be in array length or -1
-            c.state.pushCondition(
-                ctx.mkImplies(ctx.mkGt(result_s, ctx.mkIntVal(-1)),
-                ctx.mkAnd(ctx.mkGe(result_s, startIndex), ctx.mkLe(result_s, c.state.asSymbolic(base).length))), true);
-            
-            // either result_s is a valid index for the searchtarget or -1
-            c.state.pushCondition(
-                ctx.mkOr(
-                    ctx.mkEq(
-                        ctx.mkSelect(c.state.asSymbolic(base),result_s), searchTarget), 
-                        ctx.mkEq(result_s ,ctx.mkIntVal(-1))), true);
-            
-            
-            // if not -1, the index where the search target is should be the lowest
-            const intSort = ctx.mkIntSort();
-            const i = ctx.mkBound(0, intSort);
-            const match_func_decl_name = ctx.mkStringSymbol('i__INDEX_OF_' + indexOfCounter);
-            const matchInArrayBody = ctx.mkAnd(ctx.mkLt(i, result_s), ctx.mkEq(
-                                ctx.mkSelect(c.state.asSymbolic(base), i), searchTarget
-                            ));
-            const existsCheck = ctx.mkExists([match_func_decl_name], intSort, matchInArrayBody, []);
-
-            c.state.pushCondition(ctx.mkImplies(ctx.mkNot(ctx.mkEq(result_s, ctx.mkIntVal(-1))), ctx.mkNot(existsCheck), true));
-            
-            return new ConcolicValue(result, result_s);
-        }
-    );
-
-
-    let lastIndexOfCounter = 0;
-    models[Array.prototype.lastIndexOf] = symbolicHook(
-        (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[1]),
-        (c, _f, base, args, result) => {
-            const ctx = c.state.ctx;
-
-            const startIndex = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(base).length;
-            const searchTarget = c.state.asSymbolic(args[0]);
-
-            let result_s = ctx.mkIntVar('__INDEX_OF_' + indexOfCounter); 
-            
-            c.state.pushCondition(ctx.mkGe(result_s, ctx.mkIntVal(-1)), true);
-            c.state.pushCondition(ctx.mkGt(c.state.asSymbolic(base).length, result_s), true);
-
-            // result_s should be in array length or -1
-            c.state.pushCondition(
-                ctx.mkImplies(ctx.mkLt(result_s, ctx.mkIntVal(-1)),
-                ctx.mkAnd(ctx.mkGe(result_s, startIndex), ctx.mkLe(result_s, c.state.asSymbolic(base).length))), true);
-            
-            // either result_s is a valid index for the searchtarget or -1
-            c.state.pushCondition(
-                ctx.mkOr(
-                    ctx.mkEq(
-                        ctx.mkSelect(c.state.asSymbolic(base),result_s), searchTarget), 
-                        ctx.mkEq(result_s ,ctx.mkIntVal(-1))), true);
-
-            
-            // if not -1, the index where the search target is should be the highest
-            const intSort = ctx.mkIntSort();
-            const i = ctx.mkBound(0, intSort);
-            const match_func_decl_name = ctx.mkStringSymbol('i__LAST_INDEX_OF_' + indexOfCounter);
-            const matchInArrayBody = ctx.mkAnd(ctx.mkGt(i, result_s), ctx.mkEq(
-                                ctx.mkSelect(c.state.asSymbolic(base), i), searchTarget
-                            ));
-            const existsCheck = ctx.mkExists([match_func_decl_name], intSort, matchInArrayBody, []);
-
-            c.state.pushCondition(ctx.mkImplies(ctx.mkNot(ctx.mkEq(result_s, ctx.mkIntVal(-1))), ctx.mkNot(existsCheck)), true);
-            
-            return new ConcolicValue(result, result_s);
-        }
-    );
-
-
-    let includesCounter = 0;
-    models[Array.prototype.includes] = symbolicHook(
-        (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
-        (c, _f, base, args, result) => {
-            const ctx = c.state.ctx;
-            // looking for
-            const searchTarget = c.state.asSymbolic(args[0]);
-
-            const intSort = ctx.mkIntSort();
-            const i = ctx.mkBound(0, intSort);
-            const lengthBounds = ctx.mkAnd(ctx.mkGe(i, ctx.mkIntVal(0)), ctx.mkLt(i, c.state.asSymbolic(base).length));
-            const body = ctx.mkAnd(lengthBounds, ctx.mkEq(
-                                ctx.mkSelect(c.state.asSymbolic(base), i), searchTarget
-                            ));
-
-            const func_decl_name = ctx.mkStringSymbol('i__INCLUDES_INDEX_' + includesCounter);
-            const result_s = ctx.mkExists([func_decl_name], intSort, body, []);
-            
-            return new ConcolicValue(result, result_s);
-        }
-    );
-
-    let lengthCounter = 0;
-
-    models[Array.prototype.push] = symbolicHook(
-        (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
-        (c, _f, base, args, result) => {
-            
-            const array = c.state.asSymbolic(base);
-            const value = c.state.asSymbolic(args[0]);
-            if (base.concrete.length === 0 && typeof value === "number" || typeof base.concrete[0] === typeof value) {
+        models[Array.prototype.indexOf] = symbolicHook(
+            (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[1]),
+            (c, _f, base, args, result) => {
                 const ctx = c.state.ctx;
+
+                const startIndex = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(0);
+                const searchTarget = c.state.asSymbolic(args[0]);
+
+                let result_s = ctx.mkIntVar('__INDEX_OF_' + indexOfCounter); 
+                
+                c.state.pushCondition(ctx.mkGe(result_s, ctx.mkIntVal(-1)), true);
+                c.state.pushCondition(ctx.mkGt(c.state.asSymbolic(base).length, result_s), true);
+
+                // result_s should be in array length or -1
+                c.state.pushCondition(
+                    ctx.mkImplies(ctx.mkGt(result_s, ctx.mkIntVal(-1)),
+                    ctx.mkAnd(ctx.mkGe(result_s, startIndex), ctx.mkLe(result_s, c.state.asSymbolic(base).length))), true);
+                
+                // either result_s is a valid index for the searchtarget or -1
+                c.state.pushCondition(
+                    ctx.mkOr(
+                        ctx.mkEq(
+                            ctx.mkSelect(c.state.asSymbolic(base),result_s), searchTarget), 
+                            ctx.mkEq(result_s ,ctx.mkIntVal(-1))), true);
+                
+                
+                // if not -1, the index where the search target is should be the lowest
+                const intSort = ctx.mkIntSort();
+                const i = ctx.mkBound(0, intSort);
+                const match_func_decl_name = ctx.mkStringSymbol('i__INDEX_OF_' + indexOfCounter);
+                const matchInArrayBody = ctx.mkAnd(ctx.mkLt(i, result_s), ctx.mkEq(
+                                    ctx.mkSelect(c.state.asSymbolic(base), i), searchTarget
+                                ));
+                const existsCheck = ctx.mkExists([match_func_decl_name], intSort, matchInArrayBody, []);
+
+                c.state.pushCondition(ctx.mkImplies(ctx.mkNot(ctx.mkEq(result_s, ctx.mkIntVal(-1))), ctx.mkNot(existsCheck), true));
+                
+                return new ConcolicValue(result, result_s);
+            }
+        );
+
+
+        let lastIndexOfCounter = 0;
+        models[Array.prototype.lastIndexOf] = symbolicHook(
+            (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[1]),
+            (c, _f, base, args, result) => {
+                const ctx = c.state.ctx;
+
+                const startIndex = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(base).length;
+                const searchTarget = c.state.asSymbolic(args[0]);
+
+                let result_s = ctx.mkIntVar('__INDEX_OF_' + indexOfCounter); 
+                
+                c.state.pushCondition(ctx.mkGe(result_s, ctx.mkIntVal(-1)), true);
+                c.state.pushCondition(ctx.mkGt(c.state.asSymbolic(base).length, result_s), true);
+
+                // result_s should be in array length or -1
+                c.state.pushCondition(
+                    ctx.mkImplies(ctx.mkLt(result_s, ctx.mkIntVal(-1)),
+                    ctx.mkAnd(ctx.mkGe(result_s, startIndex), ctx.mkLe(result_s, c.state.asSymbolic(base).length))), true);
+                
+                // either result_s is a valid index for the searchtarget or -1
+                c.state.pushCondition(
+                    ctx.mkOr(
+                        ctx.mkEq(
+                            ctx.mkSelect(c.state.asSymbolic(base),result_s), searchTarget), 
+                            ctx.mkEq(result_s ,ctx.mkIntVal(-1))), true);
+
+                
+                // if not -1, the index where the search target is should be the highest
+                const intSort = ctx.mkIntSort();
+                const i = ctx.mkBound(0, intSort);
+                const match_func_decl_name = ctx.mkStringSymbol('i__LAST_INDEX_OF_' + indexOfCounter);
+                const matchInArrayBody = ctx.mkAnd(ctx.mkGt(i, result_s), ctx.mkEq(
+                                    ctx.mkSelect(c.state.asSymbolic(base), i), searchTarget
+                                ));
+                const existsCheck = ctx.mkExists([match_func_decl_name], intSort, matchInArrayBody, []);
+
+                c.state.pushCondition(ctx.mkImplies(ctx.mkNot(ctx.mkEq(result_s, ctx.mkIntVal(-1))), ctx.mkNot(existsCheck)), true);
+                
+                return new ConcolicValue(result, result_s);
+            }
+        );
+
+
+        let includesCounter = 0;
+        models[Array.prototype.includes] = symbolicHook(
+            (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
+            (c, _f, base, args, result) => {
+                const ctx = c.state.ctx;
+                // looking for
+                const searchTarget = c.state.asSymbolic(args[0]);
+
+                const intSort = ctx.mkIntSort();
+                const i = ctx.mkBound(0, intSort);
+                const lengthBounds = ctx.mkAnd(ctx.mkGe(i, ctx.mkIntVal(0)), ctx.mkLt(i, c.state.asSymbolic(base).length));
+                const body = ctx.mkAnd(lengthBounds, ctx.mkEq(
+                                    ctx.mkSelect(c.state.asSymbolic(base), i), searchTarget
+                                ));
+
+                const func_decl_name = ctx.mkStringSymbol('i__INCLUDES_INDEX_' + includesCounter);
+                const result_s = ctx.mkExists([func_decl_name], intSort, body, []);
+                
+                return new ConcolicValue(result, result_s);
+            }
+        );
+
+        let lengthCounter = 0;
+
+        models[Array.prototype.push] = symbolicHook(
+            (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
+            (c, _f, base, args, result) => {
+                
+                const array = c.state.asSymbolic(base);
+                const value = c.state.asSymbolic(args[0]);
+                if (base.concrete.length === 0 && typeof value === "number" || typeof base.concrete[0] === typeof value) {
+                    const ctx = c.state.ctx;
+
+                    const oldLength = array.length;
+                    const newLength = ctx.mkIntVar(`${array.name}_Length_${lengthCounter}`);
+                    lengthCounter++;
+
+                    c.state.pushCondition(ctx.mkGt(newLength, oldLength), true);
+
+                    const newArray = ctx.mkStore(array, oldLength, value);
+                    newArray.length = newLength;
+
+                    base.symbolic = newArray;
+                    return value;
+                } else {
+                    // TODO this would make the array non-homogenous
+                }
+                
+            }
+        );
+
+        models[Array.prototype.pop] = symbolicHook(
+            (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
+            (c, _f, base, args, result) => {
+                const ctx = c.state.ctx;
+                const array = c.state.asSymbolic(base);
 
                 const oldLength = array.length;
                 const newLength = ctx.mkIntVar(`${array.name}_Length_${lengthCounter}`);
                 lengthCounter++;
 
-                c.state.pushCondition(ctx.mkGt(newLength, oldLength), true);
+                c.state.pushCondition(ctx.mkLt(newLength, oldLength), true);
+                const value = new ConcolicValue(result, array.selectFromIndex(oldLength));
+                base.length = newLength;
 
-                const newArray = ctx.mkStore(array, oldLength, value);
-                newArray.length = newLength;
-
-                base.symbolic = newArray;
                 return value;
-            } else {
-                // TODO this would make the array non-homogenous
             }
-            
-        }
-    );
-
-    models[Array.prototype.pop] = symbolicHook(
-        (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
-        (c, _f, base, args, result) => {
-            const ctx = c.state.ctx;
-            const array = c.state.asSymbolic(base);
-
-            const oldLength = array.length;
-            const newLength = ctx.mkIntVar(`${array.name}_Length_${lengthCounter}`);
-            lengthCounter++;
-
-            c.state.pushCondition(ctx.mkLt(newLength, oldLength), true);
-            const value = new ConcolicValue(result, array.selectFromIndex(oldLength));
-            base.length = newLength;
-
-            return value;
-        }
-    );
+        );
+    }
 
     models[Array.prototype.keys] = NoOp();
     models[Array.prototype.concat] = NoOp();
