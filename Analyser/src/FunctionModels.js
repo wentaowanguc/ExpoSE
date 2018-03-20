@@ -447,8 +447,7 @@ function BuildModels() {
                 let searchStartIndex = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(0);
                 const array = c.state.asSymbolic(base);
                 const searchTarget = c.state.asSymbolic(args[0]);
-
-                // offset by array.startIndex
+                
                 let result_s = ctx.mkIntVar('__INDEX_OF_' + indexOfCounter); 
                 
                 c.state.pushCondition(ctx.mkGe(result_s, ctx.mkIntVal(-1)), true);
@@ -493,22 +492,23 @@ function BuildModels() {
 
                 const startIndex = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(base).length;
                 const searchTarget = c.state.asSymbolic(args[0]);
+                const array = c.state.asSymbolic(base);
 
                 let result_s = ctx.mkIntVar('__INDEX_OF_' + indexOfCounter); 
                 
                 c.state.pushCondition(ctx.mkGe(result_s, ctx.mkIntVal(-1)), true);
-                c.state.pushCondition(ctx.mkGt(c.state.asSymbolic(base).length, result_s), true);
+                c.state.pushCondition(ctx.mkGt(array.length, result_s), true);
 
                 // result_s should be in array length or -1
                 c.state.pushCondition(
                     ctx.mkImplies(ctx.mkLt(result_s, ctx.mkIntVal(-1)),
-                    ctx.mkAnd(ctx.mkGe(result_s, startIndex), ctx.mkLe(result_s, c.state.asSymbolic(base).length))), true);
+                    ctx.mkAnd(ctx.mkGe(result_s, startIndex), ctx.mkLe(result_s, array.length))), true);
                 
                 // either result_s is a valid index for the searchtarget or -1
                 c.state.pushCondition(
                     ctx.mkOr(
                         ctx.mkEq(
-                            ctx.mkSelect(c.state.asSymbolic(base),result_s), searchTarget), 
+                            ctx.mkSelect(array, ctx.mkAdd(result_s, array.startIndex)), searchTarget), 
                             ctx.mkEq(result_s ,ctx.mkIntVal(-1))), true);
 
                 
@@ -517,7 +517,7 @@ function BuildModels() {
                 const i = ctx.mkBound(0, intSort);
                 const match_func_decl_name = ctx.mkStringSymbol('i__LAST_INDEX_OF_' + indexOfCounter);
                 const matchInArrayBody = ctx.mkAnd(ctx.mkGt(i, result_s), ctx.mkEq(
-                                    ctx.mkSelect(c.state.asSymbolic(base), i), searchTarget
+                                    ctx.mkSelect(array, ctx.mkAdd(i, array.startIndex)), searchTarget
                                 ));
                 const existsCheck = ctx.mkExists([match_func_decl_name], intSort, matchInArrayBody, []);
 
