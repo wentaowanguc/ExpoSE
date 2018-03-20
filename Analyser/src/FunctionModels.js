@@ -529,21 +529,27 @@ function BuildModels() {
     models[Array.prototype.push] = symbolicHook(
         (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
         (c, _f, base, args, result) => {
-            const ctx = c.state.ctx;
+            
             const array = c.state.asSymbolic(base);
             const value = c.state.asSymbolic(args[0]);
+            if (base.concrete.length === 0 && typeof value === "number" || typeof base.concrete[0] === typeof value) {
+                const ctx = c.state.ctx;
 
-            const oldLength = array.length;
-            const newLength = ctx.mkIntVar(`${array.name}_Length_${lengthCounter}`);
-            lengthCounter++;
+                const oldLength = array.length;
+                const newLength = ctx.mkIntVar(`${array.name}_Length_${lengthCounter}`);
+                lengthCounter++;
 
-            c.state.pushCondition(ctx.mkGt(newLength, oldLength), true);
+                c.state.pushCondition(ctx.mkGt(newLength, oldLength), true);
 
-            const newArray = ctx.mkStore(array, oldLength, value);
-            newArray.length = newLength;
+                const newArray = ctx.mkStore(array, oldLength, value);
+                newArray.length = newLength;
 
-            base.symbolic = newArray;
-            return value;
+                base.symbolic = newArray;
+                return value;
+            } else {
+                // TODO this would make the array non-homogenous
+            }
+            
         }
     );
 
