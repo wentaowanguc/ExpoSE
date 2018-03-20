@@ -196,7 +196,7 @@ class SymbolicState {
         
         // Keep our arrays homogenous for now
         if (concrete instanceof Array && (concrete.length === 0 || concrete.every(i => typeof i === typeof concrete[0]))) {
-            let symbolic = this.makeArray(concrete, name);
+            symbolic = this.makeArray(concrete, name);
             // Array length is greater than 0
             this.pushCondition(this.ctx.mkGe(symbolic.length, this.ctx.mkIntVal(0)), true);
         } else {
