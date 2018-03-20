@@ -447,7 +447,7 @@ function BuildModels() {
                 let searchStartIndex = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(0);
                 const array = c.state.asSymbolic(base);
                 const searchTarget = c.state.asSymbolic(args[0]);
-                
+
                 let result_s = ctx.mkIntVar('__INDEX_OF_' + indexOfCounter); 
                 
                 c.state.pushCondition(ctx.mkGe(result_s, ctx.mkIntVal(-1)), true);
@@ -567,8 +567,8 @@ function BuildModels() {
                     lengthCounter++;
 
                     c.state.pushCondition(ctx.mkGt(newLength, oldLength), true);
-
-                    const newArray = ctx.mkStore(array, oldLength, value);
+                    
+                    const newArray = array.setAtIndex(oldLength, value);
                     newArray.length = newLength;
 
                     base.symbolic = newArray;
