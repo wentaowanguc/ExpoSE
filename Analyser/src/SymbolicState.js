@@ -352,7 +352,7 @@ class SymbolicState {
      * Pushes symbolic condition for valid array access based on concrete result and returns concrete result
      */
     _isFieldSetOrAccessWithinBounds(base_c, base_s, field_c, field_s) {
-        const isValidConcreteIndex = Number.isInteger(field_c) && field_c >= 0 && field_c < 4294967295 && field_c >= base_c.length;
+        const isValidConcreteIndex = Number.isInteger(field_c) && field_c >= 0 && field_c < 4294967295 && field_c < base_c.length;
         // If not within bounds, push a condition to make sure other bounds are explored!
         const isValidSymbolicIndex = this.ctx.mkAnd(
             this.ctx.mkGe(field_s, this.ctx.mkIntVal(0)),
