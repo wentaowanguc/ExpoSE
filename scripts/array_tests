@@ -1,3 +1,10 @@
+if [ -z ${NO_COMPILE} ]; then
+	./scripts/build/build_analyser
+	if [ $? -ne 0 ]; then
+		exit 1
+	fi
+fi
+
 ./scripts/refresh
 #!/bin/bash -e
 ./scripts/build/build_tester
