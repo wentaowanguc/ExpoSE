@@ -2,6 +2,8 @@
 
 "use strict";
 
+
+import Config from './Config';
 import Log from './Utilities/Log';
 import ObjectHelper from './Utilities/ObjectHelper';
 import Coverage from './Coverage';
@@ -195,15 +197,17 @@ class SymbolicState {
         let symbolic;
         
         // Keep our arrays homogenous for now
-        if (concrete instanceof Array && (concrete.length === 0 || concrete.every(i => typeof i === typeof concrete[0]))) {
+        if (Config.arraysEnabled && concrete instanceof Array && (concrete.length === 0 || concrete.every(i => typeof i === typeof concrete[0]))) {
             symbolic = this.makeArray(concrete, name);
             // Array length is greater than 0
             this.pushCondition(this.ctx.mkGe(symbolic.length, this.ctx.mkIntVal(0)), true);
         } else {
             let sort = this._getSort(concrete);
-            let symbol = this.ctx.mkStringSymbol(name);
-            
-            symbolic = this.ctx.mkConst(symbol, sort);
+            if (sort) {
+                let symbol = this.ctx.mkStringSymbol(name);
+                
+                symbolic = this.ctx.mkConst(symbol, sort);
+            }
         }
 
         // Use generated input if available
@@ -337,7 +341,7 @@ class SymbolicState {
 
     
     symbolicSetField(base_c, base_s, field_c, field_s, value) {
-        if (base_c  instanceof Array ) {
+        if (Config.arraysEnabled && base_c instanceof Array ) {
             // TODO Consider how to handle making arrays non-homogenous
             if (typeof field_c === "number" && base_c.length === 0 && typeof value === "number" || typeof base_c[0] === typeof value) {
                 const newArray = base_s.setAtIndex(field_s, value);
@@ -385,7 +389,7 @@ class SymbolicState {
     symbolicField(base_c, base_s, field_c, field_s) {
         if (typeof base_c === "string" && typeof field_c === "number") {
             return this._symbolicFieldSeqLookup(base_c, base_s, field_c, field_s);
-        } else if (base_c instanceof Array && typeof field_c === "number") {
+        } else if (Config.arraysEnabled && base_c instanceof Array && typeof field_c === "number") {
             return this._symbolicFieldArrayLookup(base_c, base_s, field_c, field_s);
         } else {           
                 switch (field_c) {
