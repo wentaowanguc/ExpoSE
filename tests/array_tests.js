@@ -12,10 +12,10 @@ function buildTestList() {
     }
 
     //Core Javascript, no symbex / annotations
-    buildTest('arrays/array_bool_values.js', 0, 0);
+    buildTest('arrays/array_bool_values.js', 3, 0);
     buildTest('arrays/array_concrete_behaviour.js', 0, 0);
     buildTest('arrays/array_explore_bounds.js', 2, 1);
-    buildTest('arrays/array_homogenous_only.js', 0, 0);
+    buildTest('arrays/array_homogenous_only.js', 3, 0);
     buildTest('arrays/array_includes_push_combination.js', 2, 0);
     buildTest('arrays/array_includes.js', 2, 0);
     buildTest('arrays/array_index_get_or.js', 2, 0);
@@ -43,7 +43,8 @@ function buildTestList() {
     buildTest('arrays/array_set_field_change_value.js', 3, 0);
     buildTest('arrays/array_set_field_includes_combination.js', 4, 0);
     buildTest('arrays/array_set_field_increase_length.js', 3, 0);
-    buildTest('arrays/array_string_values.js', 0, 0);
+    buildTest('arrays/array_string_values.js', 3, 0);
+    buildTest('arrays/array_set_length.js', 3, 0);
     return testList;
 }
 
