@@ -75,6 +75,8 @@ class SymbolicState {
             Log.log("Result: " + result_c.toString() + ' and ' + result_s.toString() + " (" + typeof(result_c) + ")");
             Log.log("Undefined result not yet supported");
         }
+
+        return result_c;
     }
 
     /**
