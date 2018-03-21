@@ -27,6 +27,7 @@ function buildTestList() {
     buildTest('arrays/array_index_of_length.js', 1, 0);
     buildTest('arrays/array_index_of_lowest.js', 1, 0);
     buildTest('arrays/array_index_of_negative.js', 1, 0);
+    buildTest('arrays/array_index_of_slice_combination.js', 10, 0);
     buildTest('arrays/array_index_of.js', 2, 0);
     buildTest('arrays/array_indexof_includes_combination.js', 4, 0);
     buildTest('arrays/array_last_index_of_highest.js', 1, 0);
