@@ -439,44 +439,46 @@ function BuildModels() {
         );
 
         let indexOfCounter = 0;
-
         models[Array.prototype.indexOf] = symbolicHook(
             (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[1]),
             (c, _f, base, args, result) => {
                 const ctx = c.state.ctx;
 
-                const startIndex = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(0);
+                let searchStartIndex = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(0);
+                const array = c.state.asSymbolic(base);
                 const searchTarget = c.state.asSymbolic(args[0]);
 
                 let result_s = ctx.mkIntVar('__INDEX_OF_' + indexOfCounter); 
                 
                 c.state.pushCondition(ctx.mkGe(result_s, ctx.mkIntVal(-1)), true);
-                c.state.pushCondition(ctx.mkGt(c.state.asSymbolic(base).length, result_s), true);
 
-                // result_s should be in array length or -1
+                // TODO AF check this condition is required
+                c.state.pushCondition(ctx.mkGt(array.length, result_s), true);
+
+                // result_s should be in array slice or -1
                 c.state.pushCondition(
                     ctx.mkImplies(ctx.mkGt(result_s, ctx.mkIntVal(-1)),
-                    ctx.mkAnd(ctx.mkGe(result_s, startIndex), ctx.mkLe(result_s, c.state.asSymbolic(base).length))), true);
+                    ctx.mkAnd(ctx.mkGe(result_s, searchStartIndex), ctx.mkLe(result_s, array.length))), true);
                 
-                // either result_s is a valid index for the searchtarget or -1
+                // either result_s is the index for the searchtarget or -1
                 c.state.pushCondition(
                     ctx.mkOr(
-                        ctx.mkEq(
-                            ctx.mkSelect(c.state.asSymbolic(base),result_s), searchTarget), 
-                            ctx.mkEq(result_s ,ctx.mkIntVal(-1))), true);
-                
+                        ctx.mkEq(ctx.mkSelect(array, ctx.mkAdd(result_s, array.startIndex)), searchTarget), 
+                        ctx.mkEq(result_s, ctx.mkIntVal(-1)) 
+                    ), true);
                 
                 // if not -1, the index where the search target is should be the lowest
                 const intSort = ctx.mkIntSort();
                 const i = ctx.mkBound(0, intSort);
                 const match_func_decl_name = ctx.mkStringSymbol('i__INDEX_OF_' + indexOfCounter);
-                const matchInArrayBody = ctx.mkAnd(ctx.mkLt(i, result_s), ctx.mkEq(
-                                    ctx.mkSelect(c.state.asSymbolic(base), i), searchTarget
-                                ));
+                const matchInArrayBody = ctx.mkAnd(
+                                            ctx.mkLt(i, ctx.mkAdd(result_s, array.startIndex)), 
+                                            ctx.mkEq(ctx.mkSelect(array,ctx.mkAdd(i, array.startIndex)), searchTarget)
+                                        );
                 const existsCheck = ctx.mkExists([match_func_decl_name], intSort, matchInArrayBody, []);
-
                 c.state.pushCondition(ctx.mkImplies(ctx.mkNot(ctx.mkEq(result_s, ctx.mkIntVal(-1))), ctx.mkNot(existsCheck), true));
                 
+                // return the result offset the start
                 return new ConcolicValue(result, result_s);
             }
         );
@@ -490,22 +492,23 @@ function BuildModels() {
 
                 const startIndex = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(base).length;
                 const searchTarget = c.state.asSymbolic(args[0]);
+                const array = c.state.asSymbolic(base);
 
                 let result_s = ctx.mkIntVar('__INDEX_OF_' + indexOfCounter); 
                 
                 c.state.pushCondition(ctx.mkGe(result_s, ctx.mkIntVal(-1)), true);
-                c.state.pushCondition(ctx.mkGt(c.state.asSymbolic(base).length, result_s), true);
+                c.state.pushCondition(ctx.mkGt(array.length, result_s), true);
 
                 // result_s should be in array length or -1
                 c.state.pushCondition(
                     ctx.mkImplies(ctx.mkLt(result_s, ctx.mkIntVal(-1)),
-                    ctx.mkAnd(ctx.mkGe(result_s, startIndex), ctx.mkLe(result_s, c.state.asSymbolic(base).length))), true);
+                    ctx.mkAnd(ctx.mkGe(result_s, startIndex), ctx.mkLe(result_s, array.length))), true);
                 
                 // either result_s is a valid index for the searchtarget or -1
                 c.state.pushCondition(
                     ctx.mkOr(
                         ctx.mkEq(
-                            ctx.mkSelect(c.state.asSymbolic(base),result_s), searchTarget), 
+                            ctx.mkSelect(array, ctx.mkAdd(result_s, array.startIndex)), searchTarget), 
                             ctx.mkEq(result_s ,ctx.mkIntVal(-1))), true);
 
                 
@@ -514,7 +517,7 @@ function BuildModels() {
                 const i = ctx.mkBound(0, intSort);
                 const match_func_decl_name = ctx.mkStringSymbol('i__LAST_INDEX_OF_' + indexOfCounter);
                 const matchInArrayBody = ctx.mkAnd(ctx.mkGt(i, result_s), ctx.mkEq(
-                                    ctx.mkSelect(c.state.asSymbolic(base), i), searchTarget
+                                    ctx.mkSelect(array, ctx.mkAdd(i, array.startIndex)), searchTarget
                                 ));
                 const existsCheck = ctx.mkExists([match_func_decl_name], intSort, matchInArrayBody, []);
 
@@ -532,12 +535,13 @@ function BuildModels() {
                 const ctx = c.state.ctx;
                 // looking for
                 const searchTarget = c.state.asSymbolic(args[0]);
+                const array = c.state.asSymbolic(base);
 
                 const intSort = ctx.mkIntSort();
                 const i = ctx.mkBound(0, intSort);
-                const lengthBounds = ctx.mkAnd(ctx.mkGe(i, ctx.mkIntVal(0)), ctx.mkLt(i, c.state.asSymbolic(base).length));
+                const lengthBounds = ctx.mkAnd(ctx.mkGe(i, ctx.mkIntVal(0)), ctx.mkLt(i, array.length));
                 const body = ctx.mkAnd(lengthBounds, ctx.mkEq(
-                                    ctx.mkSelect(c.state.asSymbolic(base), i), searchTarget
+                                    ctx.mkSelect(array, ctx.mkAdd(i, array.startIndex)), searchTarget
                                 ));
 
                 const func_decl_name = ctx.mkStringSymbol('i__INCLUDES_INDEX_' + includesCounter);
@@ -563,8 +567,8 @@ function BuildModels() {
                     lengthCounter++;
 
                     c.state.pushCondition(ctx.mkGt(newLength, oldLength), true);
-
-                    const newArray = ctx.mkStore(array, oldLength, value);
+                    
+                    const newArray = array.setAtIndex(oldLength, value);
                     newArray.length = newLength;
 
                     base.symbolic = newArray;
@@ -593,12 +597,49 @@ function BuildModels() {
                 return value;
             }
         );
+
+        models[Array.prototype.slice] = symbolicHook(
+            (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[2]),
+            (c, _f, base, args, result) => {
+
+                const ctx = c.state.ctx;
+                const array = c.state.asSymbolic(base);
+                const begin = args[0] ? c.state.asSymbolic(args[0]) : ctx.mkIntVal(0);
+                const end = args[1] ? c.state.asSymbolic(args[1]) : array.length;
+                
+
+                // This clones the array in Z3 by doing a store that stores the same value at the index
+                const noOpIndex = ctx.mkIntVal(0);
+                const copiedArray = array.setAtIndex(noOpIndex, array.selectFromIndex(noOpIndex));
+                
+                const newLength = ctx.mkIntVar(`${array.name}_Length_${lengthCounter}`);
+                lengthCounter++;
+
+                copiedArray.length = newLength;
+                copiedArray.startIndex = ctx.mkAdd(array.startIndex, begin);
+
+                // TODO AF double check this constraint
+                // The new length should be greater than 0 AND 
+                // IF end is positive, less than or equal to end's length -> slice(0, 4)
+                // ELSE, less than or equal to the old length-end -> slice(0, -1)
+                c.state.pushCondition(
+                    ctx.mkAnd(
+                        ctx.mkGe(newLength, ctx.mkIntVal(0)), 
+                        ctx.mkIte(
+                            ctx.mkLe(end, ctx.mkIntVal(0)), 
+                            ctx.mkLe(newLength, ctx.mkSub(array.length, end)), ctx.mkLe(newLength, end)
+                        )
+                    ),
+                    true
+                );
+                return new ConcolicValue(result, copiedArray);             
+            }
+        );
     }
 
     models[Array.prototype.keys] = NoOp();
     models[Array.prototype.concat] = NoOp();
     models[Array.prototype.forEach] = NoOp();
-    models[Array.prototype.slice] = NoOp();
     models[Array.prototype.filter] = NoOp();
     models[Array.prototype.map] = NoOp();
     models[Array.prototype.shift] = NoOp();

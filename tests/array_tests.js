@@ -43,8 +43,11 @@ function buildTestList() {
     buildTest('arrays/array_set_field_change_value.js', 3, 0);
     buildTest('arrays/array_set_field_includes_combination.js', 4, 0);
     buildTest('arrays/array_set_field_increase_length.js', 3, 0);
-    buildTest('arrays/array_string_values.js', 3, 0);
     buildTest('arrays/array_set_length.js', 3, 0);
+    buildTest('arrays/array_slice_0.js', 3, 1);
+    buildTest('arrays/array_slice_less_than_length.js', 3, 1);
+    buildTest('arrays/array_slice_negative.js', 3, 1);
+    buildTest('arrays/array_string_values.js', 3, 0);
     return testList;
 }
 
