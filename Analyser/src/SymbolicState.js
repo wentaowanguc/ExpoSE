@@ -202,7 +202,7 @@ class SymbolicState {
         if (Config.arraysEnabled && concrete instanceof Array && (concrete.length === 0 || concrete.every(i => typeof i === typeof concrete[0]))) {
             symbolic = this.makeArray(concrete, name);
             // Array length is greater than 0
-            this.pushCondition(this.ctx.mkGe(symbolic.length, this.ctx.mkIntVal(0)), true);
+            this.pushCondition(this.ctx.mkGe(symbolic.getLength(), this.ctx.mkIntVal(0)), true);
         } else {
             let sort = this._getSort(concrete);
             if (sort) {
@@ -347,14 +347,14 @@ class SymbolicState {
             // TODO Consider how to handle making arrays non-homogenous
             if (typeof field_c === "number" && base_c.length === 0 && typeof value === "number" || typeof base_c[0] === typeof value) {
                 const newArray = base_s.setAtIndex(field_s, value);
-                newArray.length = base_s.length;
+                newArray.setLength(base_s.getLength());
                 base_s.symbolic = newArray;
                 const withinArrayBounds = this._isFieldSetOrAccessWithinBounds(base_c, base_s, field_c, field_s);
                 if (!withinArrayBounds) {
                     Log.logHigh('Setting outside existing known length, unmodeled holes may have been created within array');
                 }
             } else if (field_c === "length" && typeof value === "number") {
-                this.ctx.pushCondition(this.ctx.mkLt(value, base_s.length))
+                this.ctx.pushCondition(this.ctx.mkLt(value, base_s.getLength()))
             }
         }
     }
@@ -371,7 +371,7 @@ class SymbolicState {
         // If not within bounds, push a condition to make sure other bounds are explored!
         const isValidSymbolicIndex = this.ctx.mkAnd(
             this.ctx.mkGe(field_s, this.ctx.mkIntVal(0)),
-            this.ctx.mkLt(field_s, base_s.length)
+            this.ctx.mkLt(field_s, base_s.getLength())
         );
         return this.symbolicConditional(new ConcolicValue(isValidConcreteIndex, isValidSymbolicIndex));
     }
@@ -403,7 +403,7 @@ class SymbolicState {
                     //res.FORCE_EQ_TO_INT = true;
                     return res;
                 } else if (base_c instanceof Array) {
-                    return base_s.length; 
+                    return base_s.getLength(); 
                 }
                 default:
                     Log.log('Unsupported symbolic field - concretizing' + base_c + ' (type:' + typeof base_c + ') and field ' + field_c);

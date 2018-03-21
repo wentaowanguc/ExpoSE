@@ -5,7 +5,8 @@
 var q = symbolic UnderTest initial [0, 1];
 
 if (q.length === 1 && q[0] === 3) {
-  if (q.pop() === 3) {
+  var poppedValue = q.pop();
+  if (poppedValue === 3) {
     console.log('Reached');
   } else {
     throw 'Unreachable';
