@@ -598,7 +598,6 @@ function BuildModels() {
             }
         );
 
-
         models[Array.prototype.slice] = symbolicHook(
             (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[2]),
             (c, _f, base, args, result) => {
@@ -620,7 +619,19 @@ function BuildModels() {
                 copiedArray.startIndex = ctx.mkAdd(array.startIndex, begin);
 
                 // TODO AF double check this constraint
-                c.state.pushCondition(ctx.mkAnd(ctx.mkGe(newLength, 0), ctx.mkLe(newLength, end)), true);
+                // The new length should be greater than 0 AND 
+                // IF end is positive, less than or equal to end's length -> slice(0, 4)
+                // ELSE, less than or equal to the old length-end -> slice(0, -1)
+                c.state.pushCondition(
+                    ctx.mkAnd(
+                        ctx.mkGe(newLength, ctx.mkIntVal(0)), 
+                        ctx.mkIte(
+                            ctx.mkLe(end, ctx.mkIntVal(0)), 
+                            ctx.mkLe(newLength, ctx.mkSub(array.length, end)), ctx.mkLe(newLength, end)
+                        )
+                    ),
+                    true
+                );
                 return new ConcolicValue(result, copiedArray);             
             }
         );
