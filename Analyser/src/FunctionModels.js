@@ -568,7 +568,7 @@ function BuildModels() {
                 const oldLength = array.getLength();
                 const newLength = ctx.mkIntVar(`${array.getName()}_Length_${lengthCounter++}`);
 
-                c.state.pushCondition(ctx.mkGt(newLength, oldLength), true);
+                c.state.pushCondition(ctx.mkEq(newLength, ctx.mkAdd(oldLength, ctx.mkIntVal(1))), true);
                 
                 const newArray = array.setAtIndex(oldLength, value);
                 newArray.setLength(newLength);
@@ -590,7 +590,7 @@ function BuildModels() {
                 lengthCounter++;
 
                 const value = new ConcolicValue(result, array.selectFromIndex(oldLength));
-                c.state.pushCondition(ctx.mkLt(newLength, oldLength), true);
+                c.state.pushCondition(ctx.mkEq(newLength, ctx.mkSub(oldLength, ctx.mkIntVal(1))), true);
                 
                 // Can't use array here as we need to modify in place
                 array.setLength(newLength);
