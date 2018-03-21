@@ -44,10 +44,12 @@ function buildTestList() {
     buildTest('arrays/array_set_field_includes_combination.js', 4, 0);
     buildTest('arrays/array_set_field_increase_length.js', 3, 0);
     buildTest('arrays/array_set_length.js', 3, 0);
-    buildTest('arrays/array_slice_0.js', 3, 1);
-    buildTest('arrays/array_slice_less_than_length.js', 3, 1);
-    buildTest('arrays/array_slice_negative.js', 3, 1);
-    buildTest('arrays/array_string_values.js', 3, 0);
+    buildTest('arrays/array_slice_0.js', 5, 0);
+    buildTest('arrays/array_slice_end_greater_than_length.js', 5, 0);
+    buildTest('arrays/array_slice_end_less_than_length.js', 5, 0);
+    buildTest('arrays/array_slice_end_negative.js', 5, 0);
+    buildTest('arrays/array_slice_to_reduce.js', 5, 0);
+    buildTest('arrays/array_string_values.js', 5, 0);
     return testList;
 }
 

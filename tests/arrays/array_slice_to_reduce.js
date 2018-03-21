@@ -2,12 +2,11 @@
 
 "use strict";
 
-// Tests a slice 0 produces a new array with the same array elements
 var q = symbolic UnderTest initial ['a', 'b'];
 
 if (q.length === 2 && q[0] === 'a' && q[1] === 'b') {
-  var r = q.slice(0, 1);
-  if (r.length === 1 && q[0] === 'a') {
+  var r = q.slice(1);
+  if (r.length === 1 && r[0] === 'b' ) {
     console.log('Reached');
   } else {
     throw 'Unreachable';
