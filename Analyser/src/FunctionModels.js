@@ -440,7 +440,7 @@ function BuildModels() {
 
         let indexOfCounter = 0;
         models[Array.prototype.indexOf] = symbolicHook(
-            (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[1]),
+            (c, _f, base, args, _r) => c.state.isSymbolic(base),
             (c, _f, base, args, result) => {
                 const ctx = c.state.ctx;
 
@@ -486,7 +486,7 @@ function BuildModels() {
 
         let lastIndexOfCounter = 0;
         models[Array.prototype.lastIndexOf] = symbolicHook(
-            (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[1]),
+            (c, _f, base, args, _r) => c.state.isSymbolic(base),
             (c, _f, base, args, result) => {
                 const ctx = c.state.ctx;
 
@@ -530,7 +530,7 @@ function BuildModels() {
 
         let includesCounter = 0;
         models[Array.prototype.includes] = symbolicHook(
-            (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
+            (c, _f, base, args, _r) => c.state.isSymbolic(base),
             (c, _f, base, args, result) => {
                 const ctx = c.state.ctx;
                 // looking for
@@ -554,7 +554,7 @@ function BuildModels() {
         let lengthCounter = 0;
 
         models[Array.prototype.push] = symbolicHook(
-            (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
+            (c, _f, base, args, _r) => c.state.isSymbolic(base),
             (c, _f, base, args, result) => {
                 
                 const array = c.state.asSymbolic(base);
@@ -586,7 +586,7 @@ function BuildModels() {
         );
 
         models[Array.prototype.pop] = symbolicHook(
-            (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
+            (c, _f, base, args, _r) => c.state.isSymbolic(base),
             (c, _f, base, args, result) => {
                 const ctx = c.state.ctx;
                 const array = c.state.asSymbolic(base);
@@ -606,7 +606,7 @@ function BuildModels() {
         );
 
         models[Array.prototype.slice] = symbolicHook(
-            (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[2]),
+            (c, _f, base, args, _r) => c.state.isSymbolic(base),
             (c, _f, base, args, result) => {
                 const ctx = c.state.ctx;
                 const array = c.state.asSymbolic(base);
