@@ -601,12 +601,13 @@ function BuildModels() {
         models[Array.prototype.slice] = symbolicHook(
             (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[2]),
             (c, _f, base, args, result) => {
-
                 const ctx = c.state.ctx;
                 const array = c.state.asSymbolic(base);
                 const begin = args[0] ? c.state.asSymbolic(args[0]) : ctx.mkIntVal(0);
                 const end = args[1] ? c.state.asSymbolic(args[1]) : array.length;
-                
+
+                // end cannot be greater than array length
+                c.state.pushCondition(ctx.mkLe(end, array.length), true);
 
                 // This clones the array in Z3 by doing a store that stores the same value at the index
                 const noOpIndex = ctx.mkIntVal(0);
