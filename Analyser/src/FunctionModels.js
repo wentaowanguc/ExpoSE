@@ -597,12 +597,38 @@ function BuildModels() {
                 return value;
             }
         );
+
+
+        models[Array.prototype.slice] = symbolicHook(
+            (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[2]),
+            (c, _f, base, args, result) => {
+
+                const ctx = c.state.ctx;
+                const array = c.state.asSymbolic(base);
+                const begin = args[0] ? c.state.asSymbolic(args[0]) : ctx.mkIntVal(0);
+                const end = args[1] ? c.state.asSymbolic(args[1]) : array.length;
+                
+
+                // This clones the array in Z3 by doing a store that stores the same value at the index
+                const noOpIndex = ctx.mkIntVal(0);
+                const copiedArray = array.setAtIndex(noOpIndex, array.selectFromIndex(noOpIndex));
+                
+                const newLength = ctx.mkIntVar(`${array.name}_Length_${lengthCounter}`);
+                lengthCounter++;
+
+                copiedArray.length = newLength;
+                copiedArray.startIndex = ctx.mkAdd(array.startIndex, begin);
+
+                // TODO AF double check this constraint
+                c.state.pushCondition(ctx.mkAnd(ctx.mkGe(newLength, 0), ctx.mkLe(newLength, end)), true);
+                return new ConcolicValue(result, copiedArray);             
+            }
+        );
     }
 
     models[Array.prototype.keys] = NoOp();
     models[Array.prototype.concat] = NoOp();
     models[Array.prototype.forEach] = NoOp();
-    models[Array.prototype.slice] = NoOp();
     models[Array.prototype.filter] = NoOp();
     models[Array.prototype.map] = NoOp();
     models[Array.prototype.shift] = NoOp();
