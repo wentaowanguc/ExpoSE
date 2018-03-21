@@ -626,8 +626,10 @@ function BuildModels() {
                     ctx.mkAnd(
                         ctx.mkGe(newLength, ctx.mkIntVal(0)), 
                         ctx.mkIte(
-                            ctx.mkLe(end, ctx.mkIntVal(0)), 
-                            ctx.mkLe(newLength, ctx.mkSub(array.length, end)), ctx.mkLe(newLength, end)
+                            ctx.mkGe(end, ctx.mkIntVal(0)), 
+                            ctx.mkLe(newLength, end),
+                            // negative end indexing 
+                            ctx.mkLe(newLength, ctx.mkSub(array.length, end))
                         )
                     ),
                     true
