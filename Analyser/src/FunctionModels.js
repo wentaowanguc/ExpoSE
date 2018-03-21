@@ -559,7 +559,11 @@ function BuildModels() {
                 
                 const array = c.state.asSymbolic(base);
                 const value = c.state.asSymbolic(args[0]);
-                if (base.concrete.length === 0 && typeof value === "number" || typeof base.concrete[0] === typeof value) {
+
+                const concreteArray = c.state.getConcrete(base);
+                const concreteValue = c.state.getConcrete(base);
+
+                if (concreteArray.length === 0 && typeof concreteValue === "number" || typeof concreteArray[0] === typeof concreteValue) {
                     const ctx = c.state.ctx;
 
                     const oldLength = array.length;
