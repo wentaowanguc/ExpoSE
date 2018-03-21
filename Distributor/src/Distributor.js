@@ -79,6 +79,10 @@ if (process.argv.length >= 3) {
     let start = microtime.now();
     let center = new Center(options);
 
+    process.on('SIGINT', function() {
+        center.cancel();
+    });
+
     console.log('Setting timeout to ' + options.maxTime);
 
     let maxTimeout = setTimeout(function() {
