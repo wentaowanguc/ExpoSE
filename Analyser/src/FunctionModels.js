@@ -424,15 +424,15 @@ function BuildModels() {
             (c, _f, _base, args, _result) => typeof args === "number" || (args instanceof Array && args.some(a => c.state.isSymbolic(a))) || !args,
             (c, _f, _base, args, result) => {
                 const array = c.state.makeArray(base, `CONSTRUCTOR_ARRAY_${arrayCounter}`);
-                this.pushCondition(this.ctx.mkGe(array.length, this.ctx.mkIntVal(0)), true);
+                this.pushCondition(this.ctx.mkGe(array.getLength(), this.ctx.mkIntVal(0)), true);
                 arrayCounter++;
                 
                 if (args instanceof Array && args.length > 1) {
                     let symbolicArgs = args.filter(a => c.state.isSymbolic(a));
                     symbolicArgs.forEach((a, index) => array.selectFromIndex(this.ctx.mkRealToInt(a)));
-                    this.pushCondition(this.ctx.mkLt(array.length, c.state.isSymbolic(symbolicArgs.length)), true);
+                    this.pushCondition(this.ctx.mkLt(array.getLength(), c.state.asSymbolic(symbolicArgs.length)), true);
                 } else if (typeof args === "number") {
-                    this.pushCondition(this.ctx.mkLe(array.length, c.state.isSymbolic(args[0])), true);
+                    this.pushCondition(this.ctx.mkLe(array.getLength(), c.state.asSymbolic(args[0])), true);
                 }
                 return new ConcolicValue(result, array);
             }
@@ -453,17 +453,17 @@ function BuildModels() {
                 c.state.pushCondition(ctx.mkGe(result_s, ctx.mkIntVal(-1)), true);
 
                 // TODO AF check this condition is required
-                c.state.pushCondition(ctx.mkGt(array.length, result_s), true);
+                c.state.pushCondition(ctx.mkGt(array.getLength(), result_s), true);
 
                 // result_s should be in array slice or -1
                 c.state.pushCondition(
                     ctx.mkImplies(ctx.mkGt(result_s, ctx.mkIntVal(-1)),
-                    ctx.mkAnd(ctx.mkGe(result_s, searchStartIndex), ctx.mkLe(result_s, array.length))), true);
+                    ctx.mkAnd(ctx.mkGe(result_s, searchStartIndex), ctx.mkLe(result_s, array.getLength()))), true);
                 
                 // either result_s is the index for the searchtarget or -1
                 c.state.pushCondition(
                     ctx.mkOr(
-                        ctx.mkEq(ctx.mkSelect(array, ctx.mkAdd(result_s, array.startIndex)), searchTarget), 
+                        ctx.mkEq(ctx.mkSelect(array, ctx.mkAdd(result_s, array.getStartIndex())), searchTarget), 
                         ctx.mkEq(result_s, ctx.mkIntVal(-1)) 
                     ), true);
                 
@@ -472,8 +472,8 @@ function BuildModels() {
                 const i = ctx.mkBound(0, intSort);
                 const match_func_decl_name = ctx.mkStringSymbol('i__INDEX_OF_' + indexOfCounter);
                 const matchInArrayBody = ctx.mkAnd(
-                                            ctx.mkLt(i, ctx.mkAdd(result_s, array.startIndex)), 
-                                            ctx.mkEq(ctx.mkSelect(array,ctx.mkAdd(i, array.startIndex)), searchTarget)
+                                            ctx.mkLt(i, ctx.mkAdd(result_s, array.getStartIndex())), 
+                                            ctx.mkEq(ctx.mkSelect(array,ctx.mkAdd(i, array.getStartIndex())), searchTarget)
                                         );
                 const existsCheck = ctx.mkExists([match_func_decl_name], intSort, matchInArrayBody, []);
                 c.state.pushCondition(ctx.mkImplies(ctx.mkNot(ctx.mkEq(result_s, ctx.mkIntVal(-1))), ctx.mkNot(existsCheck), true));
@@ -490,25 +490,25 @@ function BuildModels() {
             (c, _f, base, args, result) => {
                 const ctx = c.state.ctx;
 
-                const startIndex = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(base).length;
-                const searchTarget = c.state.asSymbolic(args[0]);
                 const array = c.state.asSymbolic(base);
+                const startIndex = args[1] ? c.state.asSymbolic(args[1]) : array.getLength();
+                const searchTarget = c.state.asSymbolic(args[0]);
 
                 let result_s = ctx.mkIntVar('__INDEX_OF_' + indexOfCounter); 
                 
                 c.state.pushCondition(ctx.mkGe(result_s, ctx.mkIntVal(-1)), true);
-                c.state.pushCondition(ctx.mkGt(array.length, result_s), true);
+                c.state.pushCondition(ctx.mkGt(array.getLength(), result_s), true);
 
                 // result_s should be in array length or -1
                 c.state.pushCondition(
                     ctx.mkImplies(ctx.mkLt(result_s, ctx.mkIntVal(-1)),
-                    ctx.mkAnd(ctx.mkGe(result_s, startIndex), ctx.mkLe(result_s, array.length))), true);
+                    ctx.mkAnd(ctx.mkGe(result_s, startIndex), ctx.mkLe(result_s, array.getLength()))), true);
                 
                 // either result_s is a valid index for the searchtarget or -1
                 c.state.pushCondition(
                     ctx.mkOr(
                         ctx.mkEq(
-                            ctx.mkSelect(array, ctx.mkAdd(result_s, array.startIndex)), searchTarget), 
+                            ctx.mkSelect(array, ctx.mkAdd(result_s, array.getStartIndex())), searchTarget), 
                             ctx.mkEq(result_s ,ctx.mkIntVal(-1))), true);
 
                 
@@ -517,7 +517,7 @@ function BuildModels() {
                 const i = ctx.mkBound(0, intSort);
                 const match_func_decl_name = ctx.mkStringSymbol('i__LAST_INDEX_OF_' + indexOfCounter);
                 const matchInArrayBody = ctx.mkAnd(ctx.mkGt(i, result_s), ctx.mkEq(
-                                    ctx.mkSelect(array, ctx.mkAdd(i, array.startIndex)), searchTarget
+                                    ctx.mkSelect(array, ctx.mkAdd(i, array.getStartIndex())), searchTarget
                                 ));
                 const existsCheck = ctx.mkExists([match_func_decl_name], intSort, matchInArrayBody, []);
 
@@ -539,9 +539,9 @@ function BuildModels() {
 
                 const intSort = ctx.mkIntSort();
                 const i = ctx.mkBound(0, intSort);
-                const lengthBounds = ctx.mkAnd(ctx.mkGe(i, ctx.mkIntVal(0)), ctx.mkLt(i, array.length));
+                const lengthBounds = ctx.mkAnd(ctx.mkGe(i, ctx.mkIntVal(0)), ctx.mkLt(i, array.getLength()));
                 const body = ctx.mkAnd(lengthBounds, ctx.mkEq(
-                                    ctx.mkSelect(array, ctx.mkAdd(i, array.startIndex)), searchTarget
+                                    ctx.mkSelect(array, ctx.mkAdd(i, array.getStartIndex())), searchTarget
                                 ));
 
                 const func_decl_name = ctx.mkStringSymbol('i__INCLUDES_INDEX_' + includesCounter);
@@ -566,15 +566,16 @@ function BuildModels() {
                 if (concreteArray.length === 0 && typeof concreteValue === "number" || typeof concreteArray[0] === typeof concreteValue) {
                     const ctx = c.state.ctx;
 
-                    const oldLength = array.length;
-                    const newLength = ctx.mkIntVar(`${array.name}_Length_${lengthCounter}`);
+                    const oldLength = array.getLength();
+                    const newLength = ctx.mkIntVar(`${array.getName()}_Length_${lengthCounter}`);
                     lengthCounter++;
 
                     c.state.pushCondition(ctx.mkGt(newLength, oldLength), true);
                     
                     const newArray = array.setAtIndex(oldLength, value);
-                    newArray.length = newLength;
+                    newArray.setLength(newLength);
 
+                    // Can't use array here as we need to modify in place
                     base.symbolic = newArray;
                     return value;
                 } else {
@@ -590,13 +591,15 @@ function BuildModels() {
                 const ctx = c.state.ctx;
                 const array = c.state.asSymbolic(base);
 
-                const oldLength = array.length;
-                const newLength = ctx.mkIntVar(`${array.name}_Length_${lengthCounter}`);
+                const oldLength = array.getLength();
+                const newLength = ctx.mkIntVar(`${array.getName()}_Length_${lengthCounter}`);
                 lengthCounter++;
 
-                c.state.pushCondition(ctx.mkLt(newLength, oldLength), true);
                 const value = new ConcolicValue(result, array.selectFromIndex(oldLength));
-                base.length = newLength;
+                c.state.pushCondition(ctx.mkLt(newLength, oldLength), true);
+                
+                // Can't use array here as we need to modify in place
+                array.setLength(newLength);
 
                 return value;
             }
@@ -608,20 +611,20 @@ function BuildModels() {
                 const ctx = c.state.ctx;
                 const array = c.state.asSymbolic(base);
                 const begin = args[0] ? c.state.asSymbolic(args[0]) : ctx.mkIntVal(0);
-                const end = args[1] ? c.state.asSymbolic(args[1]) : array.length;
+                const end = args[1] ? c.state.asSymbolic(args[1]) : array.getLength();
 
                 // end cannot be greater than array length
-                c.state.pushCondition(ctx.mkLe(end, array.length), true);
+                c.state.pushCondition(ctx.mkLe(end, array.getLength()), true);
 
                 // This clones the array in Z3 by doing a store that stores the same value at the index
                 const noOpIndex = ctx.mkIntVal(0);
                 const copiedArray = array.setAtIndex(noOpIndex, array.selectFromIndex(noOpIndex));
                 
-                const newLength = ctx.mkIntVar(`${array.name}_Length_${lengthCounter}`);
+                const newLength = ctx.mkIntVar(`${array.getName()}_Length_${lengthCounter}`);
                 lengthCounter++;
 
-                copiedArray.length = newLength;
-                copiedArray.startIndex = ctx.mkAdd(array.startIndex, begin);
+                copiedArray.setLength(newLength);
+                copiedArray.increaseStartIndex(begin);
 
                 // TODO AF double check this constraint
                 // The new length should be greater than 0 AND 
@@ -634,7 +637,7 @@ function BuildModels() {
                             ctx.mkGe(end, ctx.mkIntVal(0)), 
                             ctx.mkLe(newLength, end),
                             // negative end indexing 
-                            ctx.mkLe(newLength, ctx.mkSub(array.length, end))
+                            ctx.mkLe(newLength, ctx.mkSub(array.getLength(), end))
                         )
                     ),
                     true

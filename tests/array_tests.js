@@ -37,7 +37,7 @@ function buildTestList() {
     buildTest('arrays/array_length_numbers.js', 2, 0);
     buildTest('arrays/array_pop_index_of_combination.js', 2, 0);
     buildTest('arrays/array_pop_length_decreases.js', 2, 0);
-    buildTest('arrays/array_pop_value_matches.js', 2, 0);
+    buildTest('arrays/array_pop_value_matches.js', 2, 1);
     buildTest('arrays/array_push_index_of_combination.js', 2, 0);
     buildTest('arrays/array_push_length_increases.js', 2, 0);
     buildTest('arrays/array_push_value_matches.js', 3, 0);
