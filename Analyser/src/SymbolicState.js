@@ -341,11 +341,10 @@ class SymbolicState {
         return result;
     }
 
-    
     symbolicSetField(base_c, base_s, field_c, field_s, value) {
         if (Config.arraysEnabled && base_c instanceof Array ) {
             // TODO Consider how to handle making arrays non-homogenous
-            if (typeof field_c === "number" && base_c.length === 0 && typeof value === "number" || typeof base_c[0] === typeof value) {
+            if (typeof field_c === "number" && base_s.getType() === typeof value) {
                 const newArray = base_s.setAtIndex(field_s, value);
                 newArray.setLength(base_s.getLength());
                 base_s.symbolic = newArray;

@@ -557,7 +557,7 @@ function BuildModels() {
             (c, _f, base, args, _r) => {
                 const concreteArray = c.state.getConcrete(base);
                 const concreteValue = c.state.getConcrete(base);
-                return c.state.isSymbolic(base) && concreteArray instanceof Array && ((concreteArray.length === 0 && typeof concreteValue === "number") || (typeof concreteArray[0] === typeof concreteValue));
+                return c.state.isSymbolic(base) && concreteArray instanceof Array && typeof concreteValue === c.state.asSymbolic(base).getType();
             },
             (c, _f, base, args, result) => {
                 const array = c.state.asSymbolic(base);
