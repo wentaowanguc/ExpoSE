@@ -554,34 +554,28 @@ function BuildModels() {
         let lengthCounter = 0;
 
         models[Array.prototype.push] = symbolicHook(
-            (c, _f, base, args, _r) => c.state.isSymbolic(base),
-            (c, _f, base, args, result) => {
-                
-                const array = c.state.asSymbolic(base);
-                const value = c.state.asSymbolic(args[0]);
-
+            (c, _f, base, args, _r) => {
                 const concreteArray = c.state.getConcrete(base);
                 const concreteValue = c.state.getConcrete(base);
-
-                if (concreteArray.length === 0 && typeof concreteValue === "number" || typeof concreteArray[0] === typeof concreteValue) {
-                    const ctx = c.state.ctx;
-
-                    const oldLength = array.getLength();
-                    const newLength = ctx.mkIntVar(`${array.getName()}_Length_${lengthCounter}`);
-                    lengthCounter++;
-
-                    c.state.pushCondition(ctx.mkGt(newLength, oldLength), true);
-                    
-                    const newArray = array.setAtIndex(oldLength, value);
-                    newArray.setLength(newLength);
-
-                    // Can't use array here as we need to modify in place
-                    base.symbolic = newArray;
-                    return value;
-                } else {
-                    // TODO this would make the array non-homogenous
-                }
+                return c.state.isSymbolic(base) && concreteArray.length === 0 && typeof concreteValue === "number" || typeof concreteArray[0] === typeof concreteValue;
+            },
+            (c, _f, base, args, result) => {
+                const array = c.state.asSymbolic(base);
+                const value = c.state.asSymbolic(args[0]);
                 
+                const ctx = c.state.ctx;
+
+                const oldLength = array.getLength();
+                const newLength = ctx.mkIntVar(`${array.getName()}_Length_${lengthCounter++}`);
+
+                c.state.pushCondition(ctx.mkGt(newLength, oldLength), true);
+                
+                const newArray = array.setAtIndex(oldLength, value);
+                newArray.setLength(newLength);
+
+                // Can't use array here as we need to modify in place
+                base.symbolic = newArray;
+                return value;                
             }
         );
 
