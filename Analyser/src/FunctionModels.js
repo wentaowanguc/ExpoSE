@@ -5,6 +5,8 @@ import ObjectHelper from './Utilities/ObjectHelper';
 import Log from './Utilities/Log';
 import Z3 from 'z3javascript';
 import Config from './Config';
+
+import { isNative } from './Utilities/IsNative';    
 import {
     WrappedValue,
     ConcolicValue
@@ -22,6 +24,21 @@ function Exists(array1, array2, pred) {
     }
 
     return false;
+}
+
+// Backported from newest ExpoSE version
+function ConcretizeIfNative() {
+    return function(f, base, args, result) {
+        let is_native = isNative(base);
+        if (is_native) {
+            let state = this.state;
+            Log.log('WARNING: Concretizing model for ' + f.name);
+            base = state.getConcrete(base);
+            args = map.call(args, x => state.getConcrete(x));
+        }
+
+        return f.apply(base, args);
+    };
 }
 
 function DoesntMatch(l, r) {
@@ -649,6 +666,9 @@ function BuildModels() {
     models[Array.prototype.shift] = NoOp();
     models[Array.prototype.unshift] = NoOp();
     models[Array.prototype.fill] = NoOp();
+
+    models[Function.prototype.apply] = ConcretizeIfNative();
+    models[Function.prototype.call] = ConcretizeIfNative();
 
     return models;
 }
