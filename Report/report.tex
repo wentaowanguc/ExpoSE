@@ -101,7 +101,7 @@ This will be written the day before the submission.
 %%% Introduction
 \chapter{Introduction}
 %%%%%%%%%%%%%%%%%%%%%% // TODO REWORK, CITE, AND PROOF READ
-Since its inception as a `glue' language for the web, JavaScript's popularity has surged, it's now a ubiquitous language that powers mobile, web, and server applications, however its dynamic nature and deceptive syntax often lead to subtle bugs and unintended behaviour which can be difficult to identify. Dynamic symbolic execution (DSE) is a technique that can be used to automatically identify bugs and generates tests for JavaScript however this requires modelling the semantics of the language in first order logic. JavaScript arrays, in particular, are an area of the language that requires tradeoffs, difficult design decisions, and careful consideration of language semantics when modelling due to their atypical properties. JavaScript arrays are special cases of objects and as a result have a settable length, can consist of multiple types, and are not necessarily indexed sequentially.
+Since its inception as a `glue' language for the web, JavaScript's popularity has surged, it's now a ubiquitous language that powers mobile, web, and server applications, however its dynamic nature and deceptive syntax often lead to subtle bugs and unintended behaviour which can be difficult to identify. Dynamic symbolic execution (DSE) is a technique that can be used to automatically identify bugs and generates tests for JavaScript however this requires modelling the semantics of the language in first order logic. JavaScript arrays, in particular, are an area of the language that requires tradeoffs, difficult design decisions, and careful consideration of language semantics when modelling due to their atypical properties. JavaScript arrays are special cases of objects and as a result have a directly mutable length, can consist of multiple types, and are not necessarily indexed sequentially.
 
 My work extends ExpoSE, a tool for DSE, by describing an encoding for homogeneously typed JavaScript arrays in first order logic, implementing support in ExpoSE for symbolic arrays, and modelling a selection of prototype functions. I demonstrate that as a result of these extensions results in an increased test coverage of popular several popular JavaScript libraries and describe a new bug found in a popular Array ES6 polyfill. I also describe some of the limitations and 
 
@@ -481,7 +481,7 @@ JavaScript also has some idiosyncrasies for testing equality which are underpinn
 \subsection{Objects and Prototypical Inheritance}
 Typical object-oriented languages define classes which guarantee the exact sets of fields and methods an instance of the class will possess. Instances of the class can be thought of as clones or replicas of the class which mimic the class' behaviour. JavaScript instead uses prototypical inheritance, in which objects have a template or prototype which define a set of properties an object has, but objects are also free to declare their own set of properties and even overwrite their prototype's properties. 
 
-Consider the example in figure \ref{fig:js-prototypical-inheritance}, in which we create a prototype, define a new object of that prototype, and then overwrite one of the values of the prototype.
+Consider the example in Figure \ref{fig:js-prototypical-inheritance}, in which we create a prototype, define a new object of that prototype, and then overwrite one of the values of the prototype.
 
 \begin{figure}[h]
 \begin{verbatim}
@@ -521,7 +521,7 @@ $ orange.hasOwnProperty('print') // print is now defined in orange as well
 
 A prototype may itself have a prototype, the sequence of prototypes which define the properties of a given object are referred to as a prototype chain~\cite{EcmaScript, borning1986classes}. By default, all created objects inherit from\lstinline{Object.prototype} and functions, as a special class of object, inherit from \lstinline{Function.prototype} which inherits from\lstinline{Object.prototype}. These prototypes are part of the EMCAScript standard and provide utilities to make working with objects of that prototype easier. For example,\lstinline{Object.prototype} provides functions for iterating over all the values of an object or all the keys in the object.
 
-Consider the prototype chain in figure \ref{fig:js-prototypal-chain}.
+Consider the prototype chain in Figure \ref{fig:js-prototypal-chain}.
 
 \begin{figure}[h]
 \begin{verbatim}
@@ -580,7 +580,7 @@ In the example above we have a prototype chain length of three. Our \lstinline{o
 \subsection{Arrays}
 Unlike other languages, JavaScript does not model arrays as continuously indexed tuples. Instead arrays are  a special form of object where array elements are properties that satisfy the following test for a key ToString(ToUint32(k)) === k \&\& ToUint32(k) !== 2 \textasciicircum 32 - 1). In simpler terms, an array is a special case of an object where the array elements are any value where the property can be coerced to a a positive integer number less than 2\textasciicircum32\textasciicircum - 1. These array elements are treated differently to regular properties by array prototypes and the length property. 
 
-The length of an array is a property of the array prototype which tracks the highest index in the array. Note, that the highest index of the array does not necessarily track the number of elements in the array as arrays do not enforce any kind of ordering on their properties making it possible to create a non-contiguous array, an array with 'holes' in it, as shown in the example in figure \ref{fig:js-array-length}. The length product is not read-only as you might expect. If you increase length empty elements will be added to the end of the array and decreasing the length will truncate the array to satisfy the new length.
+The length of an array is a property of the array prototype which tracks the highest index in the array. Note, that the highest index of the array does not necessarily track the number of elements in the array as arrays do not enforce any kind of ordering on their properties making it possible to create a non-contiguous array, an array with 'holes' in it, as shown in the example in Figure \ref{fig:js-array-length}. The length product is not read-only as you might expect. If you increase length empty elements will be added to the end of the array and decreasing the length will truncate the array to satisfy the new length.
 
 \begin{figure}[h]
 \begin{verbatim}
@@ -618,7 +618,7 @@ $ arr[-1]
 \end{figure}
 
 \subsection{Prototype Methods}
-The array prototype has a large number of helper functions which developers frequently take advantage of, a number of which were added in the latest version of the EMCAScript standard~\cite{EcmaScript}. \ref{table:array-prototype} has some of the more commonly used and interesting functions.
+The array prototype has a large number of helper functions which developers frequently take advantage of, a number of which were added in the latest version of the EMCAScript standard~\cite{EcmaScript}. Table \ref{table:array-prototype} has some of the more commonly used and interesting functions.
 \afterpage{%
     \clearpage% Flush earlier floats (otherwise order might not be correct)
     \begin{landscape}% Landscape page
