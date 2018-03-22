@@ -4,9 +4,8 @@
 \usepackage{listings}
 \usepackage{svg}
 \usepackage{afterpage}
-
 \usepackage{pdflscape}
-
+\usepackage{listings}
 \usepackage{amsmath}
 
 \lstset{basicstyle=\ttfamily}
@@ -15,7 +14,7 @@
 %%% Input project details
 \def\studentname{Arran France}
 \def\reportyear{2018}
-\def\projecttitle{Array Support for ExpoSE}
+\def\projecttitle{Array Support for Dynamic Symbolic Execution of JavaScript}
 \def\supervisorname{Dr Johannes Kinder}
 \def\degree{BSc (Hons) in Software Engineering}
 \def\fullOrHalfUnit{Full Unit} % indicate if you are doing the project as a Full Unit or Half Unit
@@ -73,14 +72,17 @@ Solution: Symbolic execution, and specificially ExpoSE, provides a solution.
 Context: Arrays are widespread in JavaScript, they have unique properties: a large collection of standard library functions, object-like behaviour, gaps. 
 My Work: Describe the functions modelled, the array encoding in Z3, and a aummary of the scope of testing and results.
 
+%%%%%%%%%%%%%%%%%%%%%%
+%%% Symbolic Execution
 \chapter{Symbolic Execution}
 
-\section{Introduction to Symbolic Excecution}
+%%%%%%%%%%%%%%%%%%%%%% Overview
+\section{Overview}
 
-Symbolic execution is a technique for testing program correctness initially proposed in the 1970s ~\cite{king1976symbolic} ~\cite{boyer1975select}. Classically, it's the process of executing a program by representing its variables as arbitrary symbols rather than concrete values. Execution of the program occurs using these symbolic inputs by extending the basic operators and semantics of the program's language to use symbols and produce symbolic formulas rather than concrete values. In doing so, each symbolic execution tests many actual instances of execution. If statements and language features that cause execution to diverge are represented as a path condition, a conjunction of conditions on symbols that must be satisfied. Evaluating the constraint allows you to identify whether a path is feasible and if so, the satisfied constraint provides the set of concrete inputs that the path could be run under ~\cite{1976}. At the end of execution the path condition, the conjunction of branch conditions taken to the current point of execution, provides a unique representation of a path tested through the program and when solved using a constraint solver produces a set of inputs that when run take the same path through the program as the symbolic execution ~\cite{godefroid2008automated} ~\cite{godefroid2005dart}. By exploring a program's paths exhaustively (or as thoroughly as possible within either a time or path count constraint) combining symbolic execution with techniques to compare symbolic output with expected values it's possible to test program correctness ~\cite{king1976symbolic}.
+Symbolic execution is a technique for testing program correctness initially proposed in the 1970s ~\cite{king1976symbolic} ~\cite{boyer1975select}. Classically, it is the process of executing a program by representing its variables as symbols rather than concrete values. Execution of the program occurs using these symbolic inputs by extending the basic operators and semantics of the program's language to use symbols and produce symbolic formulas rather than concrete values. In doing so, each symbolic execution tests many actual instances of execution. If statements and language features that cause execution to diverge are represented as a path condition, a conjunction of conditions on symbols that must be satisfied. At the end of execution the path condition, the conjunction of branch conditions taken to the current point of execution, provides a unique representation of a path tested through the program and when solved using a constraint solver produces a set of inputs that when run take the same path through the program as the symbolic execution ~\cite{godefroid2008automated} ~\cite{godefroid2005dart}.
 
 \begin{figure}[h]
-\begin{verbatim}
+\begin{lstlisting}
 1 function abs_sum (x, y){
 2  if (x < 0)
 3    x = x * -1
@@ -88,16 +90,14 @@ Symbolic execution is a technique for testing program correctness initially prop
 5    y = y * -1
 6  return x + y
 7 }
-\end{verbatim}
+\end{lstlisting}
 \caption{\label{fig:abs-sum} Absolute Sum Function}
 \end{figure} 
 
-For example, consider the program above (figure 2.1) which returns the sum of the absolute values of two values. There are four possible paths that can be taken through the program. The first is where neither if branches are entered, the second is where the value of \lstinline{x}  is less than zero, the third is where the value of \lstinline{y}  is less than zero, and the fourth is where both \lstinline{x}  and \lstinline{y}  is less than zero. The process for symbolically executing this program classically is as follows. The function is executed with two symbolic values $x'$ and $y'$ and a path condition $pc$, "the accumulator of properties which inputs must satisfy ... to follow ... a particular path" ~\cite{king1976symbolic}, is initialised to $true$. When a branching statement (line 2 or 4) is reached the constraint solver is queried to see if the branch condition is feasible given the current path condition. If condition is satisfiable then execution forks to explore the new path and $pc$ becomes $pc \land bc$ , where $bc$ is the branch condition. This process repeats until the program terminates and every path is explored. The table 2.1 shows the path condition, symbolic results, and the constraint solver queries and results for the execution.
+For example, consider the program described in Figure \ref{fig:abs-sum} which returns the sum of the absolute values of two values. There are four possible paths that can be taken through the program. The first is where neither if branches are entered, the second is where the value of \lstinline{x}  is less than zero, the third is where the value of \lstinline{y}  is less than zero, and the fourth is where both \lstinline{x}  and \lstinline{y} are less than zero. The process for symbolically executing this program classically is as follows. The function is executed with two symbolic values $x'$ and $y'$ and a path condition $pc$, "the accumulator of properties which inputs must satisfy ... to follow ... a particular path" ~\cite{king1976symbolic}, is initialised to $true$. When a branching statement (line 2 or 4) is reached the constraint solver is queried to see if the branch condition is feasible given the current path condition. If condition is satisfiable then execution forks to explore the new path and $pc$ becomes $pc \land bc$  where $bc$ is the branch condition. This process repeats until the program terminates and every path is explored. The table \ref{abs-sum-se-table} shows the path condition, symbolic results, and the constraint solver queries and results for the execution.
 
 \begin{table}[]
 \centering
-\caption{Absolute Sum Symbolic Execution Results}
-\label{abs-sum-se-table}
 \begin{tabular}{|l|l|l|l|}
 \hline
 $pc$                & Result  & Constraint Solver Queries & Query Result \\ \hline
@@ -106,18 +106,18 @@ $x >= \land y < 0$  & $x - y$ & $x <0 $                   & SAT          \\ \hli
 $x < \land y >= 0$  & $-x+y$  & $x<0 \land y < 0 $        & SAT          \\ \hline
 $x < \land y < 0$   & $-x-y$  &                           &              \\ \hline
 \end{tabular}
+\caption{Absolute Sum Symbolic Execution Results}
+\label{abs-sum-se-table}
 \end{table}
 
-Historically, this technique has been impractical due to the limitations on computing resources and the capabilities of automated theorem provers~\cite{king1976symbolic}. However in the 2000s there were a a number of advancements in the technique by DART~\cite{godefroid2005dart} and EXE ~\cite{cadar2008exe} which were made feasible due to improvements in computer hardware and SMT solvers ~\cite{de2011satisfiability} .
+Historically, this technique has been impractical due to the limitations on computing resources and the capabilities of automated theorem provers~\cite{king1976symbolic}. However in the 2000s there were a a number of advancements in the technique by DART~\cite{godefroid2005dart} and EXE ~\cite{cadar2008exe} and improvements in computer hardware and SMT solvers ~\cite{de2011satisfiability} .
 
-In these modern implementations, the program is run both concretely and symbolically in so called concolic execution. In concolic execution, the program is instrumented to run concretely whilst the program state is shadowed by symbolic variables allowing the concrete execution to 'drive' the symbolic execution. Unlike pure symbolic execution, concolic execution requires its initial input to be concrete, this input can be random or crafted to fit the target program~\cite{godefroid2008grammar}, ~\cite{cadar2013symbolic}. As concolic execution concretely executes programs, rather than just modelling the semantics of the language, you can be sure that any bugs found are actual bugs. Additionally, when a constraint cannot be solved, concolic execution allows concrete values to be substituted for unsolvable elements of constraints ~\cite{sen2007concolic}, ~\cite{sen2005cute}.
+In these modern implementations, the program is run both concretely and symbolically in so called concolic execution. In concolic execution, the program is instrumented to run concretely whilst the program state is shadowed by symbolic variables allowing the concrete execution to`drive' the symbolic execution. Unlike pure symbolic execution, concolic execution requires its initial input to be concrete, this input can be random or crafted to fit the target program~\cite{godefroid2008grammar} ~\cite{cadar2013symbolic}. As concolic execution concretely executes programs, rather than just modelling the semantics of the language, you can be sure that any bugs found are actual bugs. Additionally, when a constraint cannot be solved, concolic execution allows concrete values to be substituted for unsolvable elements of constraints ~\cite{sen2007concolic} ~\cite{sen2005cute}.
 
-Consider the following example of concolic execution testing the program described in figure 1. Inputs for \lstinline {x} and \lstinline {y} are randomly generated, for instance $x=217$ and $y=931$. These then guide the execution to not visit any branches, producing the $pc$ of $x >= 0 \land y >=0$. This path condition can then be negated to produce further paths. Using the DART~\cite{godefroid2005dart} style directed symbolic execution the following paths are generated.
+Consider the following example of concolic execution testing the program described in  Figure~\ref{fig:abs-sum}. Inputs for \lstinline {x} and \lstinline {y} are randomly generated, for instance $x=217$ and $y=931$. These then guide the execution to not visit any branches, producing the $pc$ of $x >= 0 \land y >=0$. This path condition can then be negated to produce further paths. Using the DART~\cite{godefroid2005dart} style directed symbolic execution paths are generated as per table~\ref{abs-sum-ce-table}.
 
 \begin{table}[]
 \centering
-\caption{Absolute Sum Concolic Execution Results}
-\label{abs-sum-ce-table}
 \begin{tabular}{|l|l|l|l|l|}
 \hline
 Input (x, y) & $pc$ & Result & Constraint Solver Queries & Query Result \\ \hline
@@ -126,30 +126,32 @@ Input (x, y) & $pc$ & Result & Constraint Solver Queries & Query Result \\ \hlin
 -2, 1 & $x < \land y >= 0$ & $-x+y$ & $x<0 \land y < 0 $ & SAT \\ \hline
 -2, -7 & $x < \land y < 0$ & $-x-y$ &  &  \\ \hline
 \end{tabular}
+\caption{Absolute Sum Concolic Execution Results}
+\label{abs-sum-ce-table}
 \end{table}
 
-\subsection{Finding and Choosing Paths}
 
-Although, in theory, symbolic execution will exhaustively search through all feasible paths, as the length of the program under test increases the number of paths in the program increases roughly exponentially ~\cite{cadar2013symbolic}. As these symbolic execution tools are bounded by real world time constraint, paths must be chosen carefully in order to prioritise exploring 'interesting' cases in the time available.
+%%%%%%%%%%%%%%%%%%%%%%  Finding and Choosing Paths
+\section{Finding and Choosing Paths}
 
-In EXE, and other more traditional methods, paths are found by building a control flow graph and then exploring the graph using a form of breadth-first search (BFS) or depth-first search base. Neither BFS or DFS are particularly well suited for the problem as neither is able to prioritise 'interesting paths', they simple try to exhaustively explore all the paths in a program. DFS is especially flawed due to its ability to get 'stuck' in a symbolically bounded loop ~\cite{cadar2008exe}. 
+Although, in theory, symbolic execution will exhaustively search through all feasible paths, as the length of the program under test increases the number of paths in the program increases roughly exponentially ~\cite{cadar2013symbolic}. As these symbolic execution tools are bounded by real world time constraint, paths must be chosen carefully in order to prioritise exploring `interesting' cases in the time available.
 
-SAGE, by contrast, uses a 'generational search'. Following the initial input, paths are generated by repeatedly negating the conditions in the path condition that was explored. Then paths are prioritised using a priority queue ~\cite{godefroid2005dart}.
+In EXE, and other more traditional methods, paths are found by building a control flow graph and then exploring the graph using a form of breadth-first search (BFS) or depth-first search base. Neither BFS or DFS are particularly well suited for the problem as neither is able to prioritise`interesting paths', they simple try to exhaustively explore all the paths in a program. DFS is especially flawed due to its ability to get `stuck' in a symbolically bounded loop ~\cite{cadar2008exe}. 
 
-In detail, the algorithm for finding new test inputs is as follows: starting with an initial input $i$ which has an attribute, $bound$ of 0, and a priority queue $pq$ the program executes symbolically and returns the path condition for its execution, $pc$, in the form of a sequence of predicates $c_1 \land c_2 \land ... c_n $.  To explore alternatives to the branches that were chosen in the last execution, for $j = i.bound ... n$ where $n$ is the number of predicates in $pc$,  new inputs are generated by negating the $c_j$ and solving the new constraint ~\cite{godefroid2005dart}, ~\cite{godefroid2008grammar}.  Each new input is pushed to $pq$ with a bound of $j$. $bound$ is used to prevent path conditions being explored multiple times. The paths in the priority queue can then be prioritised using a chosen heuristic ~\cite{cadar2013symbolic}. 
+SAGE, by contrast, uses a \textit{generational search}. Following the initial input, paths are generated by repeatedly negating the conditions in the path condition that was explored. Then paths are prioritised using a priority queue~\cite{godefroid2005dart}.
 
-\subsection{Constraint Solving}
+In detail, the algorithm for finding new test inputs is as follows: starting with an initial input $i$ which has an attribute, $bound$ of 0, and a priority queue $pq$ the program executes symbolically and returns the path condition for its execution, $pc$, in the form of a sequence of predicates $c_1 \land c_2 \land ... c_n $.  To explore alternatives to the branches that were chosen in the last execution, for $j = i.bound ... n$ where $n$ is the number of predicates in $pc$,  new inputs are generated by negating the $c_j$ and solving the new constraint ~\cite{godefroid2005dart} ~\cite{godefroid2008grammar}.  Each new input is pushed to $pq$ with a bound of $j$. $bound$ is used to prevent path conditions being explored multiple times. The paths in the priority queue can then be prioritised using a chosen heuristic ~\cite{cadar2013symbolic}. 
 
 Constraint solvers are used for two purposes in symbolic execution: determining the satisfiability of branch/path constraints and producing concrete input for satisfiable conditions. Despite continual improvements in the performance of constraint solvers, calls to solvers are typically the bottleneck is symbolic execution - fortunately there are a number of possible optimisations that can be done to reduce the burden on constraint solvers and achieve better performance ~\cite{cadar2013symbolic}.
 
-\section{Caching}
+
+%%%%%%%%%%%%%%%%%%%%%%  Finding and Choosing Paths
+\section{Constraint Optimisations}
 Frequently constraints will need to be solved multiple times throughout the course of execution. Instead of calling the constraint solver multiple times for the same constraint, satisfying results can be stored in a map of constraints to satisfying results. Then, instead of directly calling the constraint solver directly, a cache lookup can be performed first to see if there is a satisfying result \cite{cadar2008klee}.
 
 This caching process can be extended to evaluate the strength of formulas. If there is a satisfying result for a stronger constraint than the one being queried then that satisfying result will be valid for the weak constraint. For instance, if the cache contains the following mapping $ (x > 3 \land y <1) \land (x < 10) \implies x = 5 \land y =  -214$ then the satisfying result will be valid for the condition $x > 3 \land y < 1 $ . This caching scheme can also be used to cache unsatisfiable constraints ~\cite{cadar2008klee}.
 
-\subsection{Removing Redundant Constraints}
-
-The majority of queries to the constraint solver in concolic execution are to determine the feasibility of a given branch. In most cases, a branch's condition will not depend on all of the variables in a path constraint allowing redundant constraints to be eliminated before passing the constraint to constraint solver. Although if this technique is applied the constraint solver will only return satisfiable values for non-eliminated variables, the existing concrete values of the other variables can be used to produce a full set of inputs ~\cite{cadar2013symbolic}.
+In most cases, a branch's condition will not depend on all of the variables in a path constraint allowing redundant constraints to be eliminated before passing the constraint to constraint solver. Although if this technique is applied the constraint solver will only return satisfiable values for non-eliminated variables, the existing concrete values of the other variables can be used to produce a full set of inputs ~\cite{cadar2013symbolic}.
 
 For instance, consider the function in figure 2.2. If the existing path constraint is  $(x < 0 ) \land ( z  > 5) \land (y < 13) \land (y + x > 15) $ and the symbolic execution negates the the last path condition to explore a new path:  $ (x < 0) \land (z > 5) \land (y < 13) \land \lnot(y + x > 15)$ then the  $z > 5$ constraint can be eliminated as $z$ does not influence the $y + x > 15$ branch.
 
@@ -170,13 +172,13 @@ function unlikely_function (x, y, z){
 \caption{\label{fig:example-function} Example Function}
 \end{figure} 
 
-\section{Symbolic Execution for Bug Detection}
+\section{Bug Detection}
 
 Symbolic execution can be used for a variety of purposes, for instance: generating test inputs, finding infeasible paths,  finding equivalent (and therefore redundant code) but its typical application, and the focus of this project, is bug detection. 
 
 In classical symbolic execution, as no actual code is executed bugs must be detected through the use of logical assertions that are tested by the constraint solver.  EFFIGY, described in ~\cite{king1976symbolic} uses the concept of an input predicate and an output predicate to determine program correctness. If for all inputs which satisfy the input predicate also satisfy the output predicate then the program is said to be correct. These are implemented through the use of \lstinline{ASSERT}, \lstinline{ASSUME}, and \lstinline{PROVE} statements.  In modern symbolic execution tools such as DART, rather than having to add additional assertions bugs are detected when runtime exceptions occur ~\cite{godefroid2005dart}.
 
-Symbolic execution offers a number advantages over typical testing techniques. Unit and integration testing are expensive and require a large amount of effort to reach 100\% coverage. In addition, they require a large amount of mock and driver code to be written, often exceeding the size of the program under test. Unit testing and integration often miss 'corner case' bugs, which are not considered either when the program is developed or when the system is tested.
+Symbolic execution offers a number advantages over typical testing techniques. Unit and integration testing are expensive and require a large amount of effort to reach 100\% coverage. In addition, they require a large amount of mock and driver code to be written, often exceeding the size of the program under test. Unit testing and integration often miss `corner case' bugs, which are not considered either when the program is developed or when the system is tested.
 
 Static analysis is much cheaper to run but at the cost of precision. Static analysis often produces false reports and consequently also requires a large amount of time spent to identify actual faults. Static analysis often may struggle to identify subtle bugs due to the lack of information available outside of runtime, and will typically perform worse on weakly typed languages.
 
@@ -185,18 +187,18 @@ Symbolic execution, like static analysis, requires no additional effort on the p
 \chapter{SMT}
 
 \section{A Short History of Automated Reasoning}
-The notion of automated reasoning has long existed, the most prominent early example being Gottfied Leibniz's dream of a machine which could automatically determine the truth of any assertion, "If controversies were to arise, there would be no more need of dispute between two philosophers than between two accountants". Leibniz's dream was later echoed in in David Hilbert's challenge to the 1928 International Congress of Mathematicians, known now as the \textit{Entscheidungsproblem} or decision problem, in which he posed the question (paraphrased here) "Is there a mechanical procedure which when fed any mathematical proposition determines in a finite number of steps whether or not the statement is provable from a set of axioms, using first-order logic?" ~\cite{smtwheredowegofromhere} ~\cite{automatedreasoningbooklet2004} 
+The notion of automated reasoning has long existed, the most prominent early example being Gottfied Leibniz's dream of a machine which could automatically determine the truth of any assertion, ``If controversies were to arise, there would be no more need of dispute between two philosophers than between two accountants". Leibniz's dream was later echoed in in David Hilbert's challenge to the 1928 International Congress of Mathematicians, known now as the \textit{Entscheidungsproblem} or decision problem, in which he posed the question (paraphrased here) ``Is there a mechanical procedure which when fed any mathematical proposition determines in a finite number of steps whether or not the statement is provable from a set of axioms, using first-order logic?" ~\cite{smtwheredowegofromhere} ~\cite{automatedreasoningbooklet2004} 
 
 At the time Hilbert proposed his challenge no formal notion of a mechanical procedure, or algorithm, existed. In 1935/6 Alonzo Church and Alan Turing independently defined equivalent notions of an algorithm, lambda calculus and Turing machines, and found a negative result for the \textit{Entscheidungsproblem}  by proving that first-order logic is undecidable. ~\cite{turingchurchproof}
 
 \textbf{Johannes - should I expand this with an informal proof of why the Entscheidungsproblem is infeasible in terms in terms of the halting problem?}
 
-Despite first-order being generally undecidable, there are some first order theories which are. In 1954, Martin Davis implemented a decision procedure for Presburger arithmetic, a decidable first-order theory of arithmetic - more limited than the general undecidable Peano's arithmetic, producing the first computed mathematical proof. He remarked later, "Its great triumph was to prove that the sum of two even numbers is even," an acknowledgement of the achievement of the program but also its limitations. ~\cite{excapebarrettriseofsmt} ~\cite{automatedreasoningbooklet2004}
+Despite first-order being generally undecidable, there are some first order theories which are. In 1954, Martin Davis implemented a decision procedure for Presburger arithmetic, a decidable first-order theory of arithmetic - more limited than the general undecidable Peano's arithmetic, producing the first computed mathematical proof. He remarked later, ``Its great triumph was to prove that the sum of two even numbers is even," an acknowledgement of the achievement of the program but also its limitations. ~\cite{excapebarrettriseofsmt} ~\cite{automatedreasoningbooklet2004}
 
 From the 1950s onwards there was a steady increase in the body of work related to automated reasoning including work by Davis and Putman, John Robinson's proof of the soundness and completeness of first order resolution, and Simon and Newell's Logic Theorist however this drastically accelerated took off in 2000s following the publication of the Chaff SAT solver and a renewed interested in theory solving. ~\cite{excapebarrettriseofsmt}
 
 \section{SAT}
-One of the simplest problems in the realm of automated reasoning is the the SAT problem. The SAT problem asks the question "Given a formula of Boolean variables is there an assignment of true/false values that makes the formula true?".  ~\cite{smtwheredowegofromhere}
+One of the simplest problems in the realm of automated reasoning is the the SAT problem. The SAT problem asks the question ``Given a formula of Boolean variables is there an assignment of true/false values that makes the formula true?".  ~\cite{smtwheredowegofromhere}
 
 For instance, given for the following formula, the answer would be no, the problem is unsatsifiable:,  $(a \lor b) \land (b \land \lnot a) \land \lnot b $.
 
@@ -322,13 +324,13 @@ For each literal, its theory solver checks the satisfiability. In this example, 
 
 \chapter{JavaScript}
 
-JavaScript was initially created by a team at Netscape in 1996 with the goal of bringing interactivity to the web via a scripting language. According to Brendan Eich (the creator of JavaScript), up until this point the web was "static, text-heavy, with at best images in tables or floating on the right or left"~\cite{AZProgrammingLanguages}. 
+JavaScript was initially created by a team at Netscape in 1996 with the goal of bringing interactivity to the web via a scripting language. According to Brendan Eich (the creator of JavaScript), up until this point the web was ``static, text-heavy, with at best images in tables or floating on the right or left"~\cite{AZProgrammingLanguages}. 
 
-Brendan was initially recruited by Netscape with the aim of implementing Scheme, a dialect of Lisp that supports first-class functions ~\cite{dybvig1996scheme}, in the browser however by this time Sun and Netscape were negotiating to bring Java to Netscape Navigator~\cite{popularityofjavascript}. An internal debate occurred about the need for two languages but Eich and other influential developers at both Sun and Netscape believed that the two languages would serve different audiences. 'Professional' developers would veer towards Java for building logic heavy components and designers and amateurs would use the scripting language as a "glue" for joining together components~\cite{AZProgrammingLanguages}.
+Brendan was initially recruited by Netscape with the aim of implementing Scheme, a dialect of Lisp that supports first-class functions ~\cite{dybvig1996scheme}, in the browser however by this time Sun and Netscape were negotiating to bring Java to Netscape Navigator~\cite{popularityofjavascript}. An internal debate occurred about the need for two languages but Eich and other influential developers at both Sun and Netscape believed that the two languages would serve different audiences. 'Professional' developers would veer towards Java for building logic heavy components and designers and amateurs would use the scripting language as a `glue' for joining together components~\cite{AZProgrammingLanguages}.
 
-Despite targeting a different audience Mocha, the language that would later evolve into JavaScript, was required by management to "look like Java", according to Eich, ruling out the existing languages Perl, Python, and Scheme. Eventually Eich settled on "Scheme-ish first-class functions and Self-ish (albeit singular) prototypes as the main ingredients" ~\cite{popularityofjavascript}. Mocha also inherited a number of confusing Java language features such as the distinction between primitives and objects (e.g.\lstinline{string}vs.\lstinline{String}) and the\lstinline{Date}constructor which is a port of Java's\lstinline{java.util.Date}, complete with the Y2K bug ~\cite{brendaneichtimetomakejscomment}. Perl and Python are also credited to influencing Mocha's string handling and regular expressions and AWK inspired the use of the\lstinline{function}keyword briefhistoryofjavascript. The first version of the language had an incredibly short development period. Eich claims he spent "about ten days" developing the first JavaScript interpreter~\cite{AZProgrammingLanguages}.
+Despite targeting a different audience Mocha, the language that would later evolve into JavaScript, was required by management to ``look like Java", according to Eich, ruling out the existing languages Perl, Python, and Scheme. Eventually Eich settled on ``Scheme-ish first-class functions and Self-ish (albeit singular) prototypes as the main ingredients" ~\cite{popularityofjavascript}. Mocha also inherited a number of confusing Java language features such as the distinction between primitives and objects (e.g.\lstinline{string}vs.\lstinline{String}) and the\lstinline{Date}constructor which is a port of Java's\lstinline{java.util.Date}, complete with the Y2K bug ~\cite{brendaneichtimetomakejscomment}. Perl and Python are also credited to influencing Mocha's string handling and regular expressions and AWK inspired the use of the\lstinline{function}keyword briefhistoryofjavascript. The first version of the language had an incredibly short development period. Eich claims he spent ``about ten days" developing the first JavaScript interpreter~\cite{AZProgrammingLanguages}.
 
-After JavaScript (abandoning its previous names, Mocha and LiveScript) was released in Netscape Navigator 2 Microsoft began work on JScript, an equivalent language which shipped with Internet Explorer 3. Eich says that "At some point in late summer or early fall 1996, it became clear to me that JS was going to be standardized. Bill Gates was bitching about us changing JS all the time."~\cite{newjavascriptmoduleowner} This led to JavaScript being standardised by Ecma International, an industry group that produces information standards, as ECMAScript in 1997. Since 1997 ECMAScript, now in its sixth version, has also been adopted as an ISO/IEC standard~\cite{ISO/IEC16262:2011}.
+After JavaScript (abandoning its previous names, Mocha and LiveScript) was released in Netscape Navigator 2 Microsoft began work on JScript, an equivalent language which shipped with Internet Explorer 3. Eich says that ``At some point in late summer or early fall 1996, it became clear to me that JS was going to be standardized. Bill Gates was bitching about us changing JS all the time."~\cite{newjavascriptmoduleowner} This led to JavaScript being standardised by Ecma International, an industry group that produces information standards, as ECMAScript in 1997. Since 1997 ECMAScript, now in its sixth version, has also been adopted as an ISO/IEC standard~\cite{ISO/IEC16262:2011}.
 
 A key moment in JavaScript's history occurred when web developers became fascinated with Ajax, a set of techniques and technologies for making interactive websites, popularised by Google Suggest and Google Maps, spurring on an advancement in interactivity of modern websites ~\cite{ajax}. To alleviate the pain of manipulating the Document Object Model (DOM), the hierarchy of objects that make up a HTML web page, and to deal with the problem that  'writing JavaScript should be fun' jQuery was released in 2006~\cite{historyofjquery} and commanded immediate popularity. In 2007, large tech companies including Digg, Google, Intel, Amazon, and the BBC all reported using jQuery ~\cite{historyofjquery} and in the 12 months between Sept 2007 and 2008 jquery.com received 13.5 million unique visitors~\cite{stateofjquery}. As early as 2006 it's clear that although JavaScript is a powerful and popular language, in part due to its low barrier of entry and its unique place as the default language of the web, there are frustrations with the difficulty in reasoning about and writing JavaScript.
 
