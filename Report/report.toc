@@ -3,28 +3,28 @@
 \contentsline {chapter}{\numberline {2}Symbolic Execution}{5}{chapter.2}
 \contentsline {section}{\numberline {2.1}Overview}{5}{section.2.1}
 \contentsline {section}{\numberline {2.2}Finding and Choosing Paths}{6}{section.2.2}
-\contentsline {section}{\numberline {2.3}Constraint Optimisations}{7}{section.2.3}
+\contentsline {section}{\numberline {2.3}Constraint Optimisations}{8}{section.2.3}
 \contentsline {section}{\numberline {2.4}Bug Detection}{8}{section.2.4}
-\contentsline {chapter}{\numberline {3}Automated Decision Procedures}{9}{chapter.3}
-\contentsline {section}{\numberline {3.1}A Short History of Automated Reasoning}{9}{section.3.1}
-\contentsline {section}{\numberline {3.2}SAT}{9}{section.3.2}
-\contentsline {subsection}{\numberline {3.2.1}DPLL}{10}{subsection.3.2.1}
-\contentsline {subsection}{\numberline {3.2.2}CDCL}{10}{subsection.3.2.2}
-\contentsline {section}{\numberline {3.3}SMT}{12}{section.3.3}
-\contentsline {subsection}{\numberline {3.3.1}Example Lazy Approach}{12}{subsection.3.3.1}
-\contentsline {subsection}{\numberline {3.3.2}DPPL(T)}{13}{subsection.3.3.2}
-\contentsline {subsection}{\numberline {3.3.3}Combining Theory Solvers}{13}{subsection.3.3.3}
-\contentsline {chapter}{\numberline {4}JavaScript}{14}{chapter.4}
-\contentsline {section}{\numberline {4.1}Javascript Design}{15}{section.4.1}
-\contentsline {subsection}{\numberline {4.1.1}Type System}{15}{subsection.4.1.1}
-\contentsline {subsection}{\numberline {4.1.2}Objects and Prototypical Inheritance}{18}{subsection.4.1.2}
-\contentsline {subsection}{\numberline {4.1.3}Arrays}{18}{subsection.4.1.3}
-\contentsline {subsection}{\numberline {4.1.4}Prototype Methods}{19}{subsection.4.1.4}
-\contentsline {section}{\numberline {4.2}Ensuring the Correctness of JavaScript}{23}{section.4.2}
-\contentsline {chapter}{\numberline {5}Implementation Details}{25}{chapter.5}
-\contentsline {section}{\numberline {5.1}Array Support Architecture}{25}{section.5.1}
-\contentsline {subsection}{\numberline {5.1.1}Analyser}{25}{subsection.5.1.1}
-\contentsline {subsection}{\numberline {5.1.2}Z3JS}{26}{subsection.5.1.2}
-\contentsline {subsection}{\numberline {5.1.3}Other Interesting Engineering Techniques}{27}{subsection.5.1.3}
-\contentsline {chapter}{\numberline {6}Results}{28}{chapter.6}
-\contentsline {section}{\numberline {6.1}Conclusion}{28}{section.6.1}
+\contentsline {chapter}{\numberline {3}Automated Decision Procedures}{10}{chapter.3}
+\contentsline {section}{\numberline {3.1}A Short History of Automated Reasoning}{10}{section.3.1}
+\contentsline {section}{\numberline {3.2}SAT}{10}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}DPLL}{11}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}CDCL}{11}{subsection.3.2.2}
+\contentsline {section}{\numberline {3.3}SMT}{13}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}Example Lazy Approach}{13}{subsection.3.3.1}
+\contentsline {subsection}{\numberline {3.3.2}DPPL(T)}{14}{subsection.3.3.2}
+\contentsline {subsection}{\numberline {3.3.3}Combining Theory Solvers}{14}{subsection.3.3.3}
+\contentsline {chapter}{\numberline {4}JavaScript}{15}{chapter.4}
+\contentsline {section}{\numberline {4.1}Javascript Design}{16}{section.4.1}
+\contentsline {subsection}{\numberline {4.1.1}Type System}{16}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.2}Objects and Prototypical Inheritance}{19}{subsection.4.1.2}
+\contentsline {subsection}{\numberline {4.1.3}Arrays}{19}{subsection.4.1.3}
+\contentsline {subsection}{\numberline {4.1.4}Prototype Methods}{20}{subsection.4.1.4}
+\contentsline {section}{\numberline {4.2}Ensuring the Correctness of JavaScript}{24}{section.4.2}
+\contentsline {chapter}{\numberline {5}Implementation Details}{26}{chapter.5}
+\contentsline {section}{\numberline {5.1}Array Support Architecture}{26}{section.5.1}
+\contentsline {subsection}{\numberline {5.1.1}Analyser}{26}{subsection.5.1.1}
+\contentsline {subsection}{\numberline {5.1.2}Z3JS}{27}{subsection.5.1.2}
+\contentsline {subsection}{\numberline {5.1.3}Other Interesting Engineering Techniques}{28}{subsection.5.1.3}
+\contentsline {chapter}{\numberline {6}Results}{29}{chapter.6}
+\contentsline {section}{\numberline {6.1}Conclusion}{29}{section.6.1}
