@@ -407,6 +407,7 @@
   title  = {Theory of Automated Reasoning: An Introduction},
   author = {Antti-Juhani Kaijanaho},
   year   = {2004},
+  url    = {http://users.jyu.fi/~antkaij/opetus/ap/2004/aure-ch1.pdf},
 }
 
 @Misc{excapebarrettriseofsmt,
@@ -465,6 +466,76 @@
   year         = {2004},
   pages        = {175--188},
   organization = {Springer},
+}
+
+@Article{newell1956logic,
+  author    = {Newell, Allen and Simon, Herbert},
+  title     = {The logic theory machine--A complex information processing system},
+  journal   = {IRE Transactions on information theory},
+  year      = {1956},
+  volume    = {2},
+  number    = {3},
+  pages     = {61--79},
+  publisher = {IEEE},
+  url       = {http://shelf1.library.cmu.edu/IMLS/BACKUP/MindModels.pre_Oct1-/logictheorymachine.pdf},
+}
+
+@Article{robinson1965machine,
+  author    = {Robinson, John Alan},
+  title     = {A machine-oriented logic based on the resolution principle},
+  journal   = {Journal of the ACM (JACM)},
+  year      = {1965},
+  volume    = {12},
+  number    = {1},
+  pages     = {23--41},
+  publisher = {ACM},
+}
+
+@Article{Davis:1960:CPQ:321033.321034,
+  author     = {Davis, Martin and Putnam, Hilary},
+  title      = {A Computing Procedure for Quantification Theory},
+  journal    = {J. ACM},
+  year       = {1960},
+  volume     = {7},
+  number     = {3},
+  pages      = {201--215},
+  month      = jul,
+  issn       = {0004-5411},
+  acmid      = {321034},
+  address    = {New York, NY, USA},
+  doi        = {10.1145/321033.321034},
+  issue_date = {July 1960},
+  numpages   = {15},
+  publisher  = {ACM},
+  url        = {http://doi.acm.org/10.1145/321033.321034},
+}
+
+@Article{Davis:1962:MPT:368273.368557,
+  author     = {Davis, Martin and Logemann, George and Loveland, Donald},
+  title      = {A Machine Program for Theorem-proving},
+  journal    = {Commun. ACM},
+  year       = {1962},
+  volume     = {5},
+  number     = {7},
+  pages      = {394--397},
+  month      = jul,
+  issn       = {0001-0782},
+  acmid      = {368557},
+  address    = {New York, NY, USA},
+  doi        = {10.1145/368273.368557},
+  issue_date = {July 1962},
+  numpages   = {4},
+  publisher  = {ACM},
+  url        = {http://doi.acm.org/10.1145/368273.368557},
+}
+
+@InProceedings{moskewicz2001chaff,
+  author       = {Moskewicz, Matthew W and Madigan, Conor F and Zhao, Ying and Zhang, Lintao and Malik, Sharad},
+  title        = {Chaff: Engineering an efficient SAT solver},
+  booktitle    = {Proceedings of the 38th annual Design Automation Conference},
+  year         = {2001},
+  pages        = {530--535},
+  organization = {ACM},
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}
