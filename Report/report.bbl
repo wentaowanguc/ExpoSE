@@ -62,6 +62,14 @@ A.~Pitts, ``Computation theory.''
 \bibitem{excapebarrettriseofsmt}
 C.~Barrett, ``The satisfiability revolution and the rise of smt,'' Mar. 2014.
 
+\bibitem{Davis:1960:CPQ:321033.321034}
+M.~Davis and H.~Putnam, ``A computing procedure for quantification theory,''
+  {\em J. ACM}, vol.~7, pp.~201--215, July 1960.
+
+\bibitem{Davis:1962:MPT:368273.368557}
+M.~Davis, G.~Logemann, and D.~Loveland, ``A machine program for
+  theorem-proving,'' {\em Commun. ACM}, vol.~5, pp.~394--397, July 1962.
+
 \bibitem{robinson1965machine}
 J.~A. Robinson, ``A machine-oriented logic based on the resolution principle,''
   {\em Journal of the ACM (JACM)}, vol.~12, no.~1, pp.~23--41, 1965.
@@ -70,6 +78,11 @@ J.~A. Robinson, ``A machine-oriented logic based on the resolution principle,''
 A.~Newell and H.~Simon, ``The logic theory machine--a complex information
   processing system,'' {\em IRE Transactions on information theory}, vol.~2,
   no.~3, pp.~61--79, 1956.
+
+\bibitem{moskewicz2001chaff}
+M.~W. Moskewicz, C.~F. Madigan, Y.~Zhao, L.~Zhang, and S.~Malik, ``Chaff:
+  Engineering an efficient sat solver,'' in {\em Proceedings of the 38th annual
+  Design Automation Conference}, pp.~530--535, ACM, 2001.
 
 \bibitem{zhang2001efficient}
 L.~Zhang, C.~F. Madigan, M.~H. Moskewicz, and S.~Malik, ``Efficient conflict
