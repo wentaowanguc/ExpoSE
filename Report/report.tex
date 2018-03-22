@@ -9,6 +9,40 @@
 \usepackage{amsmath}
 
 \lstset{basicstyle=\ttfamily}
+\usepackage{color}
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+\lstdefinelanguage{JavaScript}{
+  keywords={break, case, catch, continue, debugger, default, delete, do, else, false, finally, for, function, if, in, instanceof, new, null, return, switch, this, throw, true, try, typeof, var, void, while, with},
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]",
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  sensitive=true
+}
+
+\lstset{
+   language=JavaScript,
+   backgroundcolor=\color{lightgray},
+   extendedchars=true,
+   basicstyle=\footnotesize\ttfamily,
+   showstringspaces=false,
+   showspaces=false,
+   numbers=left,
+   numberstyle=\footnotesize,
+   numbersep=9pt,
+   tabsize=2,
+   breaklines=true,
+   showtabs=false,
+   captionpos=b
+}
 
 %%%%%%%%%%%%%%%%%%%%%%
 %%% Input project details
@@ -66,11 +100,12 @@ This will be written the day before the submission.
 %%%%%%%%%%%%%%%%%%%%%%
 %%% Introduction
 \chapter{Introduction}
-TODO
-The Problem: JavaScript is ubiqutious, easy to make mistakes in, and difficult to test convicingly. 
-Solution: Symbolic execution, and specificially ExpoSE, provides a solution.
-Context: Arrays are widespread in JavaScript, they have unique properties: a large collection of standard library functions, object-like behaviour, gaps. 
-My Work: Describe the functions modelled, the array encoding in Z3, and a aummary of the scope of testing and results.
+%%%%%%%%%%%%%%%%%%%%%% // TODO REWORK, CITE, AND PROOF READ
+Since its inception as a `glue' language for the web, JavaScript's popularity has surged, it's now a ubiquitous language that powers mobile, web, and server applications, however its dynamic nature and deceptive syntax often lead to subtle bugs and unintended behaviour which can be difficult to identify. Dynamic symbolic execution (DSE) is a technique that can be used to automatically identify bugs and generates tests for JavaScript however this requires modelling the semantics of the language in first order logic. JavaScript arrays, in particular, are an area of the language that requires tradeoffs, difficult design decisions, and careful consideration of language semantics when modelling due to their atypical properties. JavaScript arrays are special cases of objects and as a result have a settable length, can consist of multiple types, and are not necessarily indexed sequentially.
+
+My work extends ExpoSE, a tool for DSE, by describing an encoding for homogeneously typed JavaScript arrays in first order logic, implementing support in ExpoSE for symbolic arrays, and modelling a selection of prototype functions. I demonstrate that as a result of these extensions results in an increased test coverage of popular several popular JavaScript libraries and describe a new bug found in a popular Array ES6 polyfill. I also describe some of the limitations and 
+
+I also present background information on symbolic execution, including considerations for constraint optimisations and its usage for bug detection, automated decision procedures, and JavaScript's semantics, with a particular focus on the behaviour of arrays and their prototype methods. I then describe the details of implementation, my experimental methodology, and conclusions.
 
 %%%%%%%%%%%%%%%%%%%%%%
 %%% Symbolic Execution
@@ -79,22 +114,24 @@ My Work: Describe the functions modelled, the array encoding in Z3, and a aummar
 %%%%%%%%%%%%%%%%%%%%%% Overview
 \section{Overview}
 
-Symbolic execution is a technique for testing program correctness initially proposed in the 1970s ~\cite{king1976symbolic} ~\cite{boyer1975select}. Classically, it is the process of executing a program by representing its variables as symbols rather than concrete values. Execution of the program occurs using these symbolic inputs by extending the basic operators and semantics of the program's language to use symbols and produce symbolic formulas rather than concrete values. In doing so, each symbolic execution tests many actual instances of execution. If statements and language features that cause execution to diverge are represented as a path condition, a conjunction of conditions on symbols that must be satisfied. At the end of execution the path condition, the conjunction of branch conditions taken to the current point of execution, provides a unique representation of a path tested through the program and when solved using a constraint solver produces a set of inputs that when run take the same path through the program as the symbolic execution ~\cite{godefroid2008automated} ~\cite{godefroid2005dart}.
+Symbolic execution is a technique for testing program correctness initially proposed in the 1970s~\cite{king1976symbolic, boyer1975select}. Classically, it is the process of executing a program by representing its variables as symbols rather than concrete values. Execution of the program occurs using these symbolic inputs by extending the basic operators and semantics of the program's language to use symbols and produce symbolic formulas rather than concrete values. In doing so, each symbolic execution tests many actual instances of execution. If statements and language features that cause execution to diverge are represented as a path condition, a conjunction of conditions on symbols that must be satisfied. At the end of execution the path condition, the conjunction of branch conditions taken to the current point of execution, provides a unique representation of a path tested through the program and when solved using a constraint solver produces a set of inputs that when run take the same path through the program as the symbolic execution~\cite{godefroid2008automated, godefroid2005dart}.
 
 \begin{figure}[h]
 \begin{lstlisting}
-1 function abs_sum (x, y){
-2  if (x < 0)
-3    x = x * -1
-4  if (y < 0)
-5    y = y * -1
-6  return x + y
-7 }
+function abs_sum (x, y) {
+ if (x < 0) {
+   x = x * -1;
+ }
+ if (y < 0) {
+   y = y * -1;
+ }
+ return x + y;
+}
 \end{lstlisting}
 \caption{\label{fig:abs-sum} Absolute Sum Function}
 \end{figure} 
 
-For example, consider the program described in Figure \ref{fig:abs-sum} which returns the sum of the absolute values of two values. There are four possible paths that can be taken through the program. The first is where neither if branches are entered, the second is where the value of \lstinline{x}  is less than zero, the third is where the value of \lstinline{y}  is less than zero, and the fourth is where both \lstinline{x}  and \lstinline{y} are less than zero. The process for symbolically executing this program classically is as follows. The function is executed with two symbolic values $x'$ and $y'$ and a path condition $pc$, "the accumulator of properties which inputs must satisfy ... to follow ... a particular path" ~\cite{king1976symbolic}, is initialised to $true$. When a branching statement (line 2 or 4) is reached the constraint solver is queried to see if the branch condition is feasible given the current path condition. If condition is satisfiable then execution forks to explore the new path and $pc$ becomes $pc \land bc$  where $bc$ is the branch condition. This process repeats until the program terminates and every path is explored. Table \ref{abs-sum-se-table} shows the path condition, symbolic results, and the constraint solver queries and results for the execution.
+For example, consider the program described in Figure \ref{fig:abs-sum} which returns the sum of the absolute values of two values. There are four possible paths that can be taken through the program. The first is where neither if branches are entered, the second is where the value of \lstinline{x}  is less than zero, the third is where the value of \lstinline{y} is less than zero, and the fourth is where both \lstinline{x}  and \lstinline{y} are less than zero. The process for symbolically executing this program classically is as follows. The function is executed with two symbolic values $x'$ and $y'$ and a path condition $pc$, "the accumulator of properties which inputs must satisfy ... to follow ... a particular path" ~\cite{king1976symbolic}, is initialised to $true$. When a branching statement (line 2 or 5) is reached the constraint solver is queried to see if the branch condition is feasible given the current path condition. If condition is satisfiable then execution forks to explore the new path and $pc$ becomes $pc \land bc$  where $bc$ is the branch condition. This process repeats until the program terminates and every path is explored. Table \ref{abs-sum-se-table} shows the path condition, symbolic results, and the constraint solver queries and results for the execution.
 
 \begin{table}[]
 \centering
@@ -110,11 +147,11 @@ $x < \land y < 0$   & $-x-y$  &                           &              \\ \hli
 \label{abs-sum-se-table}
 \end{table}
 
-Historically, this technique has been impractical due to the limitations on computing resources and the capabilities of automated theorem provers~\cite{king1976symbolic}. However in the 2000s there were a a number of advancements in the technique by DART~\cite{godefroid2005dart} and EXE ~\cite{cadar2008exe} and improvements in computer hardware and SMT solvers ~\cite{de2011satisfiability} .
+Historically, this technique has been impractical due to the limitations on computing resources and the capabilities of automated theorem provers~\cite{king1976symbolic}. However in the 2000s there were a a number of advancements in the technique by DART~\cite{godefroid2005dart} and EXE~\cite{cadar2008exe} which combined with improvements in computer hardware and SMT solvers ~\cite{de2011satisfiability} made the technique practical.
 
 In these modern implementations, the program is run both concretely and symbolically in so called concolic execution. In concolic execution, the program is instrumented to run concretely whilst the program state is shadowed by symbolic variables allowing the concrete execution to`drive' the symbolic execution. Unlike pure symbolic execution, concolic execution requires its initial input to be concrete, this input can be random or crafted to fit the target program~\cite{godefroid2008grammar} ~\cite{cadar2013symbolic}. As concolic execution concretely executes programs, rather than just modelling the semantics of the language, you can be sure that any bugs found are actual bugs. Additionally, when a constraint cannot be solved, concolic execution allows concrete values to be substituted for unsolvable elements of constraints ~\cite{sen2007concolic} ~\cite{sen2005cute}.
 
-Consider the following example of concolic execution testing the program described in  Figure~\ref{fig:abs-sum}. Inputs for \lstinline {x} and \lstinline {y} are randomly generated, for instance $x=217$ and $y=931$. These then guide the execution to not visit any branches, producing the $pc$ of $x >= 0 \land y >=0$. This path condition can then be negated to produce further paths. Using the DART~\cite{godefroid2005dart} style directed symbolic execution paths are generated as per Table~\ref{abs-sum-ce-table}.
+Consider the following example of concolic execution testing the program described in  Figure~\ref{fig:abs-sum}. Inputs for \lstinline{x} and \lstinline{y} are randomly generated, for instance $x=217$ and $y=931$. These then guide the execution to not visit any branches, producing the $pc$ of $x >= 0 \land y >=0$. This path condition can then be negated to produce further paths. Using the DART~\cite{godefroid2005dart} style directed symbolic execution paths are generated as per Table~\ref{abs-sum-ce-table}.
 
 \begin{table}[]
 \centering
@@ -240,13 +277,11 @@ Restart & $M|| F \implies \emptyset || F$ &  &  \\ \hline
 }
 
 \subsection{CDCL}
-As variables are assigned Boolean values during the DPLL algorithm, conflicts arise from the implications of such assignments.
-
-For instance consider the following problem in CNF:
+As variables are assigned Boolean values during the DPLL algorithm, conflicts arise from the implications of such assignments. For instance consider the following problem in CNF:
 
 $(a \lor b \lor \lnot c) \land (a \lor \lnot d) \land (c \lor d \lor e) \land (\lnot e \lor \lnot f ) \land (g \lor \lnot e \lor \lnot h) \land (f \lor h)$
 
-With the assignments $g = false$, $a = false$, and $b = false$ the last clause, $ (f \lor h) $,  becomes unsatisfiable as $ f = false, h = false$ is implied.
+With the assignments $g = \mathit{false}$, $a = \mathit{false}$, and $b = \mathit{false}$ the last clause, $ (f \lor h) $,  becomes unsatisfiable as $ f = \mathit{false}, h = \mathit{false}$ is implied.
 
 CDCL attempts to identify the reason for the conflict and then use that information to jump several decisions back in the search to try a new assignment that will avoid that conflict. This process avoids exploring search spaces where there cannot be a solution. 
 
@@ -282,7 +317,7 @@ Consider the problem below which uses the theory of equality of uninterpreted fu
 
 $ f(a) = b \land  (g(f(c)) \neq g(b) \lor g(a) = g(b)) \land a \neq c $
 
-The SAT solver runs on the Boolean skeleton of the formula $1 \land (2 \lor 3) \land 4$ and suggests a model $M$, $1 = true, 2 = false, 3 = true, 4 = true$. The theory solver then finds the theory inconsistent, and adds a negation of the inconsistent model to the model preventing that state from being explored again - this new model $ 1 = true, 2 = false, 3 = true, 4 = true, (\lnot 1 \lor 2 \lor \lnot 3 \lor 4 ) = true $  is then solved by the SAT solver to produce a new model $ 1 = true, 2 = true, 3 = false, 4 = true$. This model is then sent to the theory solver which finds the theory consistent producing a satisfiable result.
+The SAT solver runs on the Boolean skeleton of the formula $1 \land (2 \lor 3) \land 4$ and suggests a model $M$, $1 = \mathit{true}, 2 = \mathit{false}, 3 = \mathit{true}, 4 = \mathit{true}$. The theory solver then finds the theory inconsistent, and adds a negation of the inconsistent model to the model preventing that state from being explored again - this new model $ 1 = \mathit{true}, 2 = \mathit{false}, 3 = \mathit{true}, 4 = \mathit{true}, (\lnot 1 \lor 2 \lor \lnot 3 \lor 4 ) = true $  is then solved by the SAT solver to produce a new model $ 1 = \mathit{true}, 2 = \mathit{true}, 3 = \mathit{false}, 4 = \mathit{true}$. This model is then sent to the theory solver which finds the theory consistent producing a satisfiable result.
 
 This basic lazy approach works well as it focuses on the domain specific strengths of the SAT solver and theory solver and it allows the SMT solver to be built modularly as the SAT and theory solvers communicate via a simple interface. Replacing the theory or SAT solver can be done independently from each other. However this basic lazy approach, even optimised, doesn't use any theory information to guide the search. ~\cite{sattosmt}
 
@@ -336,7 +371,7 @@ Google Chrome launched in 2008, with a new open source JavaScript engine named V
 
 In 2009, Node.js was launched - a JavaScript runtime based on V8 used to build asynchronous applications, popularising JavaScript as a language outside of the browser. Node.js was quickly adopted, with production applications at companies such as Uber and LinkedIn rolling out by 2011~\cite{linkedinusesnode}~\cite{uberusesnode}. 
 
-Due in part to popularity of Node, JavaScript is now one of the most popular languages for software development~\cite{stackoverflowsurvey}~\cite{tiobeindex2017nov} with npm, Node's package manager, hosting over 475,000 packagesnpm.
+Due in part to popularity of Node, JavaScript is now one of the most popular languages for software development~\cite{stackoverflowsurvey}~\cite{tiobeindex2017nov} with npm, Node's package manager, hosting over 475,000 packages \cite{npm}.
 
 \section{Javascript Design}
 
@@ -369,7 +404,7 @@ Object & Represents a collection of properties, each of which has a name and a v
     \clearpage% Flush page
 }
 
-
+%%%%%%% TODO FIGURE OUT WHAT IS GOING ON HERE
 \subsection{Type System}
 JavaScript has six types, Table \ref{type-system}, that variables can be~\cite{EcmaScript} but the types of variables are not explicitly declared at compile time. Instead, types are dynamic and can change over the course of a program. Consider the program in \ref{fig:js-coercion}. Initially \lstinline{foo} is of type string but the type is implicitly coerced into a number by the \lstinline{*} operator. Coercion between types occurs when the type of an operand is not the type the operator is expecting. For instance, as shown in the example above the \lstinline{*} operator coerces all operands to numbers. This coercion is a source of error in programs as inputs of an invalid type can be coerced in unexpected ways.
 
@@ -441,12 +476,12 @@ $ orange.print()
 $ orange.hasOwnProperty('print') // print is now defined in orange as well
 < true
 \end{verbatim}
-\caption{\label{fig:js-prototypical-inheritance} Example of Prototypical Inheritance}
+\caption{\label{fig:js-prototypical-inheritance} Example of Prototypal Inheritance}
 \end{figure} 
 
 A prototype may itself have a prototype, the sequence of prototypes which define the properties of a given object are referred to as a prototype chain ~\cite{EcmaScript}~ \cite{borning1986classes}.  By default, all created objects inherit from\lstinline{Object.prototype} and functions, as a special class of object, inherit from \lstinline{Function.prototype} which inherits from\lstinline{Object.prototype}. These prototypes are part of the EMCAScript standard and provide utilities to make working with objects of that prototype easier. For example,\lstinline{Object.prototype} provides functions for iterating over all the values of an object or all the keys in the object.
 
-Consider the prototype chain in figure \ref{fig:js-prototypical-inheritance}.
+Consider the prototype chain in figure \ref{fig:js-prototypal-chain}.
 
 \begin{figure}[h]
 \begin{verbatim}
@@ -488,7 +523,7 @@ $ orange instanceof Food
 $ orange instanceof Object
 < true
 \end{verbatim}
-\caption{\label{fig:js-prototypical-inheritance} Example of Prototypical Inheritance}
+\caption{\label{fig:js-prototypical-inheritance} Example of Prototypal Inheritance}
 \end{figure} 
 
 In the example above we have a prototype chain length of three. Our \lstinline{orange} object has a prototype of \lstinline{Fruit}, which has a prototype of \lstinline{Food}, which has a prototype of \lstinline{Object}.
@@ -499,7 +534,7 @@ In the example above we have a prototype chain length of three. Our \lstinline{o
 \framebox{
 	\includegraphics[width=10cm]{prototypechain} 
 }
-\caption{\label{fig:logo} Prototypical Inheritance in JavaScript.}
+\caption{\label{fig:fig:js-prototypal-chain} Prototypal Inheritance in JavaScript.}
 \end{figure} 
 
 \subsection{Arrays}
@@ -596,7 +631,7 @@ Z3, the SMT solver used by ExpoSE, supports two array-like theories: the theory 
 
 Z3 arrays are one dimensional unbounded maps where the index and values are of any given sort. Read and write operations on the array are mapped to select and store axioms respectively. The SMT logic below demonstrates the basic relationship between store and select.
 
-\begin{figure}[h]
+\begin{figure}[t]
 \begin{verbatim}
 (declare-const i Int)
 (declare-const v Int)

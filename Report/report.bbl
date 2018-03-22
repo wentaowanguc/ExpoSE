@@ -1,0 +1,215 @@
+\begin{thebibliography}{10}
+
+\bibitem{king1976symbolic}
+J.~C. King, ``Symbolic execution and program testing,'' {\em Communications of
+  the ACM}, vol.~19, no.~7, pp.~385--394, 1976.
+
+\bibitem{boyer1975select}
+R.~S. Boyer, B.~Elspas, and K.~N. Levitt, ``Select—a formal system for
+  testing and debugging programs by symbolic execution,'' {\em ACM SigPlan
+  Notices}, vol.~10, no.~6, pp.~234--245, 1975.
+
+\bibitem{godefroid2008automated}
+P.~Godefroid, M.~Y. Levin, D.~A. Molnar, {\em et~al.}, ``Automated whitebox
+  fuzz testing.,'' in {\em NDSS}, vol.~8, pp.~151--166, 2008.
+
+\bibitem{godefroid2005dart}
+P.~Godefroid, N.~Klarlund, and K.~Sen, ``Dart: directed automated random
+  testing,'' in {\em ACM Sigplan Notices}, vol.~40, pp.~213--223, ACM, 2005.
+
+\bibitem{cadar2008exe}
+C.~Cadar, V.~Ganesh, P.~M. Pawlowski, D.~L. Dill, and D.~R. Engler, ``Exe:
+  automatically generating inputs of death,'' {\em ACM Transactions on
+  Information and System Security (TISSEC)}, vol.~12, no.~2, p.~10, 2008.
+
+\bibitem{de2011satisfiability}
+L.~De~Moura and N.~Bj{\o}rner, ``Satisfiability modulo theories: introduction
+  and applications,'' {\em Communications of the ACM}, vol.~54, no.~9,
+  pp.~69--77, 2011.
+
+\bibitem{godefroid2008grammar}
+P.~Godefroid, A.~Kiezun, and M.~Y. Levin, ``Grammar-based whitebox fuzzing,''
+  in {\em ACM Sigplan Notices}, vol.~43, pp.~206--215, ACM, 2008.
+
+\bibitem{cadar2013symbolic}
+C.~Cadar and K.~Sen, ``Symbolic execution for software testing: three decades
+  later,'' {\em Communications of the ACM}, vol.~56, no.~2, pp.~82--90, 2013.
+
+\bibitem{sen2007concolic}
+K.~Sen, ``Concolic testing,'' in {\em Proceedings of the twenty-second IEEE/ACM
+  international conference on Automated software engineering}, pp.~571--572,
+  ACM, 2007.
+
+\bibitem{sen2005cute}
+K.~Sen, D.~Marinov, and G.~Agha, ``Cute: a concolic unit testing engine for
+  c,'' in {\em ACM SIGSOFT Software Engineering Notes}, vol.~30, pp.~263--272,
+  ACM, 2005.
+
+\bibitem{cadar2008klee}
+C.~Cadar, D.~Dunbar, D.~R. Engler, {\em et~al.}, ``Klee: Unassisted and
+  automatic generation of high-coverage tests for complex systems programs.,''
+  in {\em OSDI}, vol.~8, pp.~209--224, 2008.
+
+\bibitem{smtwheredowegofromhere}
+C.~Barrett, ``Smt: Where do we go from here?.'' Presenttation, July 2014.
+
+\bibitem{automatedreasoningbooklet2004}
+A.-J. Kaijanaho, ``Theory of automated reasoning: An introduction,'' 2004.
+
+\bibitem{turingchurchproof}
+A.~Pitts, ``Computation theory.''
+
+\bibitem{excapebarrettriseofsmt}
+C.~Barrett, ``The satisfiability revolution and the rise of smt,'' Mar. 2014.
+
+\bibitem{robinson1965machine}
+J.~A. Robinson, ``A machine-oriented logic based on the resolution principle,''
+  {\em Journal of the ACM (JACM)}, vol.~12, no.~1, pp.~23--41, 1965.
+
+\bibitem{newell1956logic}
+A.~Newell and H.~Simon, ``The logic theory machine--a complex information
+  processing system,'' {\em IRE Transactions on information theory}, vol.~2,
+  no.~3, pp.~61--79, 1956.
+
+\bibitem{zhang2001efficient}
+L.~Zhang, C.~F. Madigan, M.~H. Moskewicz, and S.~Malik, ``Efficient conflict
+  driven learning in a boolean satisfiability solver,'' in {\em Proceedings of
+  the 2001 IEEE/ACM international conference on Computer-aided design},
+  pp.~279--285, IEEE Press, 2001.
+
+\bibitem{gomes2008satisfiability}
+C.~P. Gomes, H.~Kautz, A.~Sabharwal, and B.~Selman, ``Satisfiability solvers,''
+  {\em Foundations of Artificial Intelligence}, vol.~3, pp.~89--134, 2008.
+
+\bibitem{sattosmt}
+C.~Barrett, ``From sat to smt: The dpll(t) architecture.''
+
+\bibitem{smtdpplt}
+A.~Oliveras, ``Smt theory and dpll(t),'' July 2013.
+
+\bibitem{ganzinger2004dpll}
+H.~Ganzinger, G.~Hagen, R.~Nieuwenhuis, A.~Oliveras, and C.~Tinelli, ``Dpll
+  (t): Fast decision procedures,'' in {\em International Conference on Computer
+  Aided Verification}, pp.~175--188, Springer, 2004.
+
+\bibitem{AZProgrammingLanguages}
+``The a-z of programming languages: Javascript. (2008, july 31).''
+  \url{http://web.archive.org/web/20080207010024/http://www.808multimedia.com/winnt/kernel.htm},
+  2008.
+\newblock Accessed: 2010-09-30.
+
+\bibitem{dybvig1996scheme}
+R.~K. Dybvig, {\em The Scheme Programming Language: ANSI Scheme}.
+\newblock Prentice Hall PTR, 1996.
+
+\bibitem{popularityofjavascript}
+B.~Eich, ``Popularity,'' Apr. 2008.
+
+\bibitem{brendaneichtimetomakejscomment}
+``Every day i learn something new... and stupid.,'' Apr. 2011.
+
+\bibitem{newjavascriptmoduleowner}
+B.~Eich, ``New javascript engine module owner,'' June 2011.
+
+\bibitem{ISO/IEC16262:2011}
+I.~J.~S. 22, ``Information technology -- programming languages, their
+  environments and system software interfaces -- ecmascrript language
+  specification,'' standard, International Organization for Standardization,
+  Geneva, CH, June 2011.
+
+\bibitem{ajax}
+J.~J. Garrett, ``Ajax: A new approach to web applications,'' Feb. 2005.
+
+\bibitem{historyofjquery}
+Jeresig, ``History of jquery.,'' Oct. 2007.
+
+\bibitem{stateofjquery}
+Jeresig, ``State of jquery '08,'' Oct. 2008.
+
+\bibitem{chromebenchmarks}
+R.~Goodwins, ``Google chrome - first benchmarks. summary: wow.,'' Sept. 2008.
+
+\bibitem{chromeengine}
+L.~Bak, ``V8: an open source javascript engine.'' Youtube, Sept. 2008.
+
+\bibitem{chromeengine2}
+M.~S. Ager, ``Chrome: V8 engine,'' Nov. 2008.
+
+\bibitem{knowyourenginesmozilla}
+D.~Mandelin, ``Know your engines: How to make your javascript fast,'' June
+  2011.
+
+\bibitem{linkedinusesnode}
+J.~O'Dell, ``Exclusive: How linkedin used node.js and html5 to build a better,
+  faster app,'' Aug. 20111.
+
+\bibitem{uberusesnode}
+C.~Chambers, ``Node.js meetup: Distributive web architectures - curtis
+  chambers,'' Dec. 2011.
+
+\bibitem{stackoverflowsurvey}
+``Stack overflow developer survey 2017.,'' 2017.
+
+\bibitem{tiobeindex2017nov}
+``Tiobe index for november 2017,'' Nov. 2017.
+
+\bibitem{npm}
+``Npm..''
+
+\bibitem{park2015kjs}
+D.~Park, A.~Stef{\u{a}}nescu, and G.~Ro{\c{s}}u, ``Kjs: A complete formal
+  semantics of javascript,'' in {\em ACM SIGPLAN Notices}, vol.~50,
+  pp.~346--356, ACM, 2015.
+
+\bibitem{EcmaScript}
+{ECMA International}, {\em Standard ECMA-262 - ECMAScript Language
+  Specification}.
+\newblock ECMA, 5.1~ed., June 2011.
+
+\bibitem{borning1986classes}
+A.~H. Borning, ``Classes versus prototypes in object-oriented languages,'' in
+  {\em Proceedings of 1986 ACM Fall joint computer conference}, pp.~36--40,
+  IEEE Computer Society Press, 1986.
+
+\bibitem{sridharan2012correlation}
+M.~Sridharan, J.~Dolby, S.~Chandra, M.~Sch{\"a}fer, and F.~Tip, ``Correlation
+  tracking for points-to analysis of javascript,'' in {\em European Conference
+  on Object-Oriented Programming}, pp.~435--458, Springer, 2012.
+
+\bibitem{logozzo2010rata}
+F.~Logozzo and H.~Venter, ``Rata: rapid atomic type analysis by abstract
+  interpretation--application to javascript optimization,'' in {\em
+  International Conference on Compiler Construction}, pp.~66--83, Springer,
+  2010.
+
+\bibitem{wei2013practical}
+S.~Wei and B.~G. Ryder, ``Practical blended taint analysis for javascript,'' in
+  {\em Proceedings of the 2013 International Symposium on Software Testing and
+  Analysis}, pp.~336--346, ACM, 2013.
+
+\bibitem{bierman2014understanding}
+G.~Bierman, M.~Abadi, and M.~Torgersen, ``Understanding typescript,'' in {\em
+  European Conference on Object-Oriented Programming}, pp.~257--281, Springer,
+  2014.
+
+\bibitem{richards2015concrete}
+G.~Richards, F.~Zappa~Nardelli, and J.~Vitek, ``Concrete types for
+  typescript,'' in {\em LIPIcs-Leibniz International Proceedings in
+  Informatics}, vol.~37, Schloss Dagstuhl-Leibniz-Zentrum fuer Informatik,
+  2015.
+
+\bibitem{rastogi2015safe}
+A.~Rastogi, N.~Swamy, C.~Fournet, G.~Bierman, and P.~Vekris, ``Safe \&
+  efficient gradual typing for typescript,'' {\em ACM SIGPLAN Notices},
+  vol.~50, no.~1, pp.~167--180, 2015.
+
+\bibitem{gardner2012towards}
+P.~A. Gardner, S.~Maffeis, and G.~D. Smith, ``Towards a program logic for
+  javascript,'' in {\em ACM SIGPLAN Notices}, vol.~47, pp.~31--44, ACM, 2012.
+
+\bibitem{guha2010essence}
+A.~Guha, C.~Saftoiu, and S.~Krishnamurthi, ``The essence of javascript,'' in
+  {\em European conference on Object-oriented programming}, pp.~126--150,
+  Springer, 2010.
+
+\end{thebibliography}
