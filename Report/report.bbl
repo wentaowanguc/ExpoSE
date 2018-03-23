@@ -218,14 +218,14 @@ A.~Rastogi, N.~Swamy, C.~Fournet, G.~Bierman, and P.~Vekris, ``Safe \&
 P.~A. Gardner, S.~Maffeis, and G.~D. Smith, ``Towards a program logic for
   javascript,'' in {\em ACM SIGPLAN Notices}, vol.~47, pp.~31--44, ACM, 2012.
 
-\bibitem{guha2010essence}
-A.~Guha, C.~Saftoiu, and S.~Krishnamurthi, ``The essence of javascript,'' in
-  {\em European conference on Object-oriented programming}, pp.~126--150,
-  Springer, 2010.
-
 \bibitem{park2015kjs}
 D.~Park, A.~Stef{\u{a}}nescu, and G.~Ro{\c{s}}u, ``Kjs: A complete formal
   semantics of javascript,'' in {\em ACM SIGPLAN Notices}, vol.~50,
   pp.~346--356, ACM, 2015.
+
+\bibitem{guha2010essence}
+A.~Guha, C.~Saftoiu, and S.~Krishnamurthi, ``The essence of javascript,'' in
+  {\em European conference on Object-oriented programming}, pp.~126--150,
+  Springer, 2010.
 
 \end{thebibliography}
