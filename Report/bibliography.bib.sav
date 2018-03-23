@@ -538,4 +538,13 @@
   organization = {ACM},
 }
 
+@InProceedings{Loring_2017,
+  author    = {Blake Loring and Duncan Mitchell and Johannes Kinder},
+  title     = {{ExpoSE}: practical symbolic execution of standalone {JavaScript}},
+  booktitle = {Proceedings of the 24th {ACM} {SIGSOFT} International {SPIN} Symposium on Model Checking of Software - {SPIN} 2017},
+  year      = {2017},
+  publisher = {{ACM} Press},
+  doi       = {10.1145/3092282.3092295},
+}
+
 @Comment{jabref-meta: databaseType:bibtex;}
