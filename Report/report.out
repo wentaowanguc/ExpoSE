@@ -11,9 +11,12 @@
 \BOOKMARK [1][-]{section.3.2}{SAT}{chapter.3}% 11
 \BOOKMARK [1][-]{section.3.3}{SMT}{chapter.3}% 12
 \BOOKMARK [0][-]{chapter.4}{JavaScript}{}% 13
-\BOOKMARK [1][-]{section.4.1}{Javascript Design}{chapter.4}% 14
-\BOOKMARK [1][-]{section.4.2}{Ensuring the Correctness of JavaScript}{chapter.4}% 15
-\BOOKMARK [0][-]{chapter.5}{Implementation Details}{}% 16
-\BOOKMARK [1][-]{section.5.1}{Array Support Architecture}{chapter.5}% 17
-\BOOKMARK [0][-]{chapter.6}{Results}{}% 18
-\BOOKMARK [1][-]{section.6.1}{Conclusion}{chapter.6}% 19
+\BOOKMARK [1][-]{section.4.1}{History}{chapter.4}% 14
+\BOOKMARK [1][-]{section.4.2}{Type System}{chapter.4}% 15
+\BOOKMARK [1][-]{section.4.3}{Objects and Prototypical Inheritance}{chapter.4}% 16
+\BOOKMARK [1][-]{section.4.4}{Arrays}{chapter.4}% 17
+\BOOKMARK [1][-]{section.4.5}{Ensuring the Correctness of JavaScript}{chapter.4}% 18
+\BOOKMARK [0][-]{chapter.5}{Implementation Details}{}% 19
+\BOOKMARK [1][-]{section.5.1}{Array Support Architecture}{chapter.5}% 20
+\BOOKMARK [0][-]{chapter.6}{Results}{}% 21
+\BOOKMARK [1][-]{section.6.1}{Conclusion}{chapter.6}% 22

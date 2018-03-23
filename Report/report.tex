@@ -7,6 +7,7 @@
 \usepackage{pdflscape}
 \usepackage{listings}
 \usepackage{amsmath}
+\usepackage{algpseudocode}
 
 \lstset{basicstyle=\ttfamily}
 \usepackage{color}
@@ -101,7 +102,7 @@ This will be written the day before the submission.
 %%% Introduction
 \chapter{Introduction}
 %%%%%%%%%%%%%%%%%%%%%% // TODO REWORK, CITE, AND PROOF READ
-Since its inception as a `glue' language for the web, JavaScript's popularity has surged, it's now a ubiquitous language that powers mobile, web, and server applications, however its dynamic nature and deceptive syntax often lead to subtle bugs and unintended behaviour which can be difficult to identify. Dynamic symbolic execution (DSE) is a technique that can be used to automatically identify bugs and generates tests for JavaScript however this requires modelling the semantics of the language in first order logic. JavaScript arrays, in particular, are an area of the language that requires tradeoffs, difficult design decisions, and careful consideration of language semantics when modelling due to their atypical properties. JavaScript arrays are special cases of objects and as a result have a directly mutable length, can consist of multiple types, and are not necessarily indexed sequentially.
+Since its inception as a `glue' language for the web, JavaScript's popularity has surged, it is now a ubiquitous language that powers mobile, web, and server applications, however its dynamic nature and deceptive syntax often lead to subtle bugs and unintended behaviour which can be difficult to identify. Dynamic symbolic execution (DSE) is a technique that can be used to automatically identify bugs and generates tests for JavaScript however this requires modelling the semantics of the language in first order logic. JavaScript arrays, in particular, are an area of the language that requires trade-offs, difficult design decisions, and careful consideration of language semantics when modelling due to their atypical properties. JavaScript arrays are special cases of objects and as a result have a directly mutable length, can consist of multiple types, and are not necessarily indexed sequentially.
 
 My work extends ExpoSE, a tool for DSE, by describing an encoding for homogeneously typed JavaScript arrays in first order logic, implementing support in ExpoSE for symbolic arrays, and modelling a selection of prototype functions. I demonstrate that as a result of these extensions results in an increased test coverage of popular several popular JavaScript libraries and describe a new bug found in a popular Array ES6 polyfill.
 
@@ -269,42 +270,132 @@ At the time Hilbert proposed his challenge no formal notion of a mechanical proc
 
 Despite first-order logic being generally undecidable, there are some first order theories which are including Presburger Arithmetic, a first order theory of only addition over natural numbers - more limited than the general undecidable Peano's arithmetic~\cite{automatedreasoningbooklet2004}. In 1954, Martin Davis implemented a decision procedure for Presburger arithmetic producing the first computed mathematical proof. He remarked later, ``Its great triumph was to prove that the sum of two even numbers is even," an acknowledgement of the achievement of the program but also its limitations~\cite{excapebarrettriseofsmt, automatedreasoningbooklet2004}.
 
-From the 1950s onwards there was a steady increase in the body of work related to automated reasoning including work by Davis and Putman ~\cite{Davis:1960:CPQ:321033.321034} ~\cite{Davis:1962:MPT:368273.368557}, John Robinson's proof of the soundness and completeness of first order resolution ~\cite{robinson1965machine}, and Simon and Newell's Logic Theorist ~\cite{newell1956logic} however this drastically accelerated took off in 2000s following the publication of the Chaff SAT solver~\cite{moskewicz2001chaff} and a renewed interested in theory solving~\cite{excapebarrettriseofsmt}.
+From the 1950s onwards there was a steady increase in the body of work related to automated reasoning including work by Davis and Putman~\cite{Davis:1960:CPQ:321033.321034,Davis:1962:MPT:368273.368557}, John Robinson's proof of the soundness and completeness of first order resolution~\cite{robinson1965machine}, and Simon and Newell's Logic Theorist~\cite{newell1956logic} however this drastically accelerated took off in 2000s following the publication of the Chaff SAT solver~\cite{moskewicz2001chaff} and a renewed interested in theory solving~\cite{excapebarrettriseofsmt}.
 
 \section{SAT}
 A classic problem in the realm of automated reasoning is the SAT problem. The SAT problem asks the question ``Given a formula in propositional logic is there an assignment of true/false values that makes the formula true?"~\cite{smtwheredowegofromhere}.
 
-For instance, given for the following formula, the answer would be no, the problem is unsatsifiable:, $(a \lor b) \land (b \land \lnot a) \land \lnot b $.
+For instance, given for the following formula, the answer would be no, the problem is unsatisfiable: $(a \lor b) \land (b \land \lnot a) \land \lnot b $.
 
 In the 1970s, Stephen Cook and Leonid Levin showed the SAT problem was NP-complete seeming to make automated reasoning infeasible for efficient algorithms. However, although random SAT problems exhibit worst-case performance, many real-world problems tend not to due to their tendency to have structure~\cite{smtwheredowegofromhere}.
 
 Most SAT solvers, automated tools to produce solutions for a given SAT problem, use the Davis-Putnam-Logemann-Loveland (DPLL) backtracking search combined with Conflict-Driven-Clause-Learning (CDCL) to determine satisfiability~\cite{zhang2001efficient, gomes2008satisfiability}.
 
 \subsection{DPLL}
-DPLL is a depth-first search complete systematic process for finding a satisfying assignment or proving unsatisfiability for a given SAT problem. The algorithm, at first approximation, attempts to assign a variable a Boolean value, and checks the satisfiability of the problem (with the assigned values). If the problem is not unsatisfiable then another variable has a value assigned, otherwise the previously assigned value is negated. This process is repeated until all variables are assigned a value and either the formula is satisfiable or, no matter what variable is assigned, a value the formula is unsatisfiable~\cite{sattosmt}.
+DPLL is a depth-first search complete systematic process for finding a satisfying assignment or proving unsatisfiability for a given SAT problem. The algorithm, at first approximation, attempts to assign a variable a Boolean value, and checks the satisfiability of the problem (with the assigned values). If the problem is not unsatisfiable then another variable has a value assigned, otherwise the previously assigned value is negated. This process is repeated until all variables are assigned a value and either the formula is satisfiable or, no matter what variable is assigned, a value the formula is unsatisfiable~\cite{sattosmt}. Typically SAT problems are expressed in conjunctive-normal form (CNF), as a conjunction of one or more clauses which consist of the disjunction of one or more literals. 
+%TODO CITE Davis et al 1962 here %
+For any CNF formula $F$ and a literal $l$, $\mathit{F}|l$ represents the formula obtained by replacing all occurrences of $l$ in $F$ with $true$ and simplifying by removing all clauses containing $true$ and the terms $\lnot{true}$. 
 
-Typically SAT problems are expressed in conjunctive-normal form (CNF), as a conjunction of one or more clauses which consist of the disjunction of one or more literals.
+DPLL relies on two main principles: simplification and case splitting. Simplification is achieved through unit propagation and pure literal deletion. If a CNF formula $\mathit{F}$ contains a clause $C$ which only contains a single literal $l$ then the clause `fixes' the value of $l$ in all other clauses which contain $l$, the procedure for applying unit propagation is shown in Figure \ref{fig:dppl-unit-propagate}. Pure literal deletion can be applied when there exists a literal $l$ in a CNF formula $\mathit{F}$ where $\lnot{l} \notin \mathit{F}$, all clauses containing the pure literal can be removed from the formula which has the effect of setting the pure literal's assignment to true. The procedure for applying pure literal deletion is shown in Figure \ref{fig:dppl-pure-literal}. Case splitting occurs in the recursive call to DPLL, a truth assignment is guessed and then satisfiability is recursively checked, if the assignment is unsatisfiable then then negation of that assignment is checked effectively splitting the problem into two simpler cases.
 
-It is possible to model the algorithm as a series of states and transitions. States are described in the form $M || F$, where $M$ is a sequence of literals which are assigned the value true and $F$ is the problem in CNF form. The initial state of the algorithm is as $\emptyset || F $ and the final state is either a special state $unsat$ if $F$ is unsatisfiable, or $M || G $, where $G$ is a CNF formula equivalent to the initial problem $F$ and $M$ satisfies $G$. 
+% TODO CITE https://www.cs.utexas.edu/users/vl/teaching/lbai/dpll.pdf
+% TODO CITE http://profs.sci.univr.it/~farinelli/courses/ar/slides/DPLL.pdf
+% TODO CITE http://gki.informatik.uni-freiburg.de/teaching/ss14/gki/lectures/ai08.pdf
+\begin{figure}[h]
+\begin{algorithmic}
+\Function{UnitPropagate}{$\mathit{F}$, $U$}
+	\While{$\mathit{F}$ contains a unit clause $C$} 
+		\State $\mathit{F}~\gets \mathit{F}|C$
+		\State $U~\gets U \cup {C}$
+	\EndWhile
+\EndFunction    
+\end{algorithmic}
 
-The transitions between states are described by a number of rules as described in Table \ref{dpll-rules}. $M \models C$ means that for every assignment $v$, $v(M) = true$ implies $v(C) = true$. These rules are applied to each state until a final state is achieved.
+\caption{\label{fig:dppl-unit-propagate} Unit Propagation}
+\end{figure}
+
+
+% TODO CITE https://www.cs.utexas.edu/users/vl/teaching/lbai/dpll.pdf
+\begin{figure}[h]
+\begin{algorithmic}
+\Function{PureLiteral}{$\mathit{F}$, $U$}
+	\While{$\mathit{F}$ contains a pure literal $l$} 
+		\State $C~\gets \mathit{F}|l$
+		\State $U~\gets U \cup {l}$
+	\EndWhile
+\EndFunction    
+\end{algorithmic}
+
+\caption{\label{fig:dppl-pure-literal} Unit Propagation}
+\end{figure}
+
+\begin{figure}[h]
+
+\begin{algorithmic}
+\Function{DPLL}{$\mathit{F}$, $M$}
+	\State \Call{UnitPropagate}{$\mathit{F}$, $M$}
+	\If{$\mathit{F}$ contains an empty clause}
+		\State return unsat
+	\EndIf
+	\State \Call{PureLiteral}{$\mathit{F}$, $M$}
+	\If{$\mathit{F} = T$}
+		\State return sat with the model $U$
+	\EndIf
+	\State $l \gets$ a literal containing an atom from $\mathit{F}$
+	\State \Call{DPLL}{$\mathit{F}|L$, $U \cup {L}$}
+	\State \Call{DPLL}{$\mathit{F}|\lnot{L}$, $U \cup {\lnot{L}}$}
+\EndFunction    
+\end{algorithmic}
+\caption{\label{fig:dppl-classic-algo} DPLL Algorithm}
+\end{figure}
+
+\textbf{Example}
+
+Consider the problem $F = (P \lor \lnot{Q} \lor R) \land (\lnot{P} \lor R) \land \lnot{P} \land \lnot{U} \land {R}$
+
+\begin{table}[]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+Model & $F$ & Rule Applied \\ \hline
+{} & $(P \lor \lnot{Q} \lor R) \land (\lnot{P} \lor R) \land \lnot{P} \land \lnot{U} \land {R}$ & UnitLiteral on $ \lnot{U}$   \\ \hline
+{$\lnot{U}$} & $(P \lor \lnot{Q} \lor R) \land (\lnot{P} \lor R) \land \lnot{P} \land {R}$ & UnitLiteral on $\lnot{P}$   \\ \hline
+{$\lnot{U}$, $\lnot{P}$} & $(\lnot{Q} \lor R) \land R \land R$ & UnitLiteral on $R$    \\ \hline
+{$\lnot{U}$, $\lnot{P}$, $R$} & $\lnot{Q}$ & UnitLiteral on $\lnot{Q}$     \\ \hline
+{$\lnot{U}$, $\lnot{P}$, $R$, $\lnot{Q}$ } & true &     \\ \hline
+\end{tabular}
+\caption{DPLL Results}
+\label{table:dpll-results}
+\end{table}
+
+
+%TODO Cite http://ctp.di.fct.unl.pt/~ramunas/slides/dpll(t).pdf
+It is also possible to model the algorithm as a series of states and transitions. States are described in the form $M || \mathit{F}$, where $M$ is a sequence of literals which are assigned the value true and $\mathit{F}$ is the problem in CNF form. The initial state of the algorithm is as $\emptyset || \mathit{F}$ and the final state is either a special state $unsat$ if $\mathit{F}$ is unsatisfiable, or $M || F'$, where $F'$ is a CNF formula equivalent to the initial problem $F$ and $M$ satisfies $F'$. The classical algorithm can be described by the four basic transitions, $M || \mathit{F} \implies M' || \mathit{F'} $, shown in Table \ref{table:classic-dpll-rules}: \textit{UnitPropagate}, \textit{Decide}, \textit{Fail}, and \textit{Backtrack} where $M \models C$ means that for every assignment $v$, $v(M) = true$ implies $v(C) = true$. These rules are applied to each state until a final state is achieved.
 
 \afterpage{%
     \clearpage% Flush earlier floats (otherwise order might not be correct)
     \begin{landscape}% Landscape page
 \begin{table}[]
 \centering
-\caption{DPLL Rules}
-\label{dpll-rules}
+\caption{Classic DPLL Rules}
+\label{table:classic-dpll-rules}
 \scalebox{.60}{
 \begin{tabular}{|l|l|l|l|}
 \hline
 Name & Rule & Conditions & Example \\ \hline
 Unit Propagation & $M|| F, C \lor l \implies M l || F, C \lor l$ & ​$M \models \lnot C $, $l$ is undefined in $M$ & $\emptyset || a \land (b \lor c) ) \land (d \lor e) \implies a || a \land (b \lor c) ) \land (d \lor e) $ \\ \hline
-Pure Literal & $M|| F \implies Ml || F$ & $l$ occurs in some clause of $F$, $\lnot l$ occurs in no clause of $F$, $l$ is undefined in $M$ & $\emptyset || a \land (\lnot b \lor c) \implies \lnot b ||,a \land (\lnot b \lor c) $ \\ \hline
 Decide & $M|| F \implies M l^d || F$ & $l$ or $\lnot$ occurs in a clause of $F$ & $ \lnot b | \lnot b ||, a \land (\lnot b \lor c) \implies\lnot b \land c^d ||,a \land (\lnot b \lor c) $ \\ \hline
 Fail & $M|| F, C \implies unsat$ & $M \models \lnot C$ $M$ contains no decision literals ($l^d$) & $ a \land \lnot a || \lnot a \land a \implies unsat $ \\ \hline
-Backjump & $M l^d N|| F, C \implies M l' || F, C$ & $M l^d N \models \lnot C$ and there is a clause $C' \lor l'$ where $F, C \models C' \lor l'$ and $M \models \lnot C'$, $l'$ is undefined in $M$, and $l' or \lnot l'$ occurs in $F$ or in $M l^d N$ & TODO \\ \hline
+Backtrack & $M l^d N|| F, C \implies M l' || F, C$ & $M l^d N \models \lnot C$ and there is a clause $C' \lor l'$ where $F, C \models C' \lor l'$ and $M \models \lnot C'$, $l'$ is undefined in $M$, and $l' or \lnot l'$ occurs in $F$ or in $M l^d N$ & TODO \\ \hline
+Pure Literal & $M|| F \implies Ml || F$ & $l$ occurs in some clause of $F$, $\lnot l$ occurs in no clause of $F$, $l$ is undefined in $M$ & $\emptyset || a \land (\lnot b \lor c) \implies \lnot b ||,a \land (\lnot b \lor c) $ \\ \hline
+\end{tabular}
+} %end scale
+\end{table}
+\end{landscape}
+    \clearpage% Flush page
+}
+
+\afterpage{%
+    \clearpage% Flush earlier floats (otherwise order might not be correct)
+    \begin{landscape}% Landscape page
+\begin{table}[]
+\centering
+\caption{CDCL DPLL Rules}
+\label{table:cdcl-rules}
+\scalebox{.60}{
+\begin{tabular}{|l|l|l|l|}
+\hline
+Name & Rule & Conditions & Example \\ \hline
 Learn & $M|| F \implies,M || F, C$ & All atoms of $C$ occur in $F$, $F \models C$ & \\ \hline
 Forget & $M|| F, C \implies M || F $ & $F \models C$ & \\ \hline
 Restart & $M|| F \implies \emptyset || F$ & & \\ \hline
@@ -318,25 +409,26 @@ Restart & $M|| F \implies \emptyset || F$ & & \\ \hline
 \subsection{CDCL}
 As variables are assigned Boolean values during the DPLL algorithm, conflicts arise from the implications of such assignments. For instance consider the following problem in CNF:
 
-$(a \lor b \lor \lnot c) \land (a \lor \lnot d) \land (c \lor d \lor e) \land (\lnot e \lor \lnot f ) \land (g \lor \lnot e \lor \lnot h) \land (f \lor h)$
+$(a \lor b \lor \lnot c) \land (a \lor \lnot d) \land (c \lor d \lor e) \land (\lnot{e} \lor \lnot f ) \land (g \lor \lnot{e} \lor \lnot h) \land (f \lor h)$
 
-With the assignments $g = \mathit{false}$, $a = \mathit{false}$, and $b = \mathit{false}$ the last clause, $ (f \lor h) $, becomes unsatisfiable as $ f = \mathit{false}, h = \mathit{false}$ is implied.
+With the assignments $g = \mathit{false}$, $a = \mathit{false}$, and $b = \mathit{false}$ the last clause, $ (f \lor h) $, becomes unsatisfiable as $\mathit{f} = \mathit{false}, h = \mathit{false}$ is implied as there... 
+%TODO explain why
 
-CDCL attempts to identify the reason for the conflict and then use that information to jump several decisions back in the search to try a new assignment that will avoid that conflict. This process avoids exploring search spaces where there cannot be a solution. 
+CDCL attempts to identify the reason for the conflict and then use that information to jump several decisions back in the search to try a new assignment that will avoid that conflict. This process avoids exploring search spaces where there cannot be a solution. In order to do so, additional state transitions as described in Table \ref{table:cdcl-rules} are required: \textit{Learn}, \textit{Forget}, and \textit{Restart}.
 
-In DPLL with CDCL, each assignment has a 'decision level' which represents the number of assignments away from the start the algorithm is. As the procedure assigns values to variables, a graph of the assignments and their implications can be built. When a conflict arises, a bipartition of the graph identifies the conflicting variables and the assignment that caused the implication. The way this information is stored and used for future assignments is implementation dependent but following the conflict, the algorithm will back track to the decision level before the assignment that caused the implication and will resume.
+In DPLL with CDCL, each assignment has a `decision level' which represents the number of assignments away from the start the algorithm is. As the procedure assigns values to variables, a graph of the assignments and their implications can be built. When a conflict arises, a bipartition of the graph identifies the conflicting variables and the assignment that caused the implication. The way this information is stored and used for future assignments is implementation dependent but following the conflict, the algorithm will \textit{backjump}, or backtrack non-chronologically, to the decision level before the assignment that caused the implication and will resume.
 
 \section{SMT}
 
 SMT solvers combine SAT solving with theory specific reasoning in order to tackle problems beyond simple Boolean formulas. While SAT solver problems are defined exclusively in propositional logic, SMT problems can be defined using first-order logic for any theories that the SMT solver supports. Commonly supported theories include the theory of uninterpreted functions, equality, bit vectors, arithmetic, and arrays. In practice these solvers look a lot like the automated reasoning machines that Hilbert and Leibniz imagined and can be applied to many domains such as program verification, scheduling, exploit generation, AI planning, and network analysis.
 
-SMT solvers can be classified into two distinct types: eager solvers and lazy solvers. Eager solvers attempt to transform the theory expression into a Boolean formula that can be passed to the SMT solver's underlying SAT solver. Lazy solvers instead rely on their theory solvers and pass information between the theory solvers and the SAT solver. Although eager solvers, or bit blasters, are still commonly used for problems that manipulate bit-vectors most SMT solvers now use lazy solving. Lazy solvers attempt to take advantage of the domain specific strength of the theory solvers and rely only on the SAT solver for the skeleton Boolean formula reducing by avoiding reasoning about the entire formula~\cite{sattosmt, smtdpplt}.
+SMT solvers can be classified into two distinct types: eager solvers and lazy solvers. Eager solvers attempt to transform the theory expression into a Boolean formula that can be passed to the SMT solver's underlying SAT solver. Lazy solvers instead rely on their theory solvers and pass information between the theory solvers and the SAT solver. Although eager solvers, or bit blasters, are still commonly used for problems that manipulate bit-vectors, most SMT solvers, including leading SMT solvers Z3, CVC4, and Yices, now use lazy solving.
+% TODO CITE http://smtcomp.sourceforge.net/2017/results-summary.shtml?v=1500632282 and http://homepage.cs.uiowa.edu/~tinelli/talks/SATSMT-12.pdf
+ Lazy solvers attempt to take advantage of the domain-specific strength of the theory solvers and rely only on the SAT solver for the skeleton Boolean formula avoiding the expensive transformation step~\cite{sattosmt, smtdpplt}.
 
-The adjustments that must be made to the state transition model of DPPL are as follows. 
+The adjustments that must be made to the state transition model of DPLL are as follows.  The final state is either $unsat$ or $M || F$ and $Solv _T(M)$ is satisfiable, where $Solv_T$ is a theory solver that can check theory satisfiability for $F$.
 
-The final state is either $unsat$ or $M || F$ and $Solv _T(M)$ is satisfiable, where $Solv_T$ is a theory solver that can check theory satisfiability for $F$.
-
-We also have to amend the Theory Learn and Forget rules to prevent being stuck in a state where $M || F, M \models F$, and $Solv_T(M)$ is not satisfiable by ensuring that the backtrack rule can be applied. The backtrack rule has a condition that $M \models \lnot C$. In this unsatisfiable state $T \models \lnot M$ so any clause for which $T \models C$ will enable backtracking. Finally, the pure literal rule needs to be removed. Although in Boolean logic literals are independent of each other in first-order this may not be the case.
+We also have to amend the Theory Learn and Forget rules to prevent being stuck in a state where $M || F, M \models F$, and $Solv_T(M)$ is not satisfiable by ensuring that the backtrack rule can be applied. The backtrack rule has a condition that $M \models \lnot C$. In this unsatisfiable state $T \models \lnot{M}$ so any clause for which $T \models C$ will enable backtracking. Finally, the pure literal rule needs to be removed. Although in Boolean logic literals are independent of each other in first-order this may not be the case.
 
 
 \begin{table}[h]
@@ -356,21 +448,24 @@ Consider the problem below which uses the theory of equality of uninterpreted fu
 
 $ f(a) = b \land (g(f(c)) \neq g(b) \lor g(a) = g(b)) \land a \neq c $
 
-The SAT solver runs on the Boolean skeleton of the formula $1 \land (2 \lor 3) \land 4$ and suggests a model $M$, $1 = \mathit{true}, 2 = \mathit{false}, 3 = \mathit{true}, 4 = \mathit{true}$. The theory solver then finds the theory inconsistent, and adds a negation of the inconsistent model to the model preventing that state from being explored again - this new model $ 1 = \mathit{true}, 2 = \mathit{false}, 3 = \mathit{true}, 4 = \mathit{true}, (\lnot 1 \lor 2 \lor \lnot 3 \lor 4 ) = true $ is then solved by the SAT solver to produce a new model $ 1 = \mathit{true}, 2 = \mathit{true}, 3 = \mathit{false}, 4 = \mathit{true}$. This model is then sent to the theory solver which finds the theory consistent producing a satisfiable result.
+The SAT solver runs on the Boolean skeleton of the formula $1 \land (2 \lor 3) \land 4$ and suggests a model $M$, $1 = \mathit{true}, 2 = \mathit{false}, 3 = \mathit{true}, 4 = \mathit{true}$. The theory solver then finds the theory inconsistent, and adds a negation of the inconsistent model to the model preventing that state from being explored again - this new model $ 1 = \mathit{true}, 2 = \mathit{false}, 3 = \mathit{true}, 4 = \mathit{true}, (\lnot 1 \lor 2 \lor \lnot 3 \lor 4 ) = true $ is then solved by the SAT solver to produce a new model $ 1 = \mathit{true}, 2 = \mathit{true}, 3 = \mathit{false}, 4 = \mathit{true}$. This model is then sent to the theory solver which finds the theory consistent, producing a satisfiable result.
 
-This basic lazy approach works well as it focuses on the domain specific strengths of the SAT solver and theory solver and it allows the SMT solver to be built modularly as the SAT and theory solvers communicate via a simple interface. Replacing the theory or SAT solver can be done independently from each other. However this basic lazy approach, even optimised, doesn't use any theory information to guide the search~\cite{sattosmt}.
+This basic lazy approach works well as it focuses on the domain specific strengths of the SAT solver and theory solver. It also allows the SMT solver to be built modularly as the SAT and theory solvers communicate via a simple interface enabling the theory or SAT solver to be replaced independently from each other. However this basic lazy approach, doesn't use any theory information to guide the search~\cite{sattosmt}.
 
-\subsection{DPPL(T)}
+\subsection{DPLL(T)}
 Rather than simply validating models suggested by the SAT solver, DPLL(T) uses the theory solver to find T-consequences to guide the search. It produces explanations of inconsistent states and is able to backtrack to known good states to continue search~\cite{smtdpplt, ganzinger2004dpll}.
 
 DPLL(T) adds a new rule T-Propagate which is described as $M || F \implies M l || F $ under the conditions $M \models _T l$, $l$ or $\lnot l$ occurs in $F$, and $l$ is undefined in $M$~\cite{sattosmt}.
 
-When a non-Boolean conflict occurs then the theory solver provides a conjunction, $E$, of inconsistent literals were in the model when it was found to be inconsistent. For each literal $e $ in $E$, if $e_1$ was T-propagated then a reason for the inconsistency can be described as another set of literals $R$ where $r_1 \land ... \land r_n \models _T e$. 
+When a non-Boolean conflict occurs then the theory solver provides a conjunction, $E$, of literals that were in the model when it was found to be inconsistent. For each literal $e $ in $E$, if $e_1$ was T-propagated then a reason for the inconsistency can be described as another set of literals $R$ where $r_1 \land ... \land r_n \models _T e$. 
+
+%TODO EXAMPLE
 
 \subsection{Combining Theory Solvers}
-In many cases problems cannot be simply modelled by a single theory. For instance, in the of modelling arrays we require at least the theory of arrays and the theory of arithmetic. It may be possible to use the union of the theories using the Nelson-Oppen combination~\cite{smtdpplt}.
+%TODO Make this clearer
+In many cases problems cannot be simply modelled by a single theory. For instance, modelling arrays requires at least the theory of arrays and the theory of arithmetic. It may be possible to use the union of the theories using the Nelson-Oppen combination~\cite{smtdpplt}.
 
-Given two disjoint theories $T_1$ and $T_2$, where the theories are stably-infinite and convex, and a set of literals $S$ the deterministic Nelson-Oppen algorithm has the following steps.
+Given two disjoint theories $T_1$ and $T_2$, where the theories are stably-infinite and convex, and a set of literals $S$, the deterministic Nelson-Oppen algorithm has the following steps.
 
 1. Purify each literal in $S$ so that it belongs to a single theory, $S_1$ or $S_2$ where $S = S_1 \bigcup S_2$
 
@@ -378,7 +473,7 @@ Given two disjoint theories $T_1$ and $T_2$, where the theories are stably-infin
 
 3. Check the satisfiability of each equality $e$ in $E$ with the corresponding solver If any unsat, report unsat - else report sat.
 
-For instance consider the set of literals $f(a) - f(b) = c, c = a -5, f(0) = 3, a = b$ and the theories of arithmetic and equality of uninterpreted functions.
+For instance, consider the set of literals $f(a) - f(b) = c, c = a -5, f(0) = 3, a = b$ and the theories of arithmetic and equality of uninterpreted functions.
 
 \textbf{Steps 1 and 2}
 
@@ -388,7 +483,7 @@ $c = a - 5 \implies t_5 = a - 5 \implies t_5 = t_3, t_3 = a- 5$
 
 $f(0) =3 \implies f(t_4) = t_5, t_4 = 0, t_5$
 
-The solvers share constants: $t_1$ .... ,$t_5, a, b, c$.
+The solvers share constants: $t_1$, ... ,$t_5, a, b, c$.
 
 \textbf{Step 3}
 
@@ -396,15 +491,17 @@ For each literal, its theory solver checks the satisfiability. In this example, 
 
 \chapter{JavaScript}
 
+\section{History}
+
 JavaScript was initially created by a team at Netscape in 1996 with the goal of bringing interactivity to the web via a scripting language. According to Brendan Eich (the creator of JavaScript), up until this point the web was ``static, text-heavy, with at best images in tables or floating on the right or left"~\cite{AZProgrammingLanguages}. 
 
 Brendan was initially recruited by Netscape with the aim of implementing Scheme, a dialect of Lisp that supports first-class functions~\cite{dybvig1996scheme}, in the browser however by this time Sun and Netscape were negotiating to bring Java to Netscape Navigator~\cite{popularityofjavascript}. An internal debate occurred about the need for two languages but Eich and other influential developers at both Sun and Netscape believed that the two languages would serve different audiences. 'Professional' developers would veer towards Java for building logic heavy components and designers and amateurs would use the scripting language as a `glue' for joining together components~\cite{AZProgrammingLanguages}.
 
-Despite targeting a different audience Mocha, the language that would later evolve into JavaScript, was required by management to ``look like Java", according to Eich, ruling out the existing languages Perl, Python, and Scheme. Eventually Eich settled on ``Scheme-ish first-class functions and Self-ish (albeit singular) prototypes as the main ingredients"~\cite{popularityofjavascript}. Mocha also inherited a number of confusing Java language features such as the distinction between primitives and objects (e.g.\lstinline{string}vs.\lstinline{String}) and the\lstinline{Date}constructor which is a port of Java's\lstinline{java.util.Date}, complete with the Y2K bug~\cite{brendaneichtimetomakejscomment}. Perl and Python are also credited to influencing Mocha's string handling and regular expressions and AWK inspired the use of the\lstinline{function}keyword briefhistoryofjavascript. The first version of the language had an incredibly short development period. Eich claims he spent ``about ten days" developing the first JavaScript interpreter~\cite{AZProgrammingLanguages}.
+Despite targeting a different audience Mocha, the language that would later evolve into JavaScript, was required by management to ``look like Java", according to Eich, ruling out the existing languages Perl, Python, and Scheme. Eventually Eich settled on ``Scheme-ish first-class functions and Self-ish (albeit singular) prototypes as the main ingredients"~\cite{popularityofjavascript}. Mocha also inherited a number of confusing Java language features such as the distinction between primitives and objects (e.g. \lstinline{string} vs. \lstinline{String}) and the\lstinline{Date}constructor which is a port of Java's\lstinline{java.util.Date}, complete with the Y2K bug~\cite{brendaneichtimetomakejscomment}. Perl and Python are also credited to influencing Mocha's string handling and regular expressions and AWK inspired the use of the \lstinline{function} keyword~\cite{briefhistoryofjavascript}. The first version of the language had an incredibly short development period. Eich claims he spent ``about ten days" developing the first JavaScript interpreter~\cite{AZProgrammingLanguages}.
 
-After JavaScript (abandoning its previous names, Mocha and LiveScript) was released in Netscape Navigator 2 Microsoft began work on JScript, an equivalent language which shipped with Internet Explorer 3. Eich says that ``At some point in late summer or early fall 1996, it became clear to me that JS was going to be standardized. Bill Gates was bitching about us changing JS all the time."~\cite{newjavascriptmoduleowner} This led to JavaScript being standardised by Ecma International, an industry group that produces information standards, as ECMAScript in 1997. Since 1997 ECMAScript, now in its sixth version, has also been adopted as an ISO/IEC standard~\cite{ISO/IEC16262:2011}.
+After JavaScript (abandoning its previous names Mocha and LiveScript) was released in Netscape Navigator 2 Microsoft began work on JScript, an equivalent language which shipped with Internet Explorer 3. Eich says that ``At some point in late summer or early fall 1996, it became clear to me that JS was going to be standardized. Bill Gates was bitching about us changing JS all the time."~\cite{newjavascriptmoduleowner} This led to JavaScript being standardised by Ecma International, an industry group that produces information standards, as ECMAScript in 1997. Since 1997 ECMAScript, now in its sixth version, has also been adopted as an ISO/IEC standard~\cite{ISO/IEC16262:2011}.
 
-A key moment in JavaScript's history occurred when web developers became fascinated with Ajax, a set of techniques and technologies for making interactive websites, popularised by Google Suggest and Google Maps, spurring on an advancement in interactivity of modern websites~\cite{ajax}. To alleviate the pain of manipulating the Document Object Model (DOM), the hierarchy of objects that make up a HTML web page, and to deal with the problem that 'writing JavaScript should be fun' jQuery was released in 2006~\cite{historyofjquery} and commanded immediate popularity. In 2007, large tech companies including Digg, Google, Intel, Amazon, and the BBC all reported using jQuery~\cite{historyofjquery} and in the 12 months between Sept 2007 and 2008 jquery.com received 13.5 million unique visitors~\cite{stateofjquery}. As early as 2006 it's clear that although JavaScript is a powerful and popular language, in part due to its low barrier of entry and its unique place as the default language of the web, there are frustrations with the difficulty in reasoning about and writing JavaScript.
+A key moment in JavaScript's history occurred when web developers became fascinated with Ajax, a set of techniques and technologies for making interactive websites, popularised by Google Suggest and Google Maps, spurring on an advancement in interactivity of modern websites~\cite{ajax}. To alleviate the pain of manipulating the Document Object Model (DOM), the hierarchy of objects that make up a HTML web page, and to deal with the problem that 'writing JavaScript should be fun' jQuery was released in 2006~\cite{historyofjquery} and commanded immediate popularity. In 2007, large tech companies including Digg, Google, Intel, Amazon, and the BBC all reported using jQuery~\cite{historyofjquery} and in the 12 months between Sept 2007 and 2008 jquery.com received 13.5 million unique visitors~\cite{stateofjquery}. As early as 2006 it is clear that although JavaScript is a powerful and popular language, in part due to its low barrier of entry and its unique place as the default language of the web, there are frustrations with the difficulty in reasoning about and writing JavaScript.
 
 Google Chrome launched in 2008, with a new open source JavaScript engine named V8. When it launched V8 outperformed other browsers' JavaScript engines on benchmarks~\cite{chromebenchmarks}. This was, in part, due to its hidden classes which reduce the cost of looking up properties on objects that share prototypes via inline caching, its use of a just-in time compiler (JIT) to produce assembly code rather than running an interpreter, as well as its efficient memory management~\cite{chromeengine, chromeengine2}. The launch of the V8 engine created a so called 'browser war' during which the performance of JavaScript vastly increased across all browsers~\cite{knowyourenginesmozilla}.
 
@@ -412,9 +509,7 @@ In 2009, Node.js was launched - a JavaScript runtime based on V8 used to build a
 
 Due in part to popularity of Node, JavaScript is now one of the most popular languages for software development~\cite{stackoverflowsurvey, tiobeindex2017nov} with npm, Node's package manager, hosting over 475,000 packages~\cite{npm}.
 
-\section{Javascript Design}
-
-Despite its popularity, writing correct JavaScript code remains a relatively difficult problem largely due to its dynamic type system, its tendency to silently fail, and a number of quirks inherited from early versions of the language as a result of its short development cycle. Additionally, there are a number of inconsistencies in the EMCAScript standard itself which cause interpreter implementations to differ in their approach leading to unspecified behaviours~\cite{park2015kjs}. Below I'll briefly outline the semantics of JavaScript, including arrays which are the focus of this project, and the different approaches taken to analysing JavaScript code to ensure correctness.
+Despite its popularity, writing correct JavaScript code remains a relatively difficult problem largely due to its dynamic type system, its tendency to silently fail, and a number of quirks inherited from early versions of the language as a result of its short development cycle.
 
 
 \afterpage{%
@@ -433,7 +528,7 @@ Undefined & The type of variables before they are assigned a value. \\ \hline
 Null & The type of the assignable singleton value null\\ \hline
 Boolean & A standard representation of true and false \\ \hline
 String & An ordered sequence of zero or more 16-bit unsigned integers, these are intended to represent UTF-16 characters but are not required to be \\ \hline
-Number & Represents the IEE 754 double precision numbers in the range 2 \textasciicircum -253\textasciicircum to 2 \textasciicircum 253\textasciicircum as well as the special cases NaN, $\infty$ , and $ -\infty$. JavaScript's implementation of numbers includes both a positive and negative 0. \\ \hline
+Number & Represents the IEE 754 double precision numbers in the range 2\textsuperscript{-253} to 2\textsuperscript{253} as well as the special cases NaN, $\infty$ , and $ -\infty$. JavaScript's implementation of numbers includes both a positive and negative 0. \\ \hline
 Object & Represents a collection of properties, each of which has a name and a value, as well as optionally a setter and/or getter function used to manipulate the value. To a first approximation, Objects can be thought of as a hash map \\ \hline
 \end{tabular}
 }
@@ -444,20 +539,10 @@ Object & Represents a collection of properties, each of which has a name and a v
 }
 
 %%%%%%% TODO FIGURE OUT WHAT IS GOING ON HERE
-\subsection{Type System}
-JavaScript has six types, Table \ref{type-system}, that variables can be~\cite{EcmaScript} but the types of variables are not explicitly declared at compile time. Instead, types are dynamic and can change over the course of a program. Consider the program in \ref{fig:js-coercion}. Initially \lstinline{foo} is of type string but the type is implicitly coerced into a number by the \lstinline{*} operator. Coercion between types occurs when the type of an operand is not the type the operator is expecting. For instance, as shown in the example above the \lstinline{*} operator coerces all operands to numbers. This coercion is a source of error in programs as inputs of an invalid type can be coerced in unexpected ways.
+\section{Type System}
+JavaScript has six types, Table \ref{type-system}, that variables can be~\cite{EcmaScript}, but the types of variables are not explicitly declared at compile time. Instead, types are dynamic and can change over the course of a program: \lstinline{let foo = '1'; foo = foo * 2;}. Initially \lstinline{foo} is of type string but the type is implicitly coerced into a number by the \lstinline{*} operator. Coercion between types occurs when the type of an operand is not the type the operator is expecting. For instance, as shown in the example above the \lstinline{*} operator coerces all operands to numbers. This coercion is a source of error in programs as inputs of an invalid type can be coerced in unexpected ways.
 
-Consider the contrived example in \ref{fig:js-bool-coercion} where the input to a function expecting an integer is instead a string. In this case the \lstinline{+} operator coerces a number to a string resulting in a concatenation rather than an addition.
-
-\begin{figure}[h]
-\begin{verbatim}
-let foo = '1';
-foo = foo * 2
-$ foo
-< 2
-\end{verbatim}
-\caption{\label{fig:js-coercion} Example of Coercion}
-\end{figure} 
+Consider the contrived example in \ref{fig:js-increment-concat} where the input passed to a function is a String instead of the expect Number. In this case the \lstinline{+} operator coerces a number to a string resulting in a concatenation rather than an addition.
 
 \begin{figure}[h]
 \begin{verbatim}
@@ -466,19 +551,17 @@ function increment (x) {
 }
 
 let a = '1'
-let b = increment(y)
-$ b
-< 11
+let b = increment(y) // b is String '11' rather than the expected Number 2
 \end{verbatim}
-\caption{\label{fig:js-bool-coercion} Example of Boolean Coercion}
+\caption{\label{fig:js-increment-concat} Example of Boolean Coercion}
 \end{figure} 
 
 Although the previous examples have used strings and numbers, type coercion extends to booleans as well. Non-boolean expressions are coerced with the following rules \lstinline{undefined}, \lstinline{null}, \lstinline{false}, the empty string, \lstinline{NaN}, \lstinline{+0}, and \lstinline{-0} return false while \lstinline{true}, all other numbers, all other strings, and all Objects return \lstinline{true}~\cite{EcmaScript}. These coercion rules, whilst a common source of error, can be taken advantage of to allow shortcuts like \lstinline{if (x)} to check for both undefined and null values.
 
-JavaScript also has some idiosyncrasies for testing equality which are underpinned by its type system. There are two operators for testing equality, \lstinline{==} and \lstinline{===}. The \lstinline{==} operator, the 'standard' equality operator, uses coercion to test the equality of values of differing types. However the standard equality operator doesn't necessarily use the same coercion rules as other operators. For instance, whilst boolean coercion would typically any non-zero and non-\lstinline{NaN} number to true, \lstinline{5 == true} is false. This inconsistency also extends to strings, typically all non-empty strings would coerce to true but \lstinline{'3' == 1} is false. Additionally, if you compare an object to any other type standard equality converts the object to a primitive which can lead to some unexpected results such as \lstinline{['7'] == 7}  being true. The strict operator, \lstinline{===}, by comparison has much saner behaviour - any two values not of the same type are not equal.
+JavaScript also has some idiosyncrasies for testing equality which are underpinned by its type system. There are two operators for testing equality, \lstinline{==} and \lstinline{===}. The \lstinline{==} operator, the `standard' equality operator, uses coercion to test the equality of values of differing types. However the standard equality operator does not necessarily use the same coercion rules as other operators. For instance, whilst boolean coercion would typically coerce any non-zero and non-\lstinline{NaN} number to true, \lstinline{5 == true} is false. This inconsistency also extends to strings, typically all non-empty strings would coerce to true, i.e. the if case in \lstinline| if ('3') { ... }| would execute, but \lstinline{'3' == 1} is false. Additionally, if you compare an object to any other type standard equality converts the object to a primitive which can lead to some unexpected results such as \lstinline{['7'] == 7}  being true. The strict operator, \lstinline{===}, by comparison has much saner behaviour -- any two values not of the same type are not equal.
 
-\subsection{Objects and Prototypical Inheritance}
-Typical object-oriented languages define classes which guarantee the exact sets of fields and methods an instance of the class will possess. Instances of the class can be thought of as clones or replicas of the class which mimic the class' behaviour. JavaScript instead uses prototypical inheritance, in which objects have a template or prototype which define a set of properties an object has, but objects are also free to declare their own set of properties and even overwrite their prototype's properties. 
+\section{Objects and Prototypical Inheritance}
+Typical object-oriented languages define classes which guarantee the exact sets of fields and methods an instance of the class will possess. JavaScript instead uses prototypal inheritance, in which objects have a \textit{prototype} which defines  a set of properties an object has, but objects are also free to declare their own set of properties and even overwrite their prototype's properties. 
 
 Consider the example in Figure \ref{fig:js-prototypical-inheritance}, in which we create a prototype, define a new object of that prototype, and then overwrite one of the values of the prototype.
 
@@ -498,47 +581,37 @@ Fruit.prototype = {
   }
 }
 
-var orange = new Fruit('orange', 100)
-$ orange instanceof Fruit // orange.prototype === Fruit.prototype
-< true
-$ orange.print()
-< Color: orange Weight: 100
-
-// hasOwnProperty checks whether a property belongs to the object or to its prototype
-$ orange.hasOwnProperty('color') 
-< true
-$ orange.hasOwnProperty('print') // print is inherited from orange.prototype
-< false
-orange.print = () => console.log('A Orange')
-$ orange.print()
-< A Orange
-$ orange.hasOwnProperty('print') // print is now defined in orange as well
-< true
+var orange = new Fruit('orange', 100) // orange.prototype === Fruit.prototype
+orange.hasOwnProperty('color') // true, color belongs to orange
+orange.hasOwnProperty('print') // false, print is inherited from orange.prototype
+orange.print = () => console.log('A Orange') // Redefine the print function
+orange.hasOwnProperty('print') // true, print belongs to orange as well
 \end{verbatim}
 \caption{\label{fig:js-prototypical-inheritance} Example of Prototypal Inheritance}
 \end{figure} 
 
-A prototype may itself have a prototype, the sequence of prototypes which define the properties of a given object are referred to as a prototype chain~\cite{EcmaScript, borning1986classes}. By default, all created objects inherit from\lstinline{Object.prototype} and functions, as a special class of object, inherit from \lstinline{Function.prototype} which inherits from\lstinline{Object.prototype}. These prototypes are part of the EMCAScript standard and provide utilities to make working with objects of that prototype easier. For example,\lstinline{Object.prototype} provides functions for iterating over all the values of an object or all the keys in the object.
+A prototype may itself have a prototype, the sequence of prototypes which define the properties of a given object are referred to as a prototype chain~\cite{EcmaScript, borning1986classes}. By default, all created objects inherit from \lstinline{Object.prototype} and functions, as a special class of object, inherit from \lstinline{Function.prototype} which inherits from \lstinline{Object.prototype}. These prototypes are part of the EMCAScript standard and provide utilities to make working with objects of that prototype easier. For example, \lstinline{Object.prototype} provides functions for iterating over all the values of an object or all the keys in the object.
 
-Consider the prototype chain in Figure \ref{fig:js-prototypal-chain}.
+Consider the prototype chain in Figure \ref{fig:js-prototypal-chain} in which we have a prototype chain length of three. Our \lstinline{orange} object has a prototype of \lstinline{Fruit}, which has a prototype of \lstinline{Food}, which has a prototype of \lstinline{Object}.
+
 
 \begin{figure}[h]
 \begin{verbatim}
 function Food (calories, portions) {
-  this.calories = calories
-  this.portionsPerDay = portions
+  this.calories = calories;
+  this.portionsPerDay = portions;
 }
-40
+
 Food.prototype = {
 	caloriesPerDay: function () {
-		return this.calories * this.portionsPerDay
+		return this.calories * this.portionsPerDay;
 	}
 }
 
 function Fruit (color, weight, calories, portions) {
-  Food.call(this, calories, portions) // Call the food constructor
-  this.color = color
-  this.weight = weight
+  Food.call(this, calories, portions); // Call the food constructor
+  this.color = color;
+  this.weight = weight;
 }
 
 // The prototype of Fruit is Food, but we want to use the Fruit constructor
@@ -547,25 +620,16 @@ Fruit.prototype.constructor = Fruit;
 
 // Let's add our print function to the Fruit prototype
 Fruit.prototype.print = function () {
-  console.log(`Color: ${this.color} Weight: ${this.weight}`)
+  console.log(`Color: ${this.color} Weight: ${this.weight}`);
 }
 
-let orange = new Fruit('orange', 100, 47, 5)
-$ orange.print()
-< Color: orange Weight: 100
-orange.caloriesPerDay()
-< 235
-$ orange instanceof Fruit
-< true
-$ orange instanceof Food
-< true
-$ orange instanceof Object
-< true
+let orange = new Fruit('orange', 100, 47, 5);
+$ orange instanceof Fruit; // true
+$ orange instanceof Food; // true
+$ orange instanceof Object; // true
 \end{verbatim}
-\caption{\label{fig:js-prototypical-inheritance} Example of Prototypal Inheritance}
+\caption{\label{fig:js-prototypal-inheritance} Example of Prototypal Inheritance}
 \end{figure} 
-
-In the example above we have a prototype chain length of three. Our \lstinline{orange} object has a prototype of \lstinline{Fruit}, which has a prototype of \lstinline{Food}, which has a prototype of \lstinline{Object}.
 
 \begin{figure}[h]
 \centering
@@ -573,13 +637,13 @@ In the example above we have a prototype chain length of three. Our \lstinline{o
 \framebox{
 	\includegraphics[width=10cm]{prototypechain} 
 }
-\caption{\label{fig:fig:js-prototypal-chain} Prototypal Inheritance in JavaScript.}
+\caption{\label{fig:js-prototypal-chain} Prototypal Chain for Figure \ref{fig:js-prototypal-inheritance}}
 \end{figure} 
 
-\subsection{Arrays}
-Unlike other languages, JavaScript does not model arrays as continuously indexed tuples. Instead arrays are a special form of object where array elements are properties that satisfy the following test for a key ToString(ToUint32(k)) === k \&\& ToUint32(k) !== 2 \textasciicircum 32 - 1). In simpler terms, an array is a special case of an object where the array elements are any value where the property can be coerced to a a positive integer number less than 2\textasciicircum32\textasciicircum - 1. These array elements are treated differently to regular properties by array prototypes and the length property. 
+\section{Arrays}
+Unlike other languages, JavaScript does not model arrays as continuously indexed tuples. Instead, arrays are a special form of object where the array elements are any value where the property can be coerced to a a positive integer number less than 2 \textsuperscript{32} - 1. These array elements are treated differently to regular properties by array prototypes and the length property. 
 
-The length of an array is a property of the array prototype which tracks the highest index in the array. Note, that the highest index of the array does not necessarily track the number of elements in the array as arrays do not enforce any kind of ordering on their properties making it possible to create a non-contiguous array, an array with 'holes' in it, as shown in the example in Figure \ref{fig:js-array-length}. The length product is not read-only as you might expect. If you increase length empty elements will be added to the end of the array and decreasing the length will truncate the array to satisfy the new length.
+The length of an array is a property of the array prototype which tracks the highest index in the array. Note, that the highest index of the array does not necessarily track the number of elements in the array; arrays do not enforce any kind of ordering on their properties, making it possible to create a non-contiguous array with 'holes' in it, as shown in Figure \ref{fig:js-array-length}. The length property is not read-only as you might expect. If one increase length empty elements will be added to the end of the array and decreasing the length will truncate the array to satisfy the new length.
 
 \begin{figure}[h]
 \begin{verbatim}
@@ -656,7 +720,7 @@ As described in 1.1, assuring the correctness of JavaScript code is an unsolved 
 
 Tools like Eslint and Flow are commonly used by developers to statically analyse code and identify bugs but are limited in their scope. Eslint uses a narrow set of rules to identify possibly dangerous behaviour and Flow is constrained to reasoning about types and in some cases requires additional code annotation to allow Flow to identify possible errors. These limited sets of warnings do not fully reflect the dynamic nature of JavaScript and the subtle interactions that can occur due to prototypical inheritance, dynamic property access, and dynamic dispatch. There have been a number of attempts to analyse JavaScript statically however most approaches fall short of useful due to their inability to reason about functions like\lstinline{call()} and \lstinline{apply()}~\cite{sridharan2012correlation} with the best results requiring an element of dynamic analysis as well~\cite{logozzo2010rata, wei2013practical}.
 
-Consequently there has been a shift in interest towards analysing safer (and less dynamic) targets which compile to JavaScript, the most popular of which is Typescript. Typescript is a superset of ECMAScript 6 which includes optional types to enable errors to be caught statically before compilation. Although TypeScript makes it easier to reason about potential errors caused by coercion, TypeScript itself provides no guarantees of static soundness - it's still possible for a TypeScript program to compile to JavaScript successfully and encounter a run-time error as a result of type coercion when executed~\cite{bierman2014understanding}. Extensions to TypeScript have been suggested to provide soundness ~\cite{richards2015concrete, rastogi2015safe} although these approaches require a modified interpreter or runtime enforcement. Regardless, whilst TypeScript and its derivatives provide a way of reducing or eliminating type based errors they don't help identify or eliminate errors that occur due to other dynamic features of JavaScript such as prototypical inheritance, dynamic property access, or dynamic dispatch.
+Consequently there has been a shift in interest towards analysing safer (and less dynamic) targets which compile to JavaScript, the most popular of which is Typescript. Typescript is a superset of ECMAScript 6 which includes optional types to enable errors to be caught statically before compilation. Although TypeScript makes it easier to reason about potential errors caused by coercion, TypeScript itself provides no guarantees of static soundness - it is still possible for a TypeScript program to compile to JavaScript successfully and encounter a run-time error as a result of type coercion when executed~\cite{bierman2014understanding}. Extensions to TypeScript have been suggested to provide soundness ~\cite{richards2015concrete, rastogi2015safe} although these approaches require a modified interpreter or runtime enforcement. Regardless, whilst TypeScript and its derivatives provide a way of reducing or eliminating type based errors they don't help identify or eliminate errors that occur due to other dynamic features of JavaScript such as prototypical inheritance, dynamic property access, or dynamic dispatch.
 
 There have been a number of attempts to produce formal semantics for JavaScript, to allow for better reasoning about JavaScript code, however no attempts can be considered completely successful. One approach taken by Gardner et al. (JaVerT) ~\cite{gardner2012towards, guha2010essence} is to translate a subset of the JavaScript language (targeting ECMAScript 5 in strict mode) to an intermediate language, JSL, and then performing analysis on JSL. Although the results of their analysis with translated code is promising, their process and toolchain requires an expert level understanding of the semantics of JavaScript and developers to annotate their code pre and post-conditions. Although, this approach may be suited for smaller programs (or critical subsets of programs) its approach does not scale well to large applications. Other approaches such a KJS~\cite{park2015kjs} and \ensuremath{\lambda}JS\cite{guha2010essence} support even less of the language than JaVerT and crucially none of the three approaches target the ECMAScript 6 specification.
 
