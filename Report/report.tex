@@ -449,8 +449,15 @@ When a non-Boolean conflict occurs then the theory solver provides a conjunction
 
 \subsection{Combining Theory Solvers}
 %TODO Make this clearer
-In many cases problems cannot be simply modelled by a single theory. For instance, modelling arrays requires at least the theory of arrays and the theory of arithmetic. It may be possible to use the union of the theories using the Nelson-Oppen combination~\cite{smtdpplt}.
+In many cases problems cannot be simply modelled by a single theory. For instance, modelling arrays requires at least the theory of arrays and the theory of arithmetic. It may be possible to use the union of the theories using the Nelson-Oppen combination~\cite{smtdpplt}. 
 
+%TODO CITE https://courses.cs.washington.edu/courses/cse507/14au/slides/L7.pdf
+In order for two or more theories to be combined they must meet Nelson-Oppen restrictions. The classical restrictions are that the theories $T_1, ..., T_n$ must have disjoint symbols (excluding $=$), are convex, and are stably infinite. A theory is stably infinite if for every quantifier free satisfiable formula $F$ described by $T$ there is a $T-model$ that satisfies $F$ and which has an infinite model, examples of which include the theory of Arrays and EUF. A theory is convex if a formula T-implies a disjunction of equalities, it also T-implies at least one of these equalities separately http://flolac.iis.sinica.edu.tw/flolac15/_media/deciding_a_combination_of_theories.pdf.
+% TODO EXAMPLE AND EXPLAIN
+
+There are variations of the Nelson-Oppen combination for non-convex theories and non-stably infinite theories that have other restrictions such as the Shostak method. %TODO cite http://www-step.stanford.edu/papers/fmcr03.pdf
+
+\textbf{Deterministic Nelson-Oppen}
 Given two disjoint theories $T_1$ and $T_2$, where the theories are stably-infinite and convex, and a set of literals $S$, the deterministic Nelson-Oppen algorithm has the following steps.
 
 1. Purify each literal in $S$ so that it belongs to a single theory, $S_1$ or $S_2$ where $S = S_1 \bigcup S_2$
