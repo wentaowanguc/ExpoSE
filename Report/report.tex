@@ -103,7 +103,7 @@ This will be written the day before the submission.
 \chapter{Introduction}
 %%%%%%%%%%%%%%%%%%%%%% 
 %TODO PROOF READ
-Since its inception as a `glue' language for the web~\cite{AZProgrammingLanguages}, JavaScript's popularity has surged~{stackoverflowsurvey,tiobeindex2017nov}, it is now a ubiquitous language that powers mobile, web, and server applications, however its dynamic nature and deceptive syntax often lead to subtle bugs and unintended behaviour which can be difficult to identify. Dynamic symbolic execution (DSE) is a technique that can be used to automatically identify bugs and generates tests for JavaScript however this requires modelling the semantics of the language in first order logic. JavaScript arrays, in particular, are an area of the language that requires trade-offs, difficult design decisions, and careful consideration of language semantics when modelling due to their atypical properties. JavaScript arrays are special cases of objects and as a result have a directly mutable length, can consist of multiple types, and are not necessarily indexed sequentially.
+Since its inception as a `glue' language for the web~\cite{AZProgrammingLanguages}, JavaScript's popularity has surged~\cite{stackoverflowsurvey,tiobeindex2017nov}, it is now a ubiquitous language that powers mobile, web, and server applications, however its dynamic nature and deceptive syntax often lead to subtle bugs and unintended behaviour which can be difficult to identify. Dynamic symbolic execution (DSE) is a technique that can be used to automatically identify bugs and generates tests for JavaScript however this requires modelling the semantics of the language in first order logic. JavaScript arrays, in particular, are an area of the language that requires trade-offs, difficult design decisions, and careful consideration of language semantics when modelling due to their atypical properties. JavaScript arrays are special cases of objects and as a result have a directly mutable length, can consist of multiple types, and are not necessarily indexed sequentially.
 
 My work extends ExpoSE~\cite{Loring_2017}, a tool for DSE, by describing an encoding for homogeneously typed JavaScript arrays in first order logic, implementing support in ExpoSE for symbolic arrays, and modelling a selection of prototype functions. I demonstrate that as a result of these extensions results in an increased test coverage of popular several popular JavaScript libraries and describe a new bug found in a popular Array ES6 polyfill.
 
@@ -118,7 +118,7 @@ I also present background information on symbolic execution, including considera
 
 Symbolic execution is a technique for testing program correctness initially proposed in the 1970s~\cite{king1976symbolic, boyer1975select}. Classically, it is the process of executing a program by representing its variables as symbols rather than concrete values. Execution of the program occurs using these symbolic inputs by extending the basic operators and semantics of the program's language to use symbols and produce symbolic formulas rather than concrete values. In doing so, each symbolic execution tests many actual instances of execution. If statements and language features that cause execution to diverge are represented as a path condition, a conjunction of conditions on symbols that must be satisfied. At the end of execution the path condition, the conjunction of branch conditions taken to the current point of execution, provides a unique representation of a path tested through the program and when solved using a constraint solver produces a set of inputs that when run take the same path through the program as the symbolic execution~\cite{godefroid2008automated, godefroid2005dart}.
 
-\begin{figure}[h]
+\begin{figure}[t]
 \begin{lstlisting}
 function abs_sum (x, y) {
  if (x < 0) {
@@ -135,7 +135,7 @@ function abs_sum (x, y) {
 
 For example, consider the program described in Figure \ref{fig:abs-sum} which returns the sum of the absolute values of two values. There are four possible paths that can be taken through the program. The first is where neither if branches are entered, the second is where the value of \lstinline{x} is less than zero, the third is where the value of \lstinline{y} is less than zero, and the fourth is where both \lstinline{x} and \lstinline{y} are less than zero. The process for symbolically executing this program classically is as follows. The function is executed with two symbolic values $x'$ and $y'$ and a path condition $pc$, "the accumulator of properties which inputs must satisfy ... to follow ... a particular path"~\cite{king1976symbolic}, is initialised to $true$. When a branching statement (line 2 or 5) is reached the constraint solver is queried to see if the branch condition is feasible given the current path condition. If condition is satisfiable then execution forks to explore the new path and $pc$ becomes $pc \land bc$ where $bc$ is the branch condition. This process repeats until the program terminates and every path is explored. Table \ref{abs-sum-se-table} shows the path condition, symbolic results, and the constraint solver queries and results for the execution.
 
-\begin{table}[]
+\begin{table}[t]
 \centering
 \begin{tabular}{|l|l|l|l|}
 \hline
@@ -179,7 +179,7 @@ In EXE, and other more traditional methods, paths are found by building a contro
 
 SAGE, by contrast, uses a \textit{generational search}. Following the initial input, paths are generated by repeatedly negating the conditions in the path condition that was explored. Then paths are prioritised using a priority queue~\cite{godefroid2005dart}.
 
-\begin{figure}[h]
+\begin{figure}[t]
 \begin{lstlisting}
 Search(inputSeed){
  inputSeed.bound = 0;
@@ -200,7 +200,7 @@ Search(inputSeed){
 \caption{\label{fig:sage-search} SAGE's Search Algorithm}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[t]
 \begin{lstlisting}
 ExpandExecution(input) {
   childInputs = {};
@@ -234,18 +234,18 @@ In most cases, a branch's condition will not depend on all of the variables in a
 
 For instance, consider the function in Figure \ref{fig:example-function}. If the existing path constraint is $(x < 0 ) \land ( z > 5) \land (y < 13) \land (y + x > 15) $ and the symbolic execution negates the the last path condition to explore a new path: $ (x < 0) \land (z > 5) \land (y < 13) \land \lnot(y + x > 15)$ then the $z > 5$ constraint can be eliminated as $z$ does not influence the $y + x > 15$ branch.
 
-\begin{figure}[h]
+\begin{figure}[t]
 \begin{verbatim}
 function unlikely_function (x, y, z){
  if (x < 0)
-   x--
+   x--;
  if (z > 5)
-   z++
+   z++;
  if (y < 13)
-   y++
+   y++;
  if (y + x > 15)
-   y = y * x
- return x + y + z
+   y = y * x;
+ return x + y + z;
 }
 \end{verbatim}
 \caption{\label{fig:example-function} Example Function}
@@ -292,7 +292,7 @@ DPLL relies on two main principles: simplification and case splitting. Simplific
 % TODO CITE https://www.cs.utexas.edu/users/vl/teaching/lbai/dpll.pdf
 % TODO CITE http://profs.sci.univr.it/~farinelli/courses/ar/slides/DPLL.pdf
 % TODO CITE http://gki.informatik.uni-freiburg.de/teaching/ss14/gki/lectures/ai08.pdf
-\begin{figure}[h]
+\begin{figure}[t]
 \begin{algorithmic}
 \Function{UnitPropagate}{$\mathit{F}$, $U$}
 	\While{$\mathit{F}$ contains a unit clause $C$} 
@@ -307,7 +307,7 @@ DPLL relies on two main principles: simplification and case splitting. Simplific
 
 
 % TODO CITE https://www.cs.utexas.edu/users/vl/teaching/lbai/dpll.pdf
-\begin{figure}[h]
+\begin{figure}[t]
 \begin{algorithmic}
 \Function{PureLiteral}{$\mathit{F}$, $U$}
 	\While{$\mathit{F}$ contains a pure literal $l$} 
@@ -317,11 +317,10 @@ DPLL relies on two main principles: simplification and case splitting. Simplific
 \EndFunction    
 \end{algorithmic}
 
-\caption{\label{fig:dppl-pure-literal} Unit Propagation}
+\caption{\label{fig:dppl-pure-literal} Pure Literal}
 \end{figure}
 
-\begin{figure}[h]
-
+\begin{figure}[t]
 \begin{algorithmic}
 \Function{DPLL}{$\mathit{F}$, $M$}
 	\State \Call{UnitPropagate}{$\mathit{F}$, $M$}
@@ -344,9 +343,9 @@ DPLL relies on two main principles: simplification and case splitting. Simplific
 
 Consider the problem $F = (P \lor \lnot{Q} \lor R) \land (\lnot{P} \lor R) \land \lnot{P} \land \lnot{U} \land {R}$
 
-\begin{table}[]
+\begin{table}[t]
 \centering
-\begin{tabular}{|l|l|l|l|}
+\begin{tabular}{|p{2cm}|p{4.2cm}|p{9cm}|}
 \hline
 Model & $F$ & Rule Applied \\ \hline
 {} & $(P \lor \lnot{Q} \lor R) \land (\lnot{P} \lor R) \land \lnot{P} \land \lnot{U} \land {R}$ & UnitLiteral on $ \lnot{U}$   \\ \hline
@@ -363,15 +362,10 @@ Model & $F$ & Rule Applied \\ \hline
 %TODO Cite http://ctp.di.fct.unl.pt/~ramunas/slides/dpll(t).pdf
 It is also possible to model the algorithm as a series of states and transitions. States are described in the form $M || \mathit{F}$, where $M$ is a sequence of literals which are assigned the value true and $\mathit{F}$ is the problem in CNF form. The initial state of the algorithm is as $\emptyset || \mathit{F}$ and the final state is either a special state $unsat$ if $\mathit{F}$ is unsatisfiable, or $M || F'$, where $F'$ is a CNF formula equivalent to the initial problem $F$ and $M$ satisfies $F'$. The classical algorithm can be described by the four basic transitions, $M || \mathit{F} \implies M' || \mathit{F'} $, shown in Table \ref{table:classic-dpll-rules}: \textit{UnitPropagate}, \textit{Decide}, \textit{Fail}, and \textit{Backtrack} where $M \models C$ means that for every assignment $v$, $v(M) = true$ implies $v(C) = true$. These rules are applied to each state until a final state is achieved.
 
-\afterpage{%
-    \clearpage% Flush earlier floats (otherwise order might not be correct)
-    \begin{landscape}% Landscape page
-\begin{table}[]
+
+\begin{table}[t]
 \centering
-\caption{Classic DPLL Rules}
-\label{table:classic-dpll-rules}
-\scalebox{.60}{
-\begin{tabular}{|l|l|l|l|}
+\begin{tabular}{|p{2cm}|p{3cm}||p{6cm}|p{9cm}|}
 \hline
 Name & Rule & Conditions & Example \\ \hline
 Unit Propagation & $M|| F, C \lor l \implies M l || F, C \lor l$ & ​$M \models \lnot C $, $l$ is undefined in $M$ & $\emptyset || a \land (b \lor c) ) \land (d \lor e) \implies a || a \land (b \lor c) ) \land (d \lor e) $ \\ \hline
@@ -380,32 +374,23 @@ Fail & $M|| F, C \implies unsat$ & $M \models \lnot C$ $M$ contains no decision 
 Backtrack & $M l^d N|| F, C \implies M l' || F, C$ & $M l^d N \models \lnot C$ and there is a clause $C' \lor l'$ where $F, C \models C' \lor l'$ and $M \models \lnot C'$, $l'$ is undefined in $M$, and $l' or \lnot l'$ occurs in $F$ or in $M l^d N$ & TODO \\ \hline
 Pure Literal & $M|| F \implies Ml || F$ & $l$ occurs in some clause of $F$, $\lnot l$ occurs in no clause of $F$, $l$ is undefined in $M$ & $\emptyset || a \land (\lnot b \lor c) \implies \lnot b ||,a \land (\lnot b \lor c) $ \\ \hline
 \end{tabular}
-} %end scale
+\caption{Classic DPLL Rules}
+\label{table:classic-dpll-rules}
 \end{table}
-\end{landscape}
-    \clearpage% Flush page
-}
 
-\afterpage{%
-    \clearpage% Flush earlier floats (otherwise order might not be correct)
-    \begin{landscape}% Landscape page
-\begin{table}[]
+
+\begin{table}[t]
 \centering
 \caption{CDCL DPLL Rules}
 \label{table:cdcl-rules}
-\scalebox{.60}{
-\begin{tabular}{|l|l|l|l|}
+\begin{tabular}{|p{2cm}|p{3cm}||p{6cm}|p{9cm}|}
 \hline
 Name & Rule & Conditions & Example \\ \hline
 Learn & $M|| F \implies,M || F, C$ & All atoms of $C$ occur in $F$, $F \models C$ & \\ \hline
 Forget & $M|| F, C \implies M || F $ & $F \models C$ & \\ \hline
 Restart & $M|| F \implies \emptyset || F$ & & \\ \hline
 \end{tabular}
-} %end scale
 \end{table}
-\end{landscape}
-    \clearpage% Flush page
-}
 
 \subsection{CDCL}
 As variables are assigned Boolean values during the DPLL algorithm, conflicts arise from the implications of such assignments. For instance consider the following problem in CNF:
@@ -432,16 +417,16 @@ The adjustments that must be made to the state transition model of DPLL are as f
 We also have to amend the Theory Learn and Forget rules to prevent being stuck in a state where $M || F, M \models F$, and $Solv_T(M)$ is not satisfiable by ensuring that the backtrack rule can be applied. The backtrack rule has a condition that $M \models \lnot C$. In this unsatisfiable state $T \models \lnot{M}$ so any clause for which $T \models C$ will enable backtracking. Finally, the pure literal rule needs to be removed. Although in Boolean logic literals are independent of each other in first-order this may not be the case.
 
 
-\begin{table}[h]
+\begin{table}[t]
 \centering
-\caption{SMT Rules}
 \label{smt-rulesl}
-\begin{tabular}{|l|l|l|}
+\begin{tabular}{|p{2cm}|p{3cm}|p{6cm}|p{9cm}|}
 \hline
 Name & Rule & Conditions \\ \hline
 Theory Learn & $M || F \implies M|| F, C $ & All atoms of $C$ occur in $F$, $F \models _T C $ \\ \hline
 Theory Forget & $M || F, C \implies M || F $ & $F \models _T C$ \\ \hline
 \end{tabular}
+\caption{SMT Rules}
 \end{table}
 
 \subsection{Example Lazy Approach}
@@ -513,16 +498,10 @@ Due in part to popularity of Node, JavaScript is now one of the most popular lan
 Despite its popularity, writing correct JavaScript code remains a relatively difficult problem largely due to its dynamic type system, its tendency to silently fail, and a number of quirks inherited from early versions of the language as a result of its short development cycle.
 
 
-\afterpage{%
-    \clearpage% Flush earlier floats (otherwise order might not be correct)
-    \begin{landscape}% Landscape page
-\begin{table}[]
+\begin{table}[t]
 \centering
-\caption{JavaScript Type System}
-\label{type-system}
 
-\scalebox{.63}{
-\begin{tabular}{|l|l|}
+\begin{tabular}{|p{2cm}|p{12cm}|}
 \hline
 Type & Details \\ \hline
 Undefined & The type of variables before they are assigned a value. \\ \hline
@@ -532,12 +511,9 @@ String & An ordered sequence of zero or more 16-bit unsigned integers, these are
 Number & Represents the IEE 754 double precision numbers in the range 2\textsuperscript{-253} to 2\textsuperscript{253} as well as the special cases NaN, $\infty$ , and $ -\infty$. JavaScript's implementation of numbers includes both a positive and negative 0. \\ \hline
 Object & Represents a collection of properties, each of which has a name and a value, as well as optionally a setter and/or getter function used to manipulate the value. To a first approximation, Objects can be thought of as a hash map \\ \hline
 \end{tabular}
-}
+\caption{JavaScript Type System}
+\label{type-system}
 \end{table}
-
-\end{landscape}
-    \clearpage% Flush page
-}
 
 %%%%%%% TODO FIGURE OUT WHAT IS GOING ON HERE
 \section{Type System}
@@ -545,7 +521,7 @@ JavaScript has six types, Table \ref{type-system}, that variables can be~\cite{E
 
 Consider the contrived example in \ref{fig:js-increment-concat} where the input passed to a function is a String instead of the expect Number. In this case the \lstinline{+} operator coerces a number to a string resulting in a concatenation rather than an addition.
 
-\begin{figure}[h]
+\begin{figure}[t]
 \begin{verbatim}
 function increment (x) {
   return x + 1
@@ -566,7 +542,7 @@ Typical object-oriented languages define classes which guarantee the exact sets 
 
 Consider the example in Figure \ref{fig:js-prototypical-inheritance}, in which we create a prototype, define a new object of that prototype, and then overwrite one of the values of the prototype.
 
-\begin{figure}[h]
+\begin{figure}[t]
 \begin{verbatim}
 /* This is a constructor, color and weight will be values
  that belong the constructed object */
@@ -596,7 +572,7 @@ A prototype may itself have a prototype, the sequence of prototypes which define
 Consider the prototype chain in Figure \ref{fig:js-prototypal-chain} in which we have a prototype chain length of three. Our \lstinline{orange} object has a prototype of \lstinline{Fruit}, which has a prototype of \lstinline{Food}, which has a prototype of \lstinline{Object}.
 
 
-\begin{figure}[h]
+\begin{figure}[t]
 \begin{verbatim}
 function Food (calories, portions) {
   this.calories = calories;
@@ -632,7 +608,7 @@ orange instanceof Object; // true
 \caption{\label{fig:js-prototypal-inheritance} Example of Prototypal Inheritance}
 \end{figure} 
 
-\begin{figure}[h]
+\begin{figure}[t]
 \centering
 \fboxsep 2mm
 \framebox{
@@ -650,7 +626,7 @@ Another by-product of arrays being a special form of object is that arrays are n
 
 As described above, arrays can have both properties and array elements. If the property fails the array element test described above, then the value is stored as a regular object value. This can lead to subtle bugs when working with numbers if bounds are not checked as values smaller than 0 and greater than 2  \textsuperscript{32} - 1 will not be stored as an array element, as demonstrated in Figure \ref{fig:js-array-max-length}.
 
-\begin{figure}[h]
+\begin{figure}[t]
 \begin{verbatim}
 let arr = []
 arr[0] = 'foo'; // array is 
@@ -666,9 +642,9 @@ arr.length; // still returns 1
 The array prototype has a large number of helper functions which developers frequently take advantage of, a number of which were added in the latest version of the EMCAScript standard~\cite{EcmaScript}. Table \ref{table:array-prototype} has some of the more commonly used and interesting functions.
 
 %TODO make calls to function have a consistent signature type
-\begin{table}[h]
+\begin{table}[t]
 \centering
-\begin{tabular}{|p{2cm}|p{4.2cm}|p{9cm} |}
+\begin{tabular}{|p{2cm}|p{4.2cm}|p{9cm}|}
 \hline
 Function Name & Signature & Description \\ \hline
 indexOf & {\lstinline|indexOf(element)|} & Returns the first index of the array that contains {\lstinline|element|} or -1 if {\lstinline|element|} is not in the array \\ \hline
@@ -733,7 +709,7 @@ Z3 arrays are one dimensional unbounded maps where the index and values are of a
 
 Due to way Z3 models arrays as a unbounded homogeneously typed data structure, Z3 arrays do not directly correspond to JavaScript arrays. In order to encode the finite length of JavaScript arrays a separate Z3 integer variable is used which represent the the length of the symbolic array. When the array is created an assertion is made that the length is greater than or equal to 0. Whenever the concrete JavaScript array is accessed, if the index of the array is less than the concrete length of the array then an assertion is made that the symbolic length is less than the accessed index - else an assertion is made that length is greater than or equal to the accessed index.
 
-\begin{figure}[h]
+\begin{figure}[t]
 \begin{verbatim}
 // field_c is the concrete field accessed, base_c is the concrete array, base_s is the symbolic array, field_s is the symbolic field accessed
  if (field_c >= base_c.length) {
