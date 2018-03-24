@@ -376,7 +376,7 @@ class SymbolicState {
         // If not within bounds, push a condition to make sure other bounds are explored!
         const isValidSymbolicIndex = this.ctx.mkAnd(
             this.ctx.mkGe(field_s, this.ctx.mkIntVal(0)),
-            this.ctx.mkLt(field_s, base_s.getLength())
+            this.ctx.mkLt(base_s.getLength(), field_s)
         );
         return this.symbolicConditional(new ConcolicValue(isValidConcreteIndex, isValidSymbolicIndex));
     }
