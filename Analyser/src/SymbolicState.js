@@ -358,7 +358,7 @@ class SymbolicState {
                 newArray.setLength(newLength);
                 base_s.symbolic = newArray;
                
-                this.pushCondition(this.ctx.mkGe(array.getLength(), this.ctx.mkAdd(field_s, this.ctx.mkIntVal(1))));
+                this.pushCondition(this.ctx.mkGt(array.getLength(), field_s));
                 
                 const isOutsideBounds = field_c > base_c.length;
                 if (!isOutsideBounds) {
