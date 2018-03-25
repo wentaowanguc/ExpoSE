@@ -37,14 +37,14 @@ function buildTestList() {
     buildTest('arrays/array_length_numbers.js', 2, 0);
     buildTest('arrays/array_pop_index_of_combination.js', 2, 0);
     buildTest('arrays/array_pop_length_decreases.js', 2, 0);
-    buildTest('arrays/array_pop_value_matches.js', 3, 0);
+    buildTest('arrays/array_pop_value_matches.js', 3, 1);
     buildTest('arrays/array_push_index_of_combination.js', 2, 0);
     buildTest('arrays/array_push_length_increases.js', 2, 0);
     buildTest('arrays/array_push_value_matches.js', 3, 0);
     buildTest('arrays/array_set_field_change_value.js', 3, 0);
     buildTest('arrays/array_set_field_includes_combination.js', 4, 0);
     buildTest('arrays/array_set_field_increase_length.js', 3, 0);
-    buildTest('arrays/array_set_length.js', 3, 0);
+    buildTest('arrays/array_set_length.js', 3, 2);
     buildTest('arrays/array_slice_0.js', 5, 0);
     buildTest('arrays/array_slice_end_greater_than_length.js', 5, 0);
     buildTest('arrays/array_slice_end_less_than_length.js', 5, 0);
