@@ -347,22 +347,28 @@ class SymbolicState {
         return result;
     }
 
-    symbolicSetField(base_c, base_s, field_c, field_s, value) {
+    symbolicSetField(base_c, base_s, field_c, field_s, val_c, val_s) {
         if (Config.arraysEnabled && base_c instanceof Array ) {
+            const array = base_s;
+            Log.logMid(`Set Field with ${field_c} and ${val_c}`)
             // TODO Consider how to handle making arrays non-homogenous
-            if (typeof field_c === "number" && field_c >= 0 && field_c < 4294967295 && Number.isInteger(field_c) && base_s.getType() === typeof value) {
-                const newArray = base_s.setAtIndex(field_s, value);
-                newArray.setLength(base_s.getLength());
+            if (Number.isInteger(field_c) && field_c >= 0 && field_c < 4294967295 && base_s.getType() === typeof val_c) {
+                const newArray = array.setAtIndex(this.ctx.mkRealToInt(field_s), val_s);
+                const newLength = this.ctx.mkIntVar(`${array.getName()}_Length_${array.incrementLengthCounter()}`);
+                newArray.setLength(newLength);
                 base_s.symbolic = newArray;
                
-                const isOutsideBounds = field_c > base_c.length;
-                this.ctx.pushCondition(this.ctx.mkGe(base_s.getLength(), field_s));
+                this.pushCondition(this.ctx.mkGe(array.getLength(), this.ctx.mkAdd(field_s, this.ctx.mkIntVal(1))));
                 
+                const isOutsideBounds = field_c > base_c.length;
                 if (!isOutsideBounds) {
-                    Log.logHigh('Setting outside existing known length, unmodeled holes may have been created within array');
+                    Log.log('Setting outside existing known length, unmodelled holes may have been created within array');
                 }
-            } else if (field_c === "length" && typeof value === "number") {
-                this.ctx.pushCondition(this.ctx.mkLt(value, base_s.getLength()))
+            } else if (field_c === "length" && Number.isInteger(val_c)) {
+                Log.logMid(`Setting array length to ${val_c}`);
+                const newLength = this.ctx.mkIntVar(`${array.getName()}_Length_${array.incrementLengthCounter()}`);
+                this.pushCondition(this.ctx.mkAnd(this.ctx.mkGe(newLength, val_s), this.ctx.mkGe(newLength, this.ctx.mkIntVal(0))));
+                array.setLength(newLength);
             }
         }
     }
