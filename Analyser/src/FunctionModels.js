@@ -568,8 +568,6 @@ function BuildModels() {
             }
         );
 
-        let lengthCounter = 0;
-
         models[Array.prototype.push] = symbolicHook(
             (c, _f, base, args, _r) => {
                 const concreteArray = c.state.getConcrete(base);
@@ -583,7 +581,7 @@ function BuildModels() {
                 const ctx = c.state.ctx;
 
                 const oldLength = array.getLength();
-                const newLength = ctx.mkIntVar(`${array.getName()}_Length_${lengthCounter++}`);
+                const newLength = ctx.mkIntVar(`${array.getName()}_Length_${array.incrementLengthCounter()}`);
 
                 c.state.pushCondition(ctx.mkEq(newLength, ctx.mkAdd(oldLength, ctx.mkIntVal(1))), true);
                 
@@ -603,8 +601,7 @@ function BuildModels() {
                 const array = c.state.asSymbolic(base);
 
                 const oldLength = array.getLength();
-                const newLength = ctx.mkIntVar(`${array.getName()}_Length_${lengthCounter}`);
-                lengthCounter++;
+                const newLength = ctx.mkIntVar(`${array.getName()}_Length_${array.incrementLengthCounter()}`);
 
                 const value = new ConcolicValue(result, array.selectFromIndex(oldLength));
                 c.state.pushCondition(ctx.mkEq(newLength, ctx.mkSub(oldLength, ctx.mkIntVal(1))), true);
@@ -631,8 +628,7 @@ function BuildModels() {
                 const noOpIndex = ctx.mkIntVal(0);
                 const copiedArray = array.setAtIndex(noOpIndex, array.selectFromIndex(noOpIndex));
                 
-                const newLength = ctx.mkIntVar(`${array.getName()}_Length_${lengthCounter}`);
-                lengthCounter++;
+                const newLength = ctx.mkIntVar(`${array.getName()}_Length_${array.incrementLengthCounter()}`);
 
                 copiedArray.setLength(newLength);
                 copiedArray.increaseStartIndex(begin);

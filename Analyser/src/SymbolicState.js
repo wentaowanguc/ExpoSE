@@ -347,19 +347,28 @@ class SymbolicState {
         return result;
     }
 
-    symbolicSetField(base_c, base_s, field_c, field_s, value) {
+    symbolicSetField(base_c, base_s, field_c, field_s, val_c, val_s) {
         if (Config.arraysEnabled && base_c instanceof Array ) {
+            const array = base_s;
+            Log.logMid(`Set Field with ${field_c} and ${val_c}`)
             // TODO Consider how to handle making arrays non-homogenous
-            if (typeof field_c === "number" && base_s.getType() === typeof value) {
-                const newArray = base_s.setAtIndex(field_s, value);
-                newArray.setLength(base_s.getLength());
+            if (Number.isInteger(field_c) && field_c >= 0 && field_c < 4294967295 && base_s.getType() === typeof val_c) {
+                const newArray = array.setAtIndex(this.ctx.mkRealToInt(field_s), val_s);
+                const newLength = this.ctx.mkIntVar(`${array.getName()}_Length_${array.incrementLengthCounter()}`);
+                newArray.setLength(newLength);
                 base_s.symbolic = newArray;
-                const withinArrayBounds = this._isFieldSetOrAccessWithinBounds(base_c, base_s, field_c, field_s);
-                if (!withinArrayBounds) {
-                    Log.logHigh('Setting outside existing known length, unmodeled holes may have been created within array');
+               
+                this.pushCondition(this.ctx.mkGt(array.getLength(), field_s));
+                
+                const isOutsideBounds = field_c > base_c.length;
+                if (!isOutsideBounds) {
+                    Log.log('Setting outside existing known length, unmodelled holes may have been created within array');
                 }
-            } else if (field_c === "length" && typeof value === "number") {
-                this.ctx.pushCondition(this.ctx.mkLt(value, base_s.getLength()))
+            } else if (field_c === "length" && Number.isInteger(val_c)) {
+                Log.logMid(`Setting array length to ${val_c}`);
+                const newLength = this.ctx.mkIntVar(`${array.getName()}_Length_${array.incrementLengthCounter()}`);
+                this.pushCondition(this.ctx.mkAnd(this.ctx.mkGe(newLength, val_s), this.ctx.mkGe(newLength, this.ctx.mkIntVal(0))));
+                array.setLength(newLength);
             }
         }
     }
@@ -371,24 +380,32 @@ class SymbolicState {
     /**
      * Pushes symbolic condition for valid array access based on concrete result and returns concrete result
      */
-    _isFieldSetOrAccessWithinBounds(base_c, base_s, field_c, field_s) {
-        const isValidConcreteIndex = Number.isInteger(field_c) && field_c >= 0 && field_c < 4294967295 && field_c < base_c.length;
-        // If not within bounds, push a condition to make sure other bounds are explored!
+    _isFieldAccessWithinBounds(base_c, base_s, field_c, field_s) {
+        if (!Number.isInteger(field_c)){
+            return false;
+        }
+
+        const isValidConcreteIndex = field_c >= 0 && field_c < 4294967295 && field_c < base_c.length;
+        
+        /*  If valid -> length >=0 ^ length > field
+            If not valid -> length < 0 v length <= field -> (due to assert length > 0) -> length <= field 
+        */
         const isValidSymbolicIndex = this.ctx.mkAnd(
             this.ctx.mkGe(field_s, this.ctx.mkIntVal(0)),
             this.ctx.mkLt(field_s, base_s.getLength())
         );
+        // Pushing the condition like this allows it to be negated to create an additional path
         return this.symbolicConditional(new ConcolicValue(isValidConcreteIndex, isValidSymbolicIndex));
     }
 
     _symbolicFieldArrayLookup(base_c, base_s, field_c, field_s) {
-        const withinArrayBounds = this._isFieldSetOrAccessWithinBounds(base_c, base_s, field_c, field_s);
+        const withinArrayBounds = this._isFieldAccessWithinBounds(base_c, base_s, field_c, field_s);
         Log.logMid(`Get from Array Index ${field_c}`);
         if (withinArrayBounds) {
             Log.logMid('Within Bounds: returning select from index');
             return base_s.selectFromIndex(this.ctx.mkRealToInt(field_s));
         } else {
-            Log.logMid('Not within bounds: returning undefined');
+            Log.logMid('Not within array bounds: returning undefined');
             return undefined;
         }
     }

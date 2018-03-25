@@ -293,8 +293,8 @@ class SymbolicExecution {
         });
 
         return {
-            base: this.state.getConcrete(base),
-            offset: this.state.getConcrete(offset),
+            base: base,
+            offset: offset,
             val: val,
             skip: false,
         };
@@ -302,10 +302,10 @@ class SymbolicExecution {
 
     putField(iid, base, offset, val, isComputed, isOpAssign) {
         this.state.coverage.touch(iid);
-        Log.logHigh('Put field ' + ObjectHelper.asString(base) + '.' + ObjectHelper.asString(offset) + ' at ' + this._location(iid));
+        Log.logHigh(`Put value ${val} at field ${ObjectHelper.asString(base)}.${ObjectHelper.asString(offset)} at ${this._location(iid)}`);
         
-        if (base instanceof Array) {
-            let result_s = this.state.isSymbolic(base) ? this.state.symbolicSetField(this.state.getConcrete(base), this.state.asSymbolic(base), this.state.getConcrete(offset), this.state.asSymbolic(offset), val) : undefined;
+        if (this.state.getConcrete(base) instanceof Array) {
+            let result_s = this.state.isSymbolic(base) ? this.state.symbolicSetField(this.state.getConcrete(base), this.state.asSymbolic(base), this.state.getConcrete(offset), this.state.asSymbolic(offset), this.state.getConcrete(val), this.state.asSymbolic(val)) : undefined;
             let result_c = this.state.getConcrete(base)[this.state.getConcrete(offset)] = val;
 
             let result = result_s ? new ConcolicValue(result_c, result_s) : result_c;
