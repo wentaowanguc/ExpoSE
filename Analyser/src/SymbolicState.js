@@ -350,12 +350,15 @@ class SymbolicState {
     symbolicSetField(base_c, base_s, field_c, field_s, value) {
         if (Config.arraysEnabled && base_c instanceof Array ) {
             // TODO Consider how to handle making arrays non-homogenous
-            if (typeof field_c === "number" && base_s.getType() === typeof value) {
+            if (typeof field_c === "number" && field_c >= 0 && field_c < 4294967295 && Number.isInteger(field_c) && base_s.getType() === typeof value) {
                 const newArray = base_s.setAtIndex(field_s, value);
                 newArray.setLength(base_s.getLength());
                 base_s.symbolic = newArray;
-                const withinArrayBounds = this._isFieldSetOrAccessWithinBounds(base_c, base_s, field_c, field_s);
-                if (!withinArrayBounds) {
+               
+                const isOutsideBounds = field_c > base_c.length;
+                this.ctx.pushCondition(this.ctx.mkGe(base_s.getLength(), field_s));
+                
+                if (!isOutsideBounds) {
                     Log.logHigh('Setting outside existing known length, unmodeled holes may have been created within array');
                 }
             } else if (field_c === "length" && typeof value === "number") {
@@ -371,24 +374,32 @@ class SymbolicState {
     /**
      * Pushes symbolic condition for valid array access based on concrete result and returns concrete result
      */
-    _isFieldSetOrAccessWithinBounds(base_c, base_s, field_c, field_s) {
-        const isValidConcreteIndex = Number.isInteger(field_c) && field_c >= 0 && field_c < 4294967295 && field_c < base_c.length;
-        // If not within bounds, push a condition to make sure other bounds are explored!
+    _isFieldAccessWithinBounds(base_c, base_s, field_c, field_s) {
+        if (!Number.isInteger(field_c)){
+            return false;
+        }
+
+        const isValidConcreteIndex = field_c >= 0 && field_c < 4294967295 && field_c < base_c.length;
+        
+        /*  If valid -> length >=0 ^ length > field
+            If not valid -> length < 0 v length <= field -> (due to assert length > 0) -> length <= field 
+        */
         const isValidSymbolicIndex = this.ctx.mkAnd(
             this.ctx.mkGe(field_s, this.ctx.mkIntVal(0)),
-            this.ctx.mkLt(base_s.getLength(), field_s)
+            this.ctx.mkLt(field_s, base_s.getLength())
         );
+        // Pushing the condition like this allows it to be negated to create an additional path
         return this.symbolicConditional(new ConcolicValue(isValidConcreteIndex, isValidSymbolicIndex));
     }
 
     _symbolicFieldArrayLookup(base_c, base_s, field_c, field_s) {
-        const withinArrayBounds = this._isFieldSetOrAccessWithinBounds(base_c, base_s, field_c, field_s);
+        const withinArrayBounds = this._isFieldAccessWithinBounds(base_c, base_s, field_c, field_s);
         Log.logMid(`Get from Array Index ${field_c}`);
         if (withinArrayBounds) {
             Log.logMid('Within Bounds: returning select from index');
             return base_s.selectFromIndex(this.ctx.mkRealToInt(field_s));
         } else {
-            Log.logMid('Not within bounds: returning undefined');
+            Log.logMid('Not within array bounds: returning undefined');
             return undefined;
         }
     }
