@@ -234,4 +234,9 @@ A.~Guha, C.~Saftoiu, and S.~Krishnamurthi, ``The essence of {JavaScript},'' in
   {\em European conference on Object-oriented programming}, pp.~126--150,
   Springer, 2010.
 
+\bibitem{de2008z3}
+L.~De~Moura and N.~Bj{\o}rner, ``Z3: An efficient smt solver,'' in {\em
+  International conference on Tools and Algorithms for the Construction and
+  Analysis of Systems}, pp.~337--340, Springer, 2008.
+
 \end{thebibliography}
