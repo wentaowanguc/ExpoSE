@@ -258,8 +258,8 @@ In classical symbolic execution, as no actual code is executed bugs must be dete
 
 Symbolic execution offers a number advantages over typical testing techniques. Unit and integration testing are expensive and require a large amount of effort to reach 100\% coverage. In addition, they require a large amount of mock and driver code to be written, often exceeding the size of the program under test. Unit testing and integration often miss `corner case' bugs, which are not considered either when the program is developed or when the system is tested. Conversely, Symbolic Execution automatically generates inputs that will cover all paths, specifically targeting corner cases which are likely to be missed by developers. Although, symbolic execution may require some mocking and harness code to be written the amount and code, and effort required to write it, is significantly less than writing either a unit or integration test suite.
 
-%TODO CITE COVERIFY AND CODESONAR
-Static analysis tools, such as Coverify and CodeSonar, are much cheaper to run but at the cost of precision. Static analysis often produces false reports and consequently also requires a large amount of time spent to identify actual faults. Additionally, static analysis often may struggle to identify subtle bugs due to the lack of information available outside of runtime, and will typically perform worse on weakly typed languages. Symbolic execution, unlike static analysis, does require effort on the part of the developer but has the advantage of not producing false positives and providing a valid test case for each bug found. Symbolic execution is also effective at finding edge case bugs and can also effectively analyse the behaviour of a program when it interacts with libraries for which the source code is not available.
+%TODO CITE COVERITY AND CODESONAR
+Static analysis tools, such as Coverity and CodeSonar, are much cheaper to run but at the cost of precision. Static analysis often produces false reports and consequently also requires a large amount of time spent to identify actual faults. Additionally, static analysis often may struggle to identify subtle bugs due to the lack of information available outside of runtime, and will typically perform worse on weakly typed languages. Symbolic execution, unlike static analysis, does require effort on the part of the developer but has the advantage of not producing false positives and providing a valid test case for each bug found. Symbolic execution is also effective at finding edge case bugs and can also effectively analyse the behaviour of a program when it interacts with libraries for which the source code is not available.
 
 \chapter{Automated Decision Procedures}
 
@@ -699,9 +699,9 @@ Z3 supports two array-like theories: the theory of arrays and the theory of sequ
 Z3 arrays are one dimensional unbounded maps where the index and values both have a \textit{sort}, Z3's terminology for type. Read and write operations on the array are mapped to select and store axioms respectively where the relationship between select and store is defined by $select(store(a, i, v), i) = v$ where $a$ is an array, $i$ is an array index, and $v$ is a value. Due to their unbounded and strongly typed nature, Z3 arrays do not directly correspond to JavaScript arrays which, as described in Section~\ref{sec:arrays}, can contain multiple types, are bounded between the indices 0 and 2\textsuperscript{32}-1, and have a mutable length. As a result certain tradeoffs had to be made in the way arrays are modelled and encoded. The first limitation is that arrays are only able to be symbolically modelled if they are initialised with values of a single type and only if the type of the values have an analogous Z3 sort which limits the types that are supported to Booleans, Numbers, and Strings. The second limitation is that holes that are created by mutating the length of an array or setting values non-sequentially are not modelled. Finally, in order to encode the finite length of JavaScript arrays, a separate Z3 integer variable required for each array which represents the its length. 
 
 \subsection{Representing Array Length}
-When the array is created an assertion $Length > 0$ is made. Whenever the concrete JavaScript array is accessed, if the index, $i$, is within the bounds of the concrete array then an assertion $i > 0 \land i < Length$, implying that the array's length is greater than the symbolic index. If the index is not within the bounds of the concrete array then the an assertion $\lnot{(i \geq 0 \land i < Length)}$, is made, which implies that the symbolic length is less than the accessed index. When the array is pushed to and popped from, a new length variable is created and the length is asserted to be the previous length plus or minus one. When the array is set to, a fresh length variable is created and an assertion $Length < i$ is made. When the array length is directly set to, \lstinline{array.length = x;} a fresh length variable is created and an assertion $Length = x$ is made, where $x$ is the value that was set.
+When the array is created an assertion $Length > 0$ is made. Whenever the concrete JavaScript array is accessed, if the index, $i$, is within the bounds of the concrete array then an assertion $i > 0 \land i < Length$, implying that the array's length is greater than the symbolic index. If the index is not within the bounds of the concrete array then the an assertion $\lnot{(i \geq 0 \land i < Length)}$, is made, which implies that the symbolic length is less than the accessed index. When the array is pushed to and popped from, a new length variable is created and the length is asserted to be the previous length plus or minus one. When the array is set to, a fresh length variable is created and an assertion $Length < i$ is made. When the array length is directly set to, \lstinlin|{array.length = x;| a fresh length variable is created and an assertion $Length = x$ is made, where $x$ is the value that was set.
 
-Consider the example program in Figure \ref{fig:expose-array-length} which demonstrates the constraints on the symbolic length of an array as it is accessed and updated. Initially, (line 2) the length of the array is constrained only to be greater or equal to 0, effectively unbounded. On line 3, the array is accessed at index 0 and the constraint then changes to have a length greater than the accessed value as the concrete array (\lstinline{['a']}) has an item at that index. On line 4, the array is pushed to and a new Z3 variable is created to model the length of the array but the constraint still depends on the previous variable - the new constraint is the previous variable's constraints plus one. On line 5 the array is accessed out of bounds and a new assertion is made that the length is less than the out of bounds index. When the array is set on line 6 another fresh Z3 variable is used to model the length of the array but this does not depend on the previous variable, instead it asserts that the length is greater than the accessed index (20). On line 7 the array is popped from, and similarly to line 4 when the array was pushed, a new length variable is created than depends on the previous variable's constraints minus one.
+Consider the example program in Figure \ref{fig:expose-array-length} which demonstrates the constraints on the symbolic length of an array as it is accessed and updated. Initially, (line 2) the length of the array is constrained only to be greater or equal to 0, effectively unbounded. On line 3, the array is accessed at index 0 and the constraint then changes to have a length greater than the accessed value as the concrete array (\lstinline|['a']|) has an item at that index. On line 4, the array is pushed to and a new Z3 variable is created to model the length of the array but the constraint still depends on the previous variable - the new constraint is the previous variable's constraints plus one. On line 5 the array is accessed out of bounds and a new assertion is made that the length is less than the out of bounds index. When the array is set on line 6 another fresh Z3 variable is used to model the length of the array but this does not depend on the previous variable, instead it asserts that the length is greater than the accessed index (20). On line 7 the array is popped from, and similarly to line 4 when the array was pushed, a new length variable is created than depends on the previous variable's constraints minus one.
 
 \begin{figure}[t]
 \lstinputlisting{array_manipulation.js}
@@ -712,11 +712,11 @@ Consider the example program in Figure \ref{fig:expose-array-length} which demon
 ExpoSE is architected as a number of distinct modules: Z3JS, a JavaScript interface to Z3’s C API, the Distributor, a highly parallelised dispatcher for symbolic execution paths and an aggregator of information, the Analyser, which executes the symbolic analysis for a given path, and the Tester, which automatically runs ExpoSE’s unit tests. The bulk of my work, was done in the Analyser and Z3JS. Below I briefly outline the modifications that were made to each.
 
 \subsection{Z3JS}
-Z3JS provides an interface between the Z3’s C API and JavaScript. Its main components are a \lstinline{Solver} class, a \lstinline{Query} class, a \lstinline{Model} class, an \lstinline{Expr} class, and a \lstinline{Context}~class. The \lstinline{Context} class wraps the Z3 context and acts as a façade for the Z3 API calls. The \lstinline{Expr} class wraps constructed Z3 expressions and has helper functions for printing and creating a concrete value from the symbolic expression. The \lstinline{Model} class wraps Z3 model objects and the query class is used to request solutions for models from Z3.
+Z3JS provides an interface between the Z3’s C API and JavaScript. Its main components are a \lstinline|Solver| class, a \lstinline|Query| class, a \lstinline|Model| class, an \lstinline|Expr| class, and a \lstinline|Context|~class. The \lstinline|Context| class wraps the Z3 context and acts as a façade for the Z3 API calls. The \lstinline|Expr| class wraps constructed Z3 expressions and has helper functions for printing and creating a concrete value from the symbolic expression. The \lstinline|Model| class wraps Z3 model objects and the query class is used to request solutions for models from Z3.
 
-In order to be able to interface with Z3’s array functions I had to add a number of functions to the context class including \lstinline{mkArray}, \lstinline{mkSelect}, \lstinline{mkStore} as well as functions used to perform assertions using quantifiers, \lstinline{mkForAll} and \lstinline{mkExists}. The quantifier based functions expect arrays to be passed as parameters so I also had to change some helper functions \lstinline{_buildChecks()} and \lstinline{Z3Utils.astArray()} to work with arrays of parameters.
+In order to be able to interface with Z3’s array functions I had to add a number of functions to the context class including \lstinline|mkArray|, \lstinline|mkSelect|, \lstinline|mkStore| as well as functions used to perform assertions using quantifiers, \lstinline|mkForAll| and \lstinline|mkExists|. The quantifier based functions expect arrays to be passed as parameters so I also had to change some helper functions \lstinline|_buildChecks()| and \lstinline|Z3Utils.astArray()| to work with arrays of parameters.
 
-I modified \lstinline{Expr} to a hold of number of array specific properties that need to be required throughout ExpoSE such as the expression for array length, the type of the array, the start index of the array (described in detail in Section \ref{slice-function-model}), the name of the array, and a counter for the number of length expressions an array has. All of these properties have getter functions and either an increment function or a setter. I have also written helper functions to hide the complexity of storing to \lstinline{setAtIndex()} and selecting from (\lstinline{selectFromIndex()}) an array expression.
+I modified \lstinline|Expr| to a hold of number of array specific properties that need to be required throughout ExpoSE such as the expression for array length, the type of the array, the start index of the array (described in detail in Section \ref{slice-function-model}), the name of the array, and a counter for the number of length expressions an array has. All of these properties have getter functions and either an increment function or a setter. I have also written helper functions to hide the complexity of storing to \lstinline|setAtIndex()| and selecting from (\lstinline|selectFromIndex()|) an array expression.
 
 A key function in \lstinline{Expr} is \lstinline{asConstant()} which turns the expression into a concrete value. I rewrote the function into a small switch statement which evaluates the sort of the expression. To be able to support turning array expressions into constants I had to be able to get a constant value for the expression which represents the length of the array. In order to do that I had to change the signature of the function to accept a model, using which I can call \lstinline{model.eval()} to get an interpretation for the expression. Using the concrete value for the length I can then iterate for the length of the array calling \lstinline{selectFromIndex()} to produce a concrete JavaScript array of values.
 
@@ -725,7 +725,7 @@ SymbolicState.js has a number of functions that are called when a symbolic value
 
 \lstinline{symbolicField()} has been modified to check if the array is being accessed with a potentially valid array index - i.e. a number between 0 and 2\^32-1. If so, assertions are made about the length, as described above, and if the index is less than the array length Z3JS’s \lstinline{Expr.selectFromIndex()} is called. The assertions about the array length are pushed using \lstinline{symbolicConditional()} which pushes either an expression, or the negation of that expression, depending on the result of a concrete condition - consequently whenever an in-bounds array access occurs, \lstinline{let arr = [0, 1, 2]; arr[1];}, a new path will be created to explore an out of bounds access and vice versa. \lstinline{symbolicField()} has also been modified to return the expression for the array's length when the \lstinline{length} property is accessed.
 
-\lstinline{putField()} has been modified, in SymbolicExecution.js, to call \lstinline{symbolicSetField()}, a new function in SymbolicState.js, if the concrete value \lstinline{putField()} is called on is an array. \lstinline{symbolicSetField()} has two cases: if the field is a valid array index then the value is stored in the array and a new length variable is create, alternatively if the \lstinline{.length} field is assigned to then the value is set as the new length.
+\lstinline|putField()| has been modified, in SymbolicExecution.js, to call \lstinline|symbolicSetField()|, a new function in SymbolicState.js, if the concrete value \lstinline|putField()| is called on is an array. \lstinline|symbolicSetField()| has two cases: if the field is a valid array index then the value is stored in the array and a new length variable is create, alternatively if the \lstinline|.length| field is assigned to then the value is set as the new length.
 
 \subsection{Function Models}
 \begin{figure}[t]
@@ -735,31 +735,146 @@ SymbolicState.js has a number of functions that are called when a symbolic value
 
 When symbolic values are used in native prototype functions (such as those in \lstinline{Array.prototype} described in Section \ref{sec:array-prototype-functions}) they leave the environment in which the program is being analysed and consequently become concretised preventing new paths from being explored from that point onwards in the program. This results in incomplete exploration and a reduction in code coverage. One solution to this problem is to clone the behaviour of functions in native JavaScript, Figure~\ref{fig:naive-includes} shows an example of how this might be achieved. Although this approach achieves the goal of obtaining a symbolic representation of the result of the function it also creates additional paths for each branching condition or loop inside the function. An alternative solution to this problem is to model the behaviour of the function. Doing this is typically more time consuming but has the advantage of avoiding path explosion and deferring the cost to the SMT solver.
 
-ExpoSE has a framework for modelling prototype functions in the \lstinline{FunctionModel} module. Prototypes in the \lstinline{FunctionModel} module are exposed as a symbolic hook that concretely executes the prototype function and then if a condition is met also symbolically executes a model function if it exists. Below I provide a detailed look at some of the function models that have been implemented including for \lstinline{slice}, \lstinline{indexOf}, and \lstinline{push}.
+ExpoSE has a framework for modelling prototype functions in the \lstinline|FunctionModel| module. Prototypes in the \lstinline|FunctionModel| module are exposed as a symbolic hook that concretely executes the prototype function and then if a condition is met also symbolically executes a model function if it exists. Below I provide a detailed look at some of the function models that have been implemented including for \lstinline|slice|, \lstinline|indexOf|, and \lstinline|push|.
 
-\textbf{\lstinline{slice}}
-\lstinline{slice} is a function that returns a shallow copy of a subsection of array. It takes two optional parameters \lstinline{begin} which marks the start index for the shallow copy to begin from and \lstinline{end} which marks the first index in the array that should not be included in the shallow copy. Both parameters also accept negative indices which are interpreted as reverse indexing. If no \lstinline{begin} parameter is passed then \lstinline{slice} returns a full copy of the array.
+%TODO Update function model code and line numbers in description
+\textbf{slice}
+\begin{figure}[t]
+\begin{lstlisting}
+models[Array.prototype.slice] = symbolicHook(
+            (c, _f, base, args, _r) => c.state.isSymbolic(base) && c.state.getConcrete(base) instanceof Array
+            (c, _f, base, args, result) => {
+                const ctx = c.state.ctx;
+                const array = c.state.asSymbolic(base);
+                const begin = args[0] ? c.state.asSymbolic(args[0]) : ctx.mkIntVal(0);
+                const end = args[1] ? c.state.asSymbolic(args[1]) : array.getLength();
+
+                // end cannot be greater than array length
+                c.state.pushCondition(ctx.mkLe(end, array.getLength()), true);
+
+                // This clones the array in Z3 by doing a store that stores the same value at the index
+                const noOpIndex = ctx.mkIntVal(0);
+                const copiedArray = array.setAtIndex(noOpIndex, array.selectFromIndex(noOpIndex));
+                
+                const newLength = ctx.mkIntVar(`${array.getName()}_Length_${array.incrementLengthCounter()}`);
+
+                copiedArray.setLength(newLength);
+                copiedArray.increaseStartIndex(begin);
+
+                // The new length should be greater than or equal to 0 AND 
+                // IF end is positive, less than or equal to end's length -> slice(0, 4)
+                // ELSE, less than or equal to the old length-end -> slice(0, -1)
+                c.state.pushCondition(
+                    ctx.mkAnd(
+                        ctx.mkGe(newLength, ctx.mkIntVal(0)), 
+                        ctx.mkIte(
+                            ctx.mkGe(end, ctx.mkIntVal(0)), 
+                            ctx.mkLe(newLength, end),
+                            // negative end indexing 
+                            ctx.mkLe(newLength, ctx.mkSub(array.getLength(), end))
+                        )
+                    ),
+                    true
+                );
+                return new ConcolicValue(result, copiedArray);             
+            }
+        );
+\end{lstlisting}
+\caption{\label{fig:slice-func-model} Slice Function Model.}
+\end{figure}
+
+\lstinline|Array.prototype.slice| returns a shallow copy of a subsection of array. It takes two optional parameters \lstinline|begin| which marks the start index for the shallow copy to begin from and \lstinline|end| which marks the first index in the array that should not be included in the shallow copy. Both parameters also accept negative indices which are interpreted as reverse indexing. If no \lstinline{begin} parameter is passed then \lstinline{slice} returns a full copy of the array.
+
+The function model for \lstinline{slice} is shown in Figure~\ref{fig:slice-func-model}. The first function passed to the \lstinline{symbolicHook} checks that the function the prototype is called on is a symbolic array as the \lstinline{slice} function can also be used on strings. The second function passed to the \lstinline{symbolicHook} models the function. Lines 4-10 check which arguments are passed to the function, set the default parameters if necessary, and perform validation. Lines 13-14 create a shallow copy of the array by performing a store with no effect and lines 16-18 create a new variable to represent the new array's length. Line 19 increases the \textit{start index} of the copied array - the start index is the pointer to the first index of the unbounded Z3 which should be considered part of the array that's being symbolically modelled. This methodology allows for an arbitrary number of slices to be made by continually incrementing the pointer. Both \lstinline{Expr.selectFromIndex()} and \lstinline{Expr.setAtIndex()} use the start index offset hiding the complexity of accounting for the start index pointer in most cases but in the \lstinline{FunctionModels} module, where the helper functions, the start index needs to be taken into account. Lines 24-35 describe assertions on the length of the new array. The length must be greater or equal to 0 and if \lstinline{end} is positive, the length of the copied array is $end - begin$, else the new array length is $oldArrayLength - (end + begin)$. %TODO Fix the formatting discrepancies here
+
+This model allows for all but one of the acceptable signatures of \lstinline{slice} including \lstinline{slice()}, \lstinline{slice(-1)}, and \lstinline{slice(1, -2)} but excluding \lstinline{slice(4, 1)} -- which would return an empty array.
+
+%TODO Example
+
+\textbf{pop}
+\begin{figure}[t]
+\begin{lstlisting}
+models[Array.prototype.pop] = symbolicHook(
+            (c, _f, base, args, _r) => c.state.isSymbolic(base) && c.state.getConcrete(base) instanceof Array,
+            (c, _f, base, args, result) => {
+                const ctx = c.state.ctx;
+                const array = c.state.asSymbolic(base);
+
+                const oldLength = array.getLength();
+                const newLength = ctx.mkIntVar(`${array.getName()}_Length_${array.incrementLengthCounter()}`);
+
+                const value = new ConcolicValue(result, array.selectFromIndex(oldLength));
+                c.state.pushCondition(ctx.mkEq(newLength, ctx.mkSub(oldLength, ctx.mkIntVal(1))), true);
+                
+                array.setLength(newLength);
+                return value;
+            }
+        );
+\end{lstlisting}
+\caption{\label{fig:pop-func-model} Pop Function Model.}
+\end{figure}
+
+\lstinline{Array.prototype.pop} returns the element at the last index of the array and reduces its length by one. The function model for \lstinline{pop} is shown in Figure~\ref{fig:pop-func-model}. Line 2, included in every function model, checks that the \lstinline{base} argument is symbolic and an array - if so the second function starting on line 3 is called. Lines 4-8 create a new Z3 variable to store the new length, and create a temporary variable to store the old length. Line 10 fetches the value to be popped from the array and lines 11-13 set the new length to one less than the previous length and assign it to the array expression. The popped value is then returned.
+
+%TODO describe indexOf
 
 \subsection{Tests}
-Each array functionality is backed by one or more tests. Each test has an expected number of symbolic paths which should be produced an expected number of errors so regressions in behaviour can be identified. Array support can be disabled in the analyser through the use of an environment variable. This allows programs to be executed with and without array support so that behaviour and coverage can be compared.
+\begin{figure}[t]
+\begin{lstlisting}
+var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
 
+// Clone the length
+var length = q.length;
+if (q.length === 3) {
+  q.length = 42;
+  if (q.length === 42) {
+    console.log('Success');
+  } else {
+    throw 'array_set_length: This should be unreachable';
+  }
+}
+\end{lstlisting}
+\caption{\label{fig:example-length-test} Example Unit Test.}
+\end{figure}
+
+All of the array functionality implemented, including function models and the regular concrete behaviour of arrays, is backed by a number of tests. Tests are written in a way to prompt to ExpoSE to attempt to generate inputs which would explore infeasible paths, as demonstrated in Figure~\ref{fig:example-length-test}. The expected number of errors are recorded in an array specific test runner and if the number of errors thrown does not match then the test runner rethrows the error indicating a change in behaviour. The array-specific test suite is run as a git pre-push hook to act as a smoke test and prevent regressions being committed to the repository.
 
 \chapter{Results}
 
 %TODO
 
-A deep dive into one specific program (?) with cases not caught
-An overall comparison with array support on/off on a large number of targets
-Prototype usage
-
 \section{Conclusion}
+
 
 \newpage
 \bibliography{/Users/arran/Documents/Github/FullUnit_1718_ArranFrance/Report/bibliography}
 \bibliographystyle{ieeetr}
 \label{endpage}
 
+\newpage
 
+\section*{Appendix}
+
+\section{Professional Issues}
+It is possible to imagine a world in which ExpoSE is deployed as a tool to automatically test open source code from GitHub or npm, either as part of a survey of open source JavaScript software or as a free service. Similar tools already exist such as Snyk, which attempts to find dependencies with known vulnerabilities, and the static analysis tool Deepscan, which attempts to find common coding errors. In such a situation it would be important to consider how the process of disclosing a a bug would work, given that ExpoSE has no framework for identifying the severity or impact of the bugs it finds, and the difficulty in doing so reliably~\cite{lamkanfi2010predicting}. Whilst ExpoSE cannot produce false positives, the impact of a bug found by it can range from a low impact bug that's unlikely to be triggered to a serious security vulnerability. 
+
+The steps to take to disclose a flaw ethically are not universally agreed upon and existing literature mainly deals with security vulnerabilities due to their critical nature. There are two broad types of disclosure that could qualify as ethical. The first is \textit{full disclosure}, in which the bug is reported as early and widely as possible with the intent of informing end users about the flaw. The second is \textit{responsible disclosure}, in which the flaw is reported to the maintainer or vendor and no one else until the flaw is rectified. Whilst the definition of full disclosure is concrete, the definition of responsible disclosure is more ambiguous and provokes a number of questions. What do you do if the flaw isn't rectified? At what point does the risk of potential harm require you to release the details of the vulnerability to the public? Does the amount of time given vary with the severity of the bug? These questions, and the discussion about the best method for disclosure are still active areas of debate today. This debate, and the issues with the boilerplate definition of responsible disclosure, is highlighted by two high profile vulnerabilities disclosed this year. 
+
+The Meltdown and Spectre vulnerabilities, which revealed underlying flaws in the methods for speculative execution in CPUs across multiple vendors, were announced on January. Given the nature of the vulnerability numerous parties were required to know about the flaw including operating system and browser vendors as well as cloud computing platforms such as AWS and Azure. The additional complexity created by the number of groups involved meant that time taken resulted in a chaotic public disclosure as the embargo was broken 6 days early as information was leaked. The number of parties involved also had a drastic effect on the timeline of discovery to disclosure. Google's Project Zero, the team behind the initial discovery, have a standard 90 day policy on disclosures but due to the complexity of the vulnerability and the number of groups involved this was lengthened to 6 months.
+
+Whilst the Meltdown and Spectre vulnerabilities are clearly extraordinary circumstances they highlight one of the issues with the standard model of responsible disclosure - a long period where users are unknowingly affected and vulnerable to exploitation.
+
+Another high profile vulnerability disclosed this year was the High Sierra Mac OS login bypass which enabled users to access root privileges without a password. The bug was discovered by Lemi Ergin and was disclosed via Twitter leading him to face criticism for failing to follow responsible disclosure principles. Whilst not considered good practise to not work with the vendor when disclosing a vulnerability Ergin's tweet prompted Apple to release a next day update whilst Ergin's company's email earlier in the week and a post on Apple's Developer Forum failed to prompt action~\cite{ergin-disclosure}.
+
+Whilst most professionals would broadly agree that responsible disclosure is the preferred method there are respected individuals within the security such as Bruce Schneier that argue in favour of full disclosure~\cite{debating-full-disclosure}. He argues that ``public scrutiny is how security improves" and that it is important that consumers have ``all the information" to ``make an informed decision about security".
+
+I think it is worth re-evaluating the loaded term of responsible disclosure and examining what, if any, role full disclosure has to play. It's clear from the Ergin's tweet that full disclosure produces results but at what risk? A common argument made in favour of responsible disclosure is that sharing the details of a vulnerability is irresponsible - that the `bad guys' can abuse them if they're made public. Schneier argues that malicious users are often more advanced than security researchers and may already know about the vulnerability and be actively exploiting it - and if they aren't that releasing the details of a vulnerability is a reasonable trade-off for the increased visibility of the risk that users have. Conversely security professional Troy Hunt, of have i been pwned? fame, argues that public disclosure is not appropriate if it would immediately increase the risk to users~\cite{responsibility-of-public-disclosure}. However in cases where responsible disclosure is made difficult by unwilling disclosure recipients (and in cases with organisations and individuals who have a poor track record of responding to disclosures) Hunt believes it is in the public's interest to do full disclosure~\cite{kids-pass-responsible-disclosure}.
+
+Google's Project Zero, the security research team that initially identified the Spectre and Meltdown vulnerabilities, have also struggled to identify the best way to handle disclosure. They received criticism for their strict handling of a vulnerability that they discovered in Windows 7 which was publicly disclosed two days before a patch was released by Microsoft. As a result of the backlash Project Zero added a 14 day grace period to their 90 day disclosure policy but they also acknowledge that in certain ``extreme circumstances”” they reserve the right to bring the deadline forward or backwards~\cite{project-zero-update-policy}. In doing so the acknowledge the complexity of disclosing security vulnerabilities.
+
+In conclusion, when considering how to responsibly disclose I believe there are a number of factors that must be considered - the risk to users, number of organisations that need to be involved, the vendor's history of compliance, and if there are known exploits for the vulnerability already being used. I reject the notion that there is a `one size fits all' approach to responsible disclosure and suggest that whilst full disclosure should not be the default course of action it warrants consideration in situations when disclosure would present no risk to users or when dealing with organisations or individuals who have a history of non-compliance.
+
+My conclusion prompts the question, how can responsible disclosure be achieved in the hypothetical world in which ExpoSE is deployed as an automated tool to discover bugs. I believe that every bug found would have to be treated as a possible vulnerability and be reported privately to the maintainer. I would provide a 90 day window for response, after which I would post the vulnerability to a public issue tracker and attempt to alert any public codebases which depended on that code.
 
 \end{document}
 
