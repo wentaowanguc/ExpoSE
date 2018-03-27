@@ -106,7 +106,7 @@ Since its inception as a `glue' language for the web~\cite{AZProgrammingLanguage
 
 My work extends ExpoSE~\cite{Loring_2017}, a tool for DSE, by describing an encoding for homogeneously typed JavaScript arrays in first order logic, implementing support in ExpoSE for symbolic arrays, and modelling a selection of prototype functions. I demonstrate that as a result of these extensions results in an increased test coverage of popular several popular JavaScript libraries and describe a new bug found in a popular Array ES6 polyfill.
 
-I also present background information on symbolic execution, including considerations for constraint optimisations and its usage for bug detection, automated decision procedures, with an emphasis on techniques for SAT and SMT solving, and a brief overview of JavaScript's semantics, with a particular emphasis on the behaviour of arrays and their prototype methods. I then describe the details of the implementation of my extensions to ExpoSE, my experimental methodology, and draw conclusions about their effectiveness on testing real world applications.
+I also present background information on symbolic execution, including considerations for constraint optimisations and its usage for bug detection, automated decision procedures, with an emphasis on techniques for SAT and SMT solving, and a brief overview of JavaScript's semantics, with a particular emphasis on the behaviour of arrays and their prototype functions. I then describe the details of the implementation of my extensions to ExpoSE, my experimental methodology, and draw conclusions about their effectiveness on testing real world applications.
 
 %%%%%%%%%%%%%%%%%%%%%%
 %%% Symbolic Execution
@@ -231,7 +231,7 @@ This caching process can be extended to evaluate the strength of formulas. If th
 
 In most cases, a branch's condition will not depend on all of the variables in a path constraint allowing redundant constraints to be eliminated before passing the constraint to constraint solver. Although if this technique is applied the constraint solver will only return satisfiable values for non-eliminated variables, the existing concrete values of the other variables can be used to produce a full set of inputs~\cite{cadar2013symbolic}.
 
-For instance, consider the function in Figure \ref{fig:example-function}. If the existing path constraint is $(x < 0 ) \land ( z > 5) \land (y < 13) \land (y + x > 15) $ and the symbolic execution negates the the last path condition to explore a new path: $ (x < 0) \land (z > 5) \land (y < 13) \land \lnot(y + x > 15)$ then the $z > 5$ constraint can be eliminated as $z$ does not influence the $y + x > 15$ branch.
+For instance, consider the function in Figure \ref{fig:example-function}. If the existing path constraint is $(x < 0 ) \land ( z > 5) \land (y < 13) \land (y + x > 15)$ and the symbolic execution negates the the last path condition to explore a new path: $ (x < 0) \land (z > 5) \land (y < 13) \land \lnot(y + x > 15)$ then the $z > 5$ constraint can be eliminated as $z$ does not influence the $y + x > 15$ branch.
 
 \begin{figure}[t]
 \begin{verbatim}
@@ -627,7 +627,7 @@ orange instanceof Object; // true
 \section{Arrays} \label{sec:arrays}
 Unlike other languages, JavaScript does not model arrays as continuously indexed tuples. Instead, arrays are a special form of object where the array elements are any value where the property can be coerced to a a positive integer number less than 2 \textsuperscript{32} - 1. These array elements are treated differently to regular properties by array prototypes and the length property. 
 
-The length of an array is a property of the array prototype which tracks the highest index in the array. Note, that the highest index of the array does not necessarily track the number of elements in the array; arrays do not enforce any kind of ordering on their properties, making it possible to create a non-contiguous array with 'holes' in it. For example \lstinline{let arr = []; arr[0] = 'foo'; arr[2] = 'bar';} produces an array of length 3. The length property is not read-only as one might expect. If one increases length, empty elements will be added to the end of the array, and decreasing the length will truncate the array to satisfy the new length.
+The length of an array is a property of the array prototype which tracks the highest index in the array. Note, that the highest index of the array does not necessarily track the number of elements in the array; arrays do not enforce any kind of ordering on their properties, making it possible to create a non-contiguous array with 'holes' in it. For example \lstinline|let arr = []; arr[0] = 'foo'; arr[2] = 'bar';| produces an array of length 3. The length property is not read-only as one might expect. If one increases length, empty elements will be added to the end of the array, and decreasing the length will truncate the array to satisfy the new length.
 
 Another by-product of arrays being a special form of object is that arrays are not homogenously typed. Whilst most languages require arrays to only hold values of a single type, JavaScript objects and by extension arrays can contain multiple types of value as shown by the following example \lstinline|let array = ['a', 2.0, {}, new Fruit()]|. 
 
@@ -646,7 +646,27 @@ arr.length; // still returns 1
 \end{figure}
 
 \subsection{Prototype Functions} \label{sec:array-prototype-functions}
-The array prototype has a large number of helper functions which developers frequently take advantage of, a number of which were added in the latest version of the EMCAScript standard~\cite{EcmaScript}. Table \ref{table:array-prototype} has some of the more commonly used and interesting functions.
+
+\begin{figure}[t]
+\begin{lstlisting}
+if (!Array.prototype.includes) {
+  Object.defineProperty(Array.prototype, 'includes', {
+    value: function(needle, index) {
+
+      if (this == null) {
+        return false;
+      }
+
+      index = index || 0;
+      return this.indexOf(needle) > index;
+    }
+  });
+}
+\end{lstlisting}
+\caption{\label{fig:naive-includes-polyfill} Example of a Naive Includes Polyfill.}
+\end{figure}
+
+The array prototype has a large number of helper functions which developers frequently take advantage of, a number of which were added in the latest version of the EMCAScript standard~\cite{EcmaScript}. Table \ref{table:array-prototype} lists some of the more commonly used and interesting functions. As support for the latest ECMAScript standard varies between browsers it can be difficult to developers to judge when it is safe to use a new prototype function however using modern prototype functions typically makes reasoning about code easier. To resolve this tension, developers typically include \textit{polyfills} -- code which copies the behaviour of a prototype function and dynamically adds itself to the prototype if the function is undefined. Figure \ref{fig:naive-includes-polyfill} contains a naive example implementation of a \lstinline|Array.prototype.includes| polyfill.
 
 %TODO make calls to function have a consistent signature type
 \begin{table}[t]
@@ -669,10 +689,9 @@ reduce & {\lstinline|reduce(func,initialValue)|} & Calls {\lstinline|func(accumu
 some & {\lstinline|some(func)|} & Calls {\lstinline|func(element, index, array)|} for every element in the array. Returns true if {\lstinline|func|} returns true for at least one element in the array \\ \hline
 every & {\lstinline|every(func)|} & Calls {\lstinline|func(element, index, array)|} for every element in the array. Returns true if {\lstinline|func|} returns true for all elements in the array \\ \hline
 \end{tabular}
-\caption{Array Prototype Methods}
+\caption{Array Prototype Functions.}
 \label{table:array-prototype}
 \end{table}
-
 
 \section{Ensuring Correctness}
 Assuring the correctness of JavaScript code is an unsolved problem - in part due to the fact that JavaScript is a dynamically typed scripting language but also due to legacy design decisions. Efforts have been made to make the language itself safer to use, for example ECMAScript 5 introduced a strict mode (later made the default mode in ECMAScript 6) which restricts the use of certain language features and also defines additional circumstances in which exceptions should be thrown. However there are still many subtle errors that can occur even within the safer subset of JavaScript.
@@ -685,9 +704,7 @@ There have been a number of attempts to produce formal semantics for JavaScript,
 
 Symbolic execution is a good match for JavaScript. By concretely executing the program, reasoning about the dynamic nature of JavaScript is deferred to the interpreter. The use of an interpreter for testing also provides flexibility. If JavaScript needs to be tested in another environment, switching interpreter is a relatively easy change to make. Additionally, concrete execution comes without the penalty of having to model the entire language specification as any non-modelled function can simply revert to concrete execution.
 
-\chapter{Implementation}
-
-\section{Overview}
+\chapter{Implementation} \label{sec:implementation}
 
 ExpoSE~\cite{Loring_2017} is a recently developed tool for dynamic symbolic execution of JavaScript. It takes a program as input and attempts explore all feasible paths in the program up to a maximum path count or until it exceeds a maximum time limit. Programs are instrumented using Jalangi2, a framework that provides callbacks for JavaScript statements which are used to build the symbolic representation of the program. New inputs are generated by solving path constraints using the Z3 SMT solver~\cite{de2008z3}.
 
@@ -699,7 +716,7 @@ Z3 supports two array-like theories: the theory of arrays and the theory of sequ
 Z3 arrays are one dimensional unbounded maps where the index and values both have a \textit{sort}, Z3's terminology for type. Read and write operations on the array are mapped to select and store axioms respectively where the relationship between select and store is defined by $select(store(a, i, v), i) = v$ where $a$ is an array, $i$ is an array index, and $v$ is a value. Due to their unbounded and strongly typed nature, Z3 arrays do not directly correspond to JavaScript arrays which, as described in Section~\ref{sec:arrays}, can contain multiple types, are bounded between the indices 0 and 2\textsuperscript{32}-1, and have a mutable length. As a result certain tradeoffs had to be made in the way arrays are modelled and encoded. The first limitation is that arrays are only able to be symbolically modelled if they are initialised with values of a single type and only if the type of the values have an analogous Z3 sort which limits the types that are supported to Booleans, Numbers, and Strings. The second limitation is that holes that are created by mutating the length of an array or setting values non-sequentially are not modelled. Finally, in order to encode the finite length of JavaScript arrays, a separate Z3 integer variable required for each array which represents the its length. 
 
 \subsection{Representing Array Length}
-When the array is created an assertion $Length > 0$ is made. Whenever the concrete JavaScript array is accessed, if the index, $i$, is within the bounds of the concrete array then an assertion $i > 0 \land i < Length$, implying that the array's length is greater than the symbolic index. If the index is not within the bounds of the concrete array then the an assertion $\lnot{(i \geq 0 \land i < Length)}$, is made, which implies that the symbolic length is less than the accessed index. When the array is pushed to and popped from, a new length variable is created and the length is asserted to be the previous length plus or minus one. When the array is set to, a fresh length variable is created and an assertion $Length < i$ is made. When the array length is directly set to, \lstinlin|{array.length = x;| a fresh length variable is created and an assertion $Length = x$ is made, where $x$ is the value that was set.
+When the array is created an assertion $Length > 0$ is made. Whenever the concrete JavaScript array is accessed, if the index, $i$, is within the bounds of the concrete array then an assertion $i > 0 \land i < Length$, implying that the array's length is greater than the symbolic index. If the index is not within the bounds of the concrete array then the an assertion $\lnot{(i \geq 0 \land i < Length)}$, is made, which implies that the symbolic length is less than the accessed index. When the array is pushed to and popped from, a new length variable is created and the length is asserted to be the previous length plus or minus one. When the array is set to, a fresh length variable is created and an assertion $Length < i$ is made. When the array length is directly set to, \lstinline|{array.length = x;| a fresh length variable is created and an assertion $Length = x$ is made, where $x$ is the value that was set.
 
 Consider the example program in Figure \ref{fig:expose-array-length} which demonstrates the constraints on the symbolic length of an array as it is accessed and updated. Initially, (line 2) the length of the array is constrained only to be greater or equal to 0, effectively unbounded. On line 3, the array is accessed at index 0 and the constraint then changes to have a length greater than the accessed value as the concrete array (\lstinline|['a']|) has an item at that index. On line 4, the array is pushed to and a new Z3 variable is created to model the length of the array but the constraint still depends on the previous variable - the new constraint is the previous variable's constraints plus one. On line 5 the array is accessed out of bounds and a new assertion is made that the length is less than the out of bounds index. When the array is set on line 6 another fresh Z3 variable is used to model the length of the array but this does not depend on the previous variable, instead it asserts that the length is greater than the accessed index (20). On line 7 the array is popped from, and similarly to line 4 when the array was pushed, a new length variable is created than depends on the previous variable's constraints minus one.
 
@@ -839,12 +856,53 @@ if (q.length === 3) {
 
 All of the array functionality implemented, including function models and the regular concrete behaviour of arrays, is backed by a number of tests. Tests are written in a way to prompt to ExpoSE to attempt to generate inputs which would explore infeasible paths, as demonstrated in Figure~\ref{fig:example-length-test}. The expected number of errors are recorded in an array specific test runner and if the number of errors thrown does not match then the test runner rethrows the error indicating a change in behaviour. The array-specific test suite is run as a git pre-push hook to act as a smoke test and prevent regressions being committed to the repository.
 
-\chapter{Results}
+\section{Evaluation}
+To evaluate the extensions to ExpoSE I've tested two popular JavaScript libraries, \lstinline|Lodash/array| and \lstinline|Minimist|. Both libraries have roughly 14 million downloads a week from npm and make extensive use of array operations making them ideal targets to evaluate. I also present a methodology for verification of array polyfills using ExpoSE using which I discover bugs in a popular library.
 
-%TODO
+\subsection{Methodology}
+Using a version of ExpoSE with support for Numbers, Strings, Booleans, Undefined, Null and the extensions for Array support described in Section \ref{sec:implementation} I symbolically executed \lstinline|Minimist| and \lstinline|Lodash/array| with and without array support enabled. \lstinline|Minimist| was tested with a simple harness as the module is exported as a single function and \lstinline|Lodash/array| was tested with ExpoSE's harness generator which explores all the public functions in a library with symbolic arguments of all supported types. Tests were run on the same machine with 264GB of RAM and an Intel Xeon 6142 @ 2.6GHz CPU with 64 cores. Tests were left to run until they exhausted all paths, hit a max path count of 1,000,000 or ran for 15 minutes. Impact is measured in the amount of coverage gained with array support enabled, the number of additional paths generated, as well as the increase in time taken.
+
+\subsection{Results}
+\begin{table}[t]
+\centering
+\begin{tabular}{|p{4cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|}
+\hline
+& \lstinline|Minimist| with Arrays Disabled & \lstinline|Minimist| & \lstinline|Lodash/array| with Arrays Disabled & \lstinline|Lodash/array| \\ \hline
+Lines Covered & 34\% & 73\% & 82.6\% & 83\% \\ \hline
+%Terms Covered & 22\% & 64\% & 75.8\% & 76.4\% \\ \hline
+Total Test Duration & 902s & 901s & 376s & 801s \\ \hline
+Median Test Case Duration & 6.49s & 5.42s & 7.17s & 9.63s \\ \hline
+90\textsuperscript{th} Percentile Test Case Duration & 9.7s & 21.93s & 10.75s & 11.55s \\ \hline
+Max Test Case Duration & 215.93s & 315.33s & 14.8s & 17.41s \\ \hline
+Total Paths Explored & 7243 & 2015 & 2450 & 5101 \\ \hline
+\end{tabular}
+\caption{Results.}
+\label{table:results}
+\end{table}
+%TODO Get graphs
+
+%TODO discuss more
+
+The results in Table \ref{table:results} show a clear difference in behaviour of the two libraries that are tested, although both have a net gain in coverage. \lstinline|Minimist| has a drastic jump in coverage with array support enabled which comes at the cost of total path count. The number of paths appears to be reduced as the execution was constrained by time, rather than a reduction in a number of paths that could be explored. The combination of a low path count and the high max and 90\textsuperscript{th} Percentile test case duration indicate a small number of large queries which suggests that ExpoSE had large path constraints, potentially as a result of deeper exploration of the program. \lstinline|Lodash/array| exhibited different behaviour, whilst it only received a small bump in coverage it more than doubled the number of paths explored and spent on average ~30\% longer on each path. Examining why the jump in coverage was so small revealed that the majority of functions accept strings. The remaining uncovered areas of \lstinline|Lodash/array| mostly relate to internal functions which are unreachable from the \lstinline|Lodash/array| module and polyfill code. Both libraries have areas that concretise due to lack of Object support.
+
+Overall the increased cost in query time appears to be a reasonable trade-off for the net gain in terms of both coverage and additional paths to explore.
+
+\subsection{Polyfill Verification}
+Array polyfills, as discussed in \ref{sec:array-prototype-functions}, attempt to mimic the behaviour of standard prototype functions for backwards compatibility purposes. By giving symbolic input to both a polyfill and the standard implementation function and comparing the result deviations in behaviour can be identified. Below I present an example harness and describe bugs found in a popular polyfill library.
+
+
+%TODO include harness
+
+The harness, shown in \ref{fig:polyfill-test-harness}, calls the function \lstinline|check_match()| with the polyfill function under test, the matching standard function, a symbolic \lstinline|thisArg| argument, and an array of symbolic values. The \lstinline|thisArg| argument is the argument that represents the value that the prototype is being invoked from, the \lstinline|arr| in \lstinline|arr.includes(myValue, 0);|. The array of symbolic values are the values that should be passed to the function. \lstinline|check_match()| then uses \lstinline|apply()| to call the two functions, using \lstinline|try| to prevent an exception from causing the test case to fail, and stores the results. If the results differ then an exception is thrown which contains a string representation of the two values and the key word alert to make the output easily to identify using \lstinline|grep|.
+
+\lstinline|js-polyfills| is a popular with 970 stars on Github and 7,000 weekly downloads. It contains polyfills for many array functions including \lstinline|Array.includes|. Using the harness and techniques described above, ExpoSE identified that calling the polyfill function with an \lstinline|undefined| base type would cause the function to return \lstinline|false| whereas the standard prototype implementation throws an exception.
 
 \section{Conclusion}
 
+%TODO 
+Learn -> The difficulty in testing, the importance of writing tests for exceptional cases rather than normal control flow.
+Improve -> Support for non-homogenous arrays, more function models, an expression that reasons about holes in the array, producing arrays of multiple types + empty when a symbolic value is required -> won't be forced by path conditions
+Do It Again -> Think more about the big picture -> write code defensively, use more verbose logging, improve on my own understanding of symbolic execution, test on real world targets earlier, do a large real world survey to identify which function models are a priority.
 
 \newpage
 \bibliography{/Users/arran/Documents/Github/FullUnit_1718_ArranFrance/Report/bibliography}

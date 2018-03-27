@@ -2,7 +2,7 @@
 
 \bibitem{AZProgrammingLanguages}
 ``The {A-Z }of programming languages: {JavaScript}. (2008, july 31).''
-  \url{http://web.archive.org/web/20080207010024/http://www.808multimedia.com/winnt/kernel.htm},
+  \url{https://web.archive.org/web/20180210015852/https://www.computerworld.com.au/article/255293/a-z_programming_languages_javascript/},
   2008.
 \newblock Accessed: 2010-09-30.
 
@@ -238,5 +238,28 @@ A.~Guha, C.~Saftoiu, and S.~Krishnamurthi, ``The essence of {JavaScript},'' in
 L.~De~Moura and N.~Bj{\o}rner, ``Z3: An efficient smt solver,'' in {\em
   International conference on Tools and Algorithms for the Construction and
   Analysis of Systems}, pp.~337--340, Springer, 2008.
+
+\bibitem{lamkanfi2010predicting}
+A.~Lamkanfi, S.~Demeyer, E.~Giger, and B.~Goethals, ``Predicting the severity
+  of a reported bug,'' in {\em Mining Software Repositories (MSR), 2010 7th
+  IEEE Working Conference on}, pp.~1--10, IEEE, 2010.
+
+\bibitem{ergin-disclosure}
+L.~O. Ergin, ``The story behind “anyone can login as root” tweet,'' Nov.
+  2017.
+
+\bibitem{debating-full-disclosure}
+B.~Schneier, ``Debating full disclosure,'' Jan. 2007.
+
+\bibitem{responsibility-of-public-disclosure}
+T.~Hunt, ``The responsibility of public disclosure,'' May 2013.
+
+\bibitem{kids-pass-responsible-disclosure}
+T.~Hunt, ``Kids pass just reminded us how hard responsible disclosure is,''
+  July 2017.
+
+\bibitem{project-zero-update-policy}
+{Google Project Zero}, ``Feedback and data-driven updates to google’s
+  disclosure policy,'' Feb. 2015.
 
 \end{thebibliography}
