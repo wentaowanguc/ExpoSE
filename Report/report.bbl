@@ -150,6 +150,9 @@ H.~Ganzinger, G.~Hagen, R.~Nieuwenhuis, A.~Oliveras, and C.~Tinelli, ``{DPLL
   (T)}: Fast decision procedures,'' in {\em International Conference on
   Computer Aided Verification}, pp.~175--188, Springer, 2004.
 
+\bibitem{Torlak}
+E.~Torlak, ``Combining theories.''
+
 \bibitem{manna2003combining}
 Z.~Manna and C.~G. Zarba, ``Combining decision procedures,'' in {\em Formal
   Methods at the Crossroads. From Panacea to Foundational Support},
