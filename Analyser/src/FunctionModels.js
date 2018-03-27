@@ -468,8 +468,6 @@ function BuildModels() {
                 let result_s = ctx.mkIntVar('__INDEX_OF_' + indexOfCounter); 
                 
                 c.state.pushCondition(ctx.mkGe(result_s, ctx.mkIntVal(-1)), true);
-
-                // TODO AF check this condition is required
                 c.state.pushCondition(ctx.mkGt(array.getLength(), result_s), true);
 
                 // result_s should be in array slice or -1
@@ -642,7 +640,6 @@ function BuildModels() {
                 copiedArray.setLength(newLength);
                 copiedArray.increaseStartIndex(begin);
 
-                // TODO AF double check this constraint
                 // The new length should be greater than 0 AND 
                 // IF end is positive, less than or equal to end's length -> slice(0, 4)
                 // ELSE, less than or equal to the old length-end -> slice(0, -1)
