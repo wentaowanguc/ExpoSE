@@ -12,7 +12,7 @@
 \contentsline {subsection}{\numberline {3.2.2}CDCL}{12}{subsection.3.2.2}
 \contentsline {section}{\numberline {3.3}SMT}{13}{section.3.3}
 \contentsline {subsection}{\numberline {3.3.1}Example Lazy Approach}{14}{subsection.3.3.1}
-\contentsline {subsection}{\numberline {3.3.2}DPLL(T)}{15}{subsection.3.3.2}
+\contentsline {subsection}{\numberline {3.3.2}DPLL(T)}{14}{subsection.3.3.2}
 \contentsline {subsection}{\numberline {3.3.3}Combining Theory Solvers}{15}{subsection.3.3.3}
 \contentsline {chapter}{\numberline {4}JavaScript}{17}{chapter.4}
 \contentsline {section}{\numberline {4.1}History}{17}{section.4.1}

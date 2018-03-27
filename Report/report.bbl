@@ -150,6 +150,11 @@ H.~Ganzinger, G.~Hagen, R.~Nieuwenhuis, A.~Oliveras, and C.~Tinelli, ``{DPLL
   (T)}: Fast decision procedures,'' in {\em International Conference on
   Computer Aided Verification}, pp.~175--188, Springer, 2004.
 
+\bibitem{manna2003combining}
+Z.~Manna and C.~G. Zarba, ``Combining decision procedures,'' in {\em Formal
+  Methods at the Crossroads. From Panacea to Foundational Support},
+  pp.~381--422, Springer, 2003.
+
 \bibitem{dybvig1996scheme}
 R.~K. Dybvig, {\em The Scheme Programming Language: ANSI Scheme}.
 \newblock Prentice Hall PTR, 1996.
