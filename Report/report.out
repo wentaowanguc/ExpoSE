@@ -19,6 +19,10 @@
 \BOOKMARK [0][-]{chapter.5}{Implementation}{}% 19
 \BOOKMARK [1][-]{section.5.1}{JavaScript Array Encoding}{chapter.5}% 20
 \BOOKMARK [1][-]{section.5.2}{Array Support Architecture}{chapter.5}% 21
-\BOOKMARK [1][-]{section.5.3}{Evaluation}{chapter.5}% 22
-\BOOKMARK [1][-]{section.5.4}{Conclusion}{chapter.5}% 23
-\BOOKMARK [1][-]{section.5.5}{Professional Issues}{chapter.5}% 24
+\BOOKMARK [0][-]{chapter.6}{Evaluation}{}% 22
+\BOOKMARK [1][-]{section.6.1}{Methodology}{chapter.6}% 23
+\BOOKMARK [1][-]{section.6.2}{Results}{chapter.6}% 24
+\BOOKMARK [1][-]{section.6.3}{Polyfill Verification}{chapter.6}% 25
+\BOOKMARK [0][-]{chapter.7}{Conclusion}{}% 26
+\BOOKMARK [0][-]{chapter.8}{Appendix}{}% 27
+\BOOKMARK [1][-]{section.8.1}{Professional Issues}{chapter.8}% 28
