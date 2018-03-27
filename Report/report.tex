@@ -229,7 +229,7 @@ In most cases, a branch's condition will not depend on all of the variables in a
 For instance, consider the function in Figure \ref{fig:example-function}. If the existing path constraint is $(x < 0 ) \land ( z > 5) \land (y < 13) \land (y + x > 15)$ and the symbolic execution negates the the last path condition to explore a new path: $ (x < 0) \land (z > 5) \land (y < 13) \land \lnot(y + x > 15)$, then the $z > 5$ constraint can be eliminated as $z$ does not influence the $y + x > 15$ branch.
 
 \begin{figure}[t]
-\begin{verbatim}
+\begin{lstlisting}
 function unlikely_function (x, y, z){
  if (x < 0)
    x--;
@@ -241,7 +241,7 @@ function unlikely_function (x, y, z){
    y = y * x;
  return x + y + z;
 }
-\end{verbatim}
+\end{lstlisting}
 \caption{\label{fig:example-function} Example Function}
 \end{figure} 
 
@@ -515,17 +515,17 @@ Object & Represents a collection of properties, each of which has a name and a v
 \section{Type System}
 JavaScript has six types, as shown in Table \ref{type-system}, that variables can be~\cite{EcmaScript}, but the types of variables are not explicitly declared at compile time. Instead, types are dynamic and can change over the course of a program: \lstinline{let foo = '1'; foo = foo * 2;}. Initially \lstinline{foo} is of type string but the type is implicitly coerced into a number by the \lstinline{*} operator. Coercion between types occurs when the type of an operand is not the type the operator is expecting. For instance, as shown in the example above the \lstinline{*} operator coerces all operands to numbers. This coercion is a source of error in programs as inputs of an invalid type can be coerced in unexpected ways.
 
-Consider the contrived example in Figure \ref{fig:js-increment-concat} where the input passed to a function is a String instead of the expect Number. In this case the \lstinline{+} operator coerces a number to a string resulting in a concatenation rather than an addition.
+Consider the contrived example in Figure \ref{fig:js-increment-concat} where the input passed to a function is a String instead of the expect Number. In this case the \lstinline|+| operator coerces a number to a string resulting in a concatenation rather than an addition.
 
 \begin{figure}[t]
-\begin{verbatim}
+\begin{lstlisting}
 function increment (x) {
   return x + 1
 }
 
 let a = '1'
-let b = increment(y) // b is String '11' rather than the expected Number 2
-\end{verbatim}
+let b = increment(y) // b is the String '11' rather than the expected Number 2
+\end{lstlisting}
 \caption{\label{fig:js-increment-concat} Example of Boolean Coercion}
 \end{figure} 
 
@@ -539,7 +539,7 @@ Typical object-oriented languages define classes which guarantee the exact sets 
 Consider the example in Figure \ref{fig:js-prototypical-inheritance}, in which we create a prototype, define a new object of that prototype, and then overwrite one of the values of the prototype.
 
 \begin{figure}[t]
-\begin{verbatim}
+\begin{lstlisting}
 /* This is a constructor, color and weight will be values
  that belong the constructed object */
 function Fruit (color, weight) {
@@ -559,7 +559,7 @@ orange.hasOwnProperty('color') // true, color belongs to orange
 orange.hasOwnProperty('print') // false, print is inherited from orange.prototype
 orange.print = () => console.log('A Orange') // Redefine the print function
 orange.hasOwnProperty('print') // true, print belongs to orange as well
-\end{verbatim}
+\end{lstlisting}
 \caption{\label{fig:js-prototypical-inheritance} Example of Prototypal Inheritance}
 \end{figure} 
 
@@ -569,7 +569,7 @@ Consider the prototype chain in Figure \ref{fig:js-prototypal-chain} in which we
 
 
 \begin{figure}[t]
-\begin{verbatim}
+\begin{lstlisting}
 function Food (calories, portions) {
   this.calories = calories;
   this.portionsPerDay = portions;
@@ -600,7 +600,7 @@ let orange = new Fruit('orange', 100, 47, 5);
 orange instanceof Fruit; // true
 orange instanceof Food; // true
 orange instanceof Object; // true
-\end{verbatim}
+\end{lstlisting}
 \caption{\label{fig:js-prototypal-inheritance} Example of Prototypal Inheritance}
 \end{figure} 
 
@@ -623,14 +623,14 @@ Another by-product of arrays being a special form of object is that arrays are n
 As described above, arrays can have both properties and array elements. If the property fails the array element test described above, then the value is stored as a regular object value. This can lead to subtle bugs when working with numbers if bounds are not checked as values smaller than 0 and greater than 2  \textsuperscript{32} - 1 will not be stored as an array element, as demonstrated in Figure \ref{fig:js-array-max-length}.
 
 \begin{figure}[t]
-\begin{verbatim}
+\begin{lstlisting}
 let arr = []
 arr[0] = 'foo'; // array is 
 arr.length; // returns 1
 arr[4294967296] = 'bar'; // 4294967296 === 2^32-1, property not an element
 arr[-1] = 'baz'; // -1 < 0, property not an array element
 arr.length; // still returns 1
-\end{verbatim}
+\end{lstlisting}
 \caption{\label{fig:js-array-max-length} Example of Array Object Behaviour}
 \end{figure}
 

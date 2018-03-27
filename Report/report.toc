@@ -19,7 +19,7 @@
 \contentsline {section}{\numberline {4.2}Type System}{19}{section.4.2}
 \contentsline {section}{\numberline {4.3}Objects and Prototypal Inheritance}{20}{section.4.3}
 \contentsline {section}{\numberline {4.4}Arrays}{21}{section.4.4}
-\contentsline {subsection}{\numberline {4.4.1}Prototype Functions}{21}{subsection.4.4.1}
+\contentsline {subsection}{\numberline {4.4.1}Prototype Functions}{22}{subsection.4.4.1}
 \contentsline {section}{\numberline {4.5}Ensuring Correctness}{22}{section.4.5}
 \contentsline {chapter}{\numberline {5}Implementation}{26}{chapter.5}
 \contentsline {section}{\numberline {5.1}JavaScript Array Encoding}{26}{section.5.1}
