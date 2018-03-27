@@ -330,7 +330,7 @@ Consider the problem $F = (P \lor \lnot{Q} \lor R) \land (\lnot{P} \lor R) \land
 
 \begin{table}[t]
 \centering
-\begin{tabular}{|p{2cm}|p{4.2cm}|p{9cm}|}
+\begin{tabular}{|l|l|l|}
 \hline
 Model & $F$ & Rule Applied \\ \hline
 {} & $(P \lor \lnot{Q} \lor R) \land (\lnot{P} \lor R \lor Q) \land \lnot{P} \land \lnot{U} \land (R \lor Q)$ & UnitPropagate on $\lnot{U}$   \\ \hline
@@ -361,7 +361,7 @@ Pure Literal & $M|| F \implies Ml || F$ & $l$ occurs in some clause of $F$, $\ln
 
 \begin{table}[t]
 \centering
-\begin{tabular}{|p{2cm}|p{5.5cm}|p{5.5cm}}
+\begin{tabular}{|l|l|l|}
 \hline
 Name & Rule & Conditions  \\ \hline
 Learn & $M|| F \implies M || F, C$ & All atoms of $C$ occur in $F$, $F \models C$  \\ \hline
@@ -396,7 +396,7 @@ We also have to amend the Theory Learn and Forget rules to prevent being stuck i
 \begin{table}[t]
 \centering
 \label{smt-rulesl}
-\begin{tabular}{|p{2cm}|p{3cm}|p{6cm}|p{9cm}|}
+\begin{tabular}{|l|l|l|}
 \hline
 Name & Rule & Conditions \\ \hline
 Theory Learn & $M || F \implies M|| F, C $ & All atoms of $C$ occur in $F$, $F \models _T C $ \\ \hline
@@ -426,9 +426,9 @@ Consider the unsatisfiable problem $f(a) = b \land (g(b) \neq g(f(a)) \lor c \ne
 
 \begin{table}[t]
 \centering
-\begin{tabular}{|l|p{6.5cm}|p{3cm}|}
+\begin{tabular}{|p{4.5cm}|p{6.5cm}|p{3cm}|}
 \hline
-Model & $F$ & Rule Applied \\ \hline
+Model & Formula & Rule Applied \\ \hline
 {} & $f(a) = b \land (g(b) \neq g(f(a)) \lor c \neq a) \land f(c) = b$ & UnitPropagate on $f(a) = b$   \\ \hline
 {$f(a) = b$ } & $(g(b) \neq g(f(a)) \lor c \neq a)$ & UnitPropagate on $ f(c) = b$   \\ \hline
 {$f(a) = b$, $f(c) = b$ } & $g(b) \neq g(f(a)) \lor c \neq a)$ & T-Propagate on $\lnot{g(b) \neq g(f(a))}$   \\ \hline
@@ -738,7 +738,7 @@ SymbolicState.js has a number of functions that are called when a symbolic value
 \caption{\label{fig:naive-includes} Example of a Naive Implementation of a Function Model for Includes.}
 \end{figure}
 
-When symbolic values are used in native prototype functions (such as those in \lstinline{Array.prototype} described in Section \ref{sec:array-prototype-functions}) they leave the environment in which the program is being analysed and consequently become concretised preventing new paths from being explored from that point onwards in the program. This results in incomplete exploration and a reduction in code coverage. One solution to this problem is to clone the behaviour of functions in native JavaScript, Figure~\ref{fig:naive-includes} shows an example of how this might be achieved. Although this approach achieves the goal of obtaining a symbolic representation of the result of the function it also creates additional paths for each branching condition or loop inside the function. An alternative solution to this problem is to model the behaviour of the function. Doing this is typically more time consuming but has the advantage of avoiding path explosion and deferring the cost to the SMT solver.
+When symbolic values are used in native %prototype functions (such as those in \lstinline{Array.prototype} described in Section \ref{sec:array-prototype-functions}) they leave the environment in which the program is being analysed and consequently become concretised preventing new paths from being explored from that point onwards in the program. This results in incomplete exploration and a reduction in code coverage. One solution to this problem is to clone the behaviour of functions in native JavaScript, Figure~\ref{fig:naive-includes} shows an example of how this might be achieved. Although this approach achieves the goal of obtaining a symbolic representation of the result of the function it also creates additional paths for each branching condition or loop inside the function. An alternative solution to this problem is to model the behaviour of the function. Doing this is typically more time consuming but has the advantage of avoiding path explosion and deferring the cost to the SMT solver.
 
 ExpoSE has a framework for modelling prototype functions in the \lstinline|FunctionModel| module. Prototypes in the \lstinline|FunctionModel| module are exposed as a symbolic hook that concretely executes the prototype function and then if a condition is met also symbolically executes a model function if it exists. 
 %TODO make it clear that these are not the only function models
