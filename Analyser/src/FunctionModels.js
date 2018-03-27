@@ -618,8 +618,17 @@ function BuildModels() {
             (c, _f, base, args, result) => {
                 const ctx = c.state.ctx;
                 const array = c.state.asSymbolic(base);
-                const begin = args[0] ? c.state.asSymbolic(args[0]) : ctx.mkIntVal(0);
-                const end = args[1] ? c.state.asSymbolic(args[1]) : array.getLength();
+
+                let begin = args[0] ? c.state.asSymbolic(args[0]) : ctx.mkIntVal(0);
+                let end = args[1] ? c.state.asSymbolic(args[1]) : array.getLength();
+
+                // handle slice(-1)
+                // if begin is less than 0, begin equals 0 and end equals arg[0], else begin must be ge than 0
+                c.state.pushCondition(ctx.mkIte(
+                    ctx.mkLt(begin, ctx.mkIntVal(0)), 
+                    ctx.mkAnd(ctx.mkEq(begin, ctx.mkIntVal(0)), ctx.mkEq(end, c.state.asSymbolic(args[0]))),
+                    ctx.mkGe(begin, ctx.mkIntVal(0))
+                ));
 
                 // end cannot be greater than array length
                 c.state.pushCondition(ctx.mkLe(end, array.getLength()), true);
@@ -642,9 +651,9 @@ function BuildModels() {
                         ctx.mkGe(newLength, ctx.mkIntVal(0)), 
                         ctx.mkIte(
                             ctx.mkGe(end, ctx.mkIntVal(0)), 
-                            ctx.mkLe(newLength, end),
+                            ctx.mkLe(newLength, ctx.mkSub(array.getLength(), end)),
                             // negative end indexing 
-                            ctx.mkLe(newLength, ctx.mkSub(array.getLength(), end))
+                            ctx.mkLe(newLength, ctx.mkSub(array.getLength(), ctx.mkAdd(end, begin)))
                         )
                     ),
                     true
