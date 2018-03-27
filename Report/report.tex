@@ -520,11 +520,11 @@ Consider the contrived example in Figure \ref{fig:js-increment-concat} where the
 \begin{figure}[t]
 \begin{lstlisting}
 function increment (x) {
-  return x + 1
+  return x + 1;
 }
 
-let a = '1'
-let b = increment(y) // b is the String '11' rather than the expected Number 2
+let a = '1';
+let b = increment(y); // b is the String '11' rather than the expected Number 2
 \end{lstlisting}
 \caption{\label{fig:js-increment-concat} Example of Boolean Coercion}
 \end{figure} 
@@ -543,22 +543,22 @@ Consider the example in Figure \ref{fig:js-prototypical-inheritance}, in which w
 /* This is a constructor, color and weight will be values
  that belong the constructed object */
 function Fruit (color, weight) {
-  this.color = color
-  this.weight = weight
+  this.color = color;
+  this.weight = weight;
 }
 
 // This is the set of values all fruit will inherit from the prototype
 Fruit.prototype = {
   print: function () {
-    console.log(`Color: ${this.color} Weight: ${this.weight}`)
+    console.log(`Color: ${this.color} Weight: ${this.weight}`);
   }
 }
 
-var orange = new Fruit('orange', 100) // orange.prototype === Fruit.prototype
-orange.hasOwnProperty('color') // true, color belongs to orange
-orange.hasOwnProperty('print') // false, print is inherited from orange.prototype
-orange.print = () => console.log('A Orange') // Redefine the print function
-orange.hasOwnProperty('print') // true, print belongs to orange as well
+var orange = new Fruit('orange', 100); // orange.prototype === Fruit.prototype
+orange.hasOwnProperty('color'); // true, color belongs to orange
+orange.hasOwnProperty('print'); // false, print is inherited from orange.prototype
+orange.print = () => console.log('A Orange'); // Redefine the print function
+orange.hasOwnProperty('print';) // true, print belongs to orange as well
 \end{lstlisting}
 \caption{\label{fig:js-prototypical-inheritance} Example of Prototypal Inheritance}
 \end{figure} 
@@ -624,7 +624,7 @@ As described above, arrays can have both properties and array elements. If the p
 
 \begin{figure}[t]
 \begin{lstlisting}
-let arr = []
+let arr = [];
 arr[0] = 'foo'; // array is 
 arr.length; // returns 1
 arr[4294967296] = 'bar'; // 4294967296 === 2^32-1, property not an element
@@ -641,7 +641,6 @@ arr.length; // still returns 1
 if (!Array.prototype.includes) {
   Object.defineProperty(Array.prototype, 'includes', {
     value: function(needle, index) {
-
       if (this == null) {
         return false;
       }
