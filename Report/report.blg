@@ -1,9 +1,6 @@
 This is BibTeX, Version 0.99dThe top-level auxiliary file: report.aux
 The style file: ieeetr.bst
 Database file #1: /Users/arran/Documents/Github/FullUnit_1718_ArranFrance/Report/bibliography.bib
-Warning--can't use both volume and number fields in godefroid2005dart
-Warning--can't use both volume and number fields in godefroid2008grammar
-Warning--can't use both volume and number fields in sen2005cute
-Warning--can't use both volume and number fields in gardner2012towards
-Warning--can't use both volume and number fields in park2015kjs
-(There were 5 warnings)
+Warning--you've nested cross references--entry "DBLP:conf/spin/2017"
+refers to entry "DBLP:conf/spin/2017", which also refers to something
+(There was 1 warning)

@@ -66,7 +66,7 @@ This report has been prepared on the basis of my own work. Where other published
 
 \vskip3em
 
-Word Count: 
+Word Count: 18,038
 
 \vskip3em
 
@@ -74,11 +74,11 @@ Student Name: \studentname
 
 \vskip3em
 
-Date of Submission: 
+Date of Submission: 2018-03-28
 
 \vskip3em
 
-Signature:
+Signature: Arran France
 
 \newpage
 
@@ -102,7 +102,7 @@ Signature:
 %%%%%%%%%%%%%%%%%%%%%% 
 Since its inception as a `glue' language for the web~\cite{AZProgrammingLanguages} JavaScript's popularity has surged~\cite{stackoverflowsurvey,tiobeindex2017nov}. JavaScript is now a ubiquitous language that powers mobile, web, and server applications however its dynamic nature and deceptive syntax often lead to subtle bugs and unintended behaviour which can be difficult to identify. Dynamic symbolic execution (DSE) is a technique that can be used to automatically identify bugs and generates tests for JavaScript however this requires modelling the semantics of the language in first order logic. JavaScript arrays are an area of the language that requires trade-offs, difficult design decisions, and careful consideration of language semantics when modelling due to their atypical properties.
 
-My work extends ExpoSE~\cite{Loring_2017}, a tool for DSE, by describing an encoding for homogeneously typed JavaScript arrays in first order logic, implementing support in ExpoSE for symbolic arrays, and modelling a selection of prototype functions. I demonstrate that these extensions result in an increased test coverage of two popular JavaScript libraries and describe a new bug found in a popular Array ES6 polyfill.
+My work extends ExpoSE~\cite{DBLP:conf/spin/2017}, a tool for DSE, by describing an encoding for homogeneously typed JavaScript arrays in first order logic, implementing support in ExpoSE for symbolic arrays, and modelling a selection of prototype functions. I demonstrate that these extensions result in an increased test coverage of two popular JavaScript libraries and describe a new bug found in a popular Array ES6 polyfill.
 
 I begin this report presenting background information on symbolic execution, including considerations for constraint optimisations and its usage for bug detection, automated decision procedures, with an emphasis on techniques for SAT and SMT solving, and a brief overview of JavaScript's semantics, with a particular emphasis on the behaviour of arrays and their prototype functions. I then describe the details of the implementation of my extensions to ExpoSE, my experimental methodology, and draw conclusions about their effectiveness on testing real world applications.
 
@@ -127,7 +127,7 @@ function abs_sum (x, y) {
  return x + y;
 }
 \end{lstlisting}
-\caption{\label{fig:abs-sum} Absolute Sum Function}
+\caption{\label{fig:abs-sum} Absolute Sum Function.}
 \end{figure} 
 
 \begin{table}[t]
@@ -140,7 +140,7 @@ $x >= \land y < 0$  & $x - y$ & $x <0 $                   & SAT          \\ \hli
 $x < \land y >= 0$  & $-x+y$  & $x<0 \land y < 0 $        & SAT          \\ \hline
 $x < \land y < 0$   & $-x-y$  &                           &              \\ \hline
 \end{tabular}
-\caption{Absolute Sum Symbolic Execution Results}
+\caption{Absolute Sum Symbolic Execution Results.}
 \label{abs-sum-se-table}
 \end{table}
 
@@ -162,7 +162,7 @@ Input (x, y) & $pc$ & Result & Constraint Solver Queries & Query Result \\ \hlin
 -2, 1 & $x < \land y >= 0$ & $-x+y$ & $x<0 \land y < 0 $ & SAT \\ \hline
 -2, -7 & $x < \land y < 0$ & $-x-y$ &  &  \\ \hline
 \end{tabular}
-\caption{Absolute Sum Concolic Execution Results}
+\caption{Absolute Sum Concolic Execution Results.}
 \label{abs-sum-ce-table}
 \end{table}
 
@@ -192,7 +192,7 @@ SAGE, by contrast, uses a \textit{generational search}. Following the initial in
 	\EndWhile
 \EndFunction    
 \end{algorithmic}
-\caption{\label{fig:sage-search} SAGE's Search Algorithm}
+\caption{\label{fig:sage-search} SAGE's Search Algorithm.}
 \end{figure}
 
 \begin{figure}[t]
@@ -210,7 +210,7 @@ SAGE, by contrast, uses a \textit{generational search}. Following the initial in
 	\State \Return $alternatives$
 \EndFunction    
 \end{algorithmic}
-\caption{\label{fig:sage-compute-new-children} SAGE's Algorithm for Computing New Children}
+\caption{\label{fig:sage-compute-new-children} SAGE's Expansion Algorithm for Generating New Paths.}
 \end{figure}
 
 
@@ -242,7 +242,7 @@ function unlikely_function (x, y, z){
  return x + y + z;
 }
 \end{lstlisting}
-\caption{\label{fig:example-function} Example Function}
+\caption{\label{fig:example-function} Example Function.}
 \end{figure} 
 
 \section{Bug Detection}
@@ -290,7 +290,7 @@ For any CNF formula $F$ and literal $l$, $\mathit{F}|l$ represents the formula o
 \EndFunction    
 \end{algorithmic}
 
-\caption{\label{fig:dppl-unit-propagate} Unit Propagation}
+\caption{\label{fig:dppl-unit-propagate} Unit Propagation Algorithm.}
 \end{figure}
 
 \begin{figure}[t]
@@ -303,7 +303,7 @@ For any CNF formula $F$ and literal $l$, $\mathit{F}|l$ represents the formula o
 \EndFunction    
 \end{algorithmic}
 
-\caption{\label{fig:dppl-pure-literal} Pure Literal}
+\caption{\label{fig:dppl-pure-literal} Pure Literal Algorithm.}
 \end{figure}
 
 \begin{figure}[t]
@@ -338,7 +338,7 @@ Model & $F$ & Rule Applied \\ \hline
 {$\lnot{U}$, $\lnot{P}$} & $(\lnot{Q} \lor R) \land (R \lor Q)) \land (R \lor Q)$ & PureLiteral on $R$    \\ \hline
 {$\lnot{U}$, $\lnot{P}, R$} & $true$ &     \\ \hline
 \end{tabular}
-\caption{DPLL Results}
+\caption{Example DPLL Results.}
 \label{table:dpll-results}
 \end{table}
 
@@ -354,7 +354,7 @@ Fail & $M|| F, C \implies unsat$ & $M \models \lnot C$ $M$ contains no decision 
 Backtrack & $M l^d N|| F, C \implies M l' || F, C$ & $M l^d N \models \lnot C$ and there is a clause $C' \lor l'$ where $F, C \models C' \lor l'$ and $M \models \lnot C'$, $l'$ is undefined in $M$, and $l' or \lnot l'$ occurs in $F$ or in $M l^d N$ & $a^d || (a \lor b) \land (\lnot{a} \lor c) \implies \lnot{a} || (a \lor b) \land (\lnot{a} \lor c)$  \\ \hline
 Pure Literal & $M|| F \implies Ml || F$ & $l$ occurs in some clause of $F$, $\lnot l$ occurs in no clause of $F$, and $l$ is undefined in $M$ & $\emptyset || a \land (\lnot b \lor c) \implies \lnot b || a \land (\lnot b \lor c) $ \\ \hline
 \end{tabular}
-\caption{Classic DPLL Rules}
+\caption{Classic DPLL Rules.}
 \label{table:classic-dpll-rules}
 \end{table}
 
@@ -368,7 +368,7 @@ Learn & $M|| F \implies M || F, C$ & All atoms of $C$ occur in $F$, $F \models C
 Forget & $M|| F, C \implies M || F $ & $F \models C$  \\ \hline
 Restart & $M|| F \implies \emptyset || F$ &  \\ \hline
 \end{tabular}
-\caption{CDCL DPLL Rules}
+\caption{CDCL DPLL Rules.}
 \label{table:cdcl-rules}
 \end{table}
 
@@ -402,7 +402,7 @@ Name & Rule & Conditions \\ \hline
 Theory Learn & $M || F \implies M|| F, C $ & All atoms of $C$ occur in $F$, $F \models _T C $ \\ \hline
 Theory Forget & $M || F, C \implies M || F $ & $F \models _T C$ \\ \hline
 \end{tabular}
-\caption{SMT Rules}
+\caption{SMT Rules.}
 \end{table}
 
 \subsection{Example Lazy Approach}
@@ -435,7 +435,7 @@ Model & Formula & Rule Applied \\ \hline
 {$f(a) = b$, $f(c) = b$, $\lnot{g(b) \neq g(f(a))}$ } & $c \neq a$ & T-Propagate on $\lnot{c \neq a}$   \\ \hline
 {$f(a) = b$, $f(c) = b$, $\lnot{g(b) \neq g(f(a))}$ } & $unsat$ &    \\ \hline
 \end{tabular}
-\caption{DPLL(T) Results}
+\caption{DPLL(T) Results.}
 \label{table:dpll-t-results}
 \end{table}
 
@@ -508,7 +508,7 @@ String & An ordered sequence of zero or more 16-bit unsigned integers, these are
 Number & Represents the IEE 754 double precision numbers in the range 2\textsuperscript{-253} to 2\textsuperscript{253} as well as the special cases NaN, $\infty$ , and $ -\infty$. JavaScript's implementation of numbers includes both a positive and negative 0. \\ \hline
 Object & Represents a collection of properties, each of which has a name and a value, as well as optionally a setter and/or getter function used to manipulate the value. To a first approximation, Objects can be thought of as a hash map. \\ \hline
 \end{tabular}
-\caption{JavaScript Type System}
+\caption{JavaScript Type System.}
 \label{type-system}
 \end{table}
 
@@ -526,7 +526,7 @@ function increment (x) {
 let a = '1';
 let b = increment(y); // b is the String '11' rather than the expected Number 2
 \end{lstlisting}
-\caption{\label{fig:js-increment-concat} Example of Boolean Coercion}
+\caption{\label{fig:js-increment-concat} Example of Boolean Coercion.}
 \end{figure} 
 
 Although the previous examples have used strings and numbers, type coercion extends to booleans as well. Non-boolean expressions are coerced with the following rules: \lstinline|undefined|, \lstinline|null|, \lstinline|false|, the empty string, \lstinline|NaN|, \lstinline|+0|, and \lstinline|-0| return \lstinline|false|; while \lstinline|true|, all other numbers, all other strings, and all Objects return \lstinline|true|~\cite{EcmaScript}. These coercion rules, whilst a common source of error, can be taken advantage of to allow shortcuts like \lstinline|if (x)| to check for both undefined and null values.
@@ -560,7 +560,7 @@ orange.hasOwnProperty('print'); // false, print is inherited from orange.prototy
 orange.print = () => console.log('A Orange'); // Redefine the print function
 orange.hasOwnProperty('print';) // true, print belongs to orange as well
 \end{lstlisting}
-\caption{\label{fig:js-prototypical-inheritance} Example of Prototypal Inheritance}
+\caption{\label{fig:js-prototypical-inheritance} Example of Prototypal Inheritance.}
 \end{figure} 
 
 A prototype may itself have a prototype, the sequence of prototypes which define the properties of a given object are referred to as a prototype chain~\cite{EcmaScript, borning1986classes}. By default, all created objects inherit from \lstinline{Object.prototype} and functions, as a special class of object, inherit from \lstinline{Function.prototype} which inherits from \lstinline{Object.prototype}. These prototypes are part of the EMCAScript standard and provide utilities to make working with objects of that prototype easier. For example, \lstinline{Object.prototype} provides functions for iterating over all the values of an object or all the keys in the object.
@@ -601,7 +601,7 @@ orange instanceof Fruit; // true
 orange instanceof Food; // true
 orange instanceof Object; // true
 \end{lstlisting}
-\caption{\label{fig:js-prototypal-inheritance} Example of Prototypal Inheritance}
+\caption{\label{fig:js-prototypal-inheritance} Example of Prototypal Inheritance.}
 \end{figure} 
 
 \begin{figure}[t]
@@ -610,7 +610,7 @@ orange instanceof Object; // true
 \framebox{
 	\includegraphics[width=10cm]{prototypechain} 
 }
-\caption{\label{fig:js-prototypal-chain} Prototypal Chain for Figure \ref{fig:js-prototypal-inheritance}}
+\caption{\label{fig:js-prototypal-chain} Prototypal Chain for Figure \ref{fig:js-prototypal-inheritance}.}
 \end{figure} 
 
 \section{Arrays} \label{sec:arrays}
@@ -631,7 +631,7 @@ arr[4294967296] = 'bar'; // 4294967296 === 2^32-1, property not an element
 arr[-1] = 'baz'; // -1 < 0, property not an array element
 arr.length; // still returns 1
 \end{lstlisting}
-\caption{\label{fig:js-array-max-length} Example of Array Object Behaviour}
+\caption{\label{fig:js-array-max-length} Example of Array Object Behaviour.}
 \end{figure}
 
 \subsection{Prototype Functions} \label{sec:array-prototype-functions}
@@ -685,7 +685,7 @@ Assuring the correctness of JavaScript code is an unsolved problem - in part due
 
 Tools like Eslint and Flow are commonly used by developers to statically analyse code and identify bugs but are limited in their scope. Eslint uses a narrow set of rules to identify possibly dangerous behaviour. Flow is constrained to reasoning about types and in some cases requires additional code annotation to identify possible errors. These limited sets of warnings do not fully reflect the dynamic nature of JavaScript and the subtle interactions that can occur due to prototypal inheritance, dynamic property access, and dynamic dispatch. There have been a number of attempts to analyse JavaScript statically however most approaches fall short of useful due to their inability to reason about functions like \lstinline{call()} and \lstinline{apply()}~\cite{sridharan2012correlation}, with the best results requiring an element of dynamic analysis as well~\cite{logozzo2010rata, wei2013practical}.
 
-Consequently there has been a shift in interest towards analysing safer (and less dynamic) targets which compile to JavaScript, the most popular of which is Typescript. Typescript is a superset of ECMAScript 6 which includes optional types to enable errors to be caught statically before compilation. Although TypeScript makes it easier to reason about potential errors caused by coercion, TypeScript itself provides no guarantees of static soundness - it is still possible for a TypeScript program to compile to JavaScript successfully and encounter a run-time error as a result of type coercion when executed~\cite{bierman2014understanding}. Extensions to TypeScript have been suggested to provide soundness ~\cite{richards2015concrete, rastogi2015safe} although these approaches require a modified interpreter or runtime enforcement. Regardless, whilst TypeScript and its derivatives provide a way of reducing or eliminating type based errors they do not help identify or eliminate errors that occur due to other dynamic features of JavaScript such as prototypal inheritance, dynamic property access, or dynamic dispatch.
+Consequently there has been a shift in interest towards analysing safer (and less dynamic) targets which compile to JavaScript, the most popular of which is Typescript. Typescript is a superset of ECMAScript 6 which includes optional types to enable errors to be caught statically before compilation. Although TypeScript makes it easier to reason about potential errors caused by coercion, TypeScript itself provides no guarantees of static soundness - it is still possible for a TypeScript program to compile to JavaScript successfully and encounter a run-time error as a result of type coercion when executed~\cite{bierman2014understanding}. Extensions to TypeScript have been suggested to provide soundness ~\cite{richards2015concrete, DBLP:conf/popl/2015} although these approaches require a modified interpreter or runtime enforcement. Regardless, whilst TypeScript and its derivatives provide a way of reducing or eliminating type based errors they do not help identify or eliminate errors that occur due to other dynamic features of JavaScript such as prototypal inheritance, dynamic property access, or dynamic dispatch.
 
 There have been a number of attempts to produce formal semantics for JavaScript, to allow for better reasoning about JavaScript code, however no attempts can be considered completely successful. One approach taken is to translate a subset of the JavaScript language (targeting ECMAScript 5 in strict mode) to an intermediate language, JSL, on which analysis can be performed ~\cite{gardner2012towards}. Although the results of this type of analysis is promising, the process and toolchain requires an expert level understanding of the semantics of JavaScript and also requires developers to annotate their code pre and post-conditions. While, this approach may be suited for smaller programs (or critical subsets of programs) its approach does not scale well to large applications. Other approaches such a KJS~\cite{park2015kjs} and \ensuremath{\lambda}JS\cite{guha2010essence} support even less of the language than JaVerT and crucially none of the three approaches target, or can be easily extended to, the ECMAScript 6 specification.
 
@@ -693,7 +693,7 @@ Symbolic execution is a good match for JavaScript. By concretely executing the p
 
 \chapter{Implementation} \label{sec:implementation}
 
-ExpoSE~\cite{Loring_2017} is a recently developed tool for dynamic symbolic execution of JavaScript. It takes a program as input and attempts explore all feasible paths in the program up to a maximum path count or until it exceeds a maximum time limit. Programs are instrumented using Jalangi2, a framework that provides callbacks for JavaScript statements which are used to build the symbolic representation of the program. New inputs are generated by solving path constraints using the Z3 SMT solver~\cite{de2008z3}.
+ExpoSE~\cite{DBLP:conf/spin/2017} is a recently developed tool for dynamic symbolic execution of JavaScript. It takes a program as input and attempts explore all feasible paths in the program up to a maximum path count or until it exceeds a maximum time limit. Programs are instrumented using Jalangi2, a framework that provides callbacks for JavaScript statements which are used to build the symbolic representation of the program. New inputs are generated by solving path constraints using the Z3 SMT solver~\cite{de2008z3}.
 
 Below I outline the implementation of my extensions to ExpoSE to support arrays. Specifically I describe the challenges in encoding JavaScript arrays in Z3, the modifications necessary to symbolically reason about arrays and their length, and a description of the function models I have written for Array prototype functions.
 
@@ -709,7 +709,7 @@ Consider the example program in Figure \ref{fig:expose-array-length} which demon
 
 \begin{figure}[t]
 \lstinputlisting{array_manipulation.js}
-\caption{\label{fig:expose-array-length} Example of Array Constraints Enforcement}
+\caption{\label{fig:expose-array-length} Example of Array Constraints Enforcement.}
 \end{figure}
 
 \section{Array Support Architecture}
@@ -891,7 +891,7 @@ Array polyfills, as discussed in \ref{sec:array-prototype-functions}, attempt to
 
 \begin{figure}[t]
 \lstinputlisting{polyfill_harness.js}
-\caption{\label{fig:polyfill-test-harness} Polyfill Test Harness}
+\caption{\label{fig:polyfill-test-harness} Polyfill Test Harness.}
 \end{figure}
 
 The harness, shown in \ref{fig:polyfill-test-harness}, calls the function \lstinline|testPolyfill()| with the polyfill function under test, the matching standard function, a symbolic \lstinline|thisArg| argument, and an array of symbolic values. The \lstinline|thisArg| argument is the argument that represents the value that the prototype is being invoked from, the \lstinline|arr| in \lstinline|arr.includes(myValue, 0);|. The array of symbolic values are the values that should be passed to the function. \lstinline|testPolyfill()| then uses \lstinline|apply()| to call the two functions, using \lstinline|try| to prevent an exception from causing the test case to fail, and stores the results. If the results differ then an exception is thrown which contains a string representation of the two values and the key word alert to make the output easily to identify using \lstinline|grep|.

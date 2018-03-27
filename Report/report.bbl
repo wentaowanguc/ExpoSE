@@ -1,42 +1,50 @@
 \begin{thebibliography}{10}
 
 \bibitem{AZProgrammingLanguages}
-``The {A-Z }of programming languages: {JavaScript}. (2008, july 31).''
+``The {A-Z }of programming languages: {JavaScript}..''
   \url{https://web.archive.org/web/20180210015852/https://www.computerworld.com.au/article/255293/a-z_programming_languages_javascript/},
-  2008.
+  July 2008.
 \newblock Accessed: 2010-09-30.
 
 \bibitem{stackoverflowsurvey}
-``Stack overflow developer survey 2017.,'' 2017.
+``{Stack Overflow }developer survey 2017.''
+  \url{https://insights.stackoverflow.com/survey/2017#most-popular-technologies},
+  2017.
+\newblock Accessed: 2010-09-30.
 
 \bibitem{tiobeindex2017nov}
-``Tiobe index for november 2017,'' Nov. 2017.
+``{TIOBE} index for {November} 2017.'' \url{
+  https://www.tiobe.com/tiobe-index/}, Nov. 2017.
+\newblock Accessed: 2010-09-30.
 
-\bibitem{Loring_2017}
+\bibitem{DBLP:conf/spin/2017}
 B.~Loring, D.~Mitchell, and J.~Kinder, ``{ExpoSE}: practical symbolic execution
   of standalone {JavaScript},'' in {\em Proceedings of the 24th {ACM} {SIGSOFT}
-  International {SPIN} Symposium on Model Checking of Software - {SPIN} 2017},
-  {ACM} Press, 2017.
+  International {SPIN} Symposium on Model Checking of Software, Santa Barbara,
+  CA, USA, July 10-14, 2017\/} \cite{DBLP:conf/spin/2017}, pp.~196--199.
 
 \bibitem{king1976symbolic}
 J.~C. King, ``Symbolic execution and program testing,'' {\em Communications of
   the ACM}, vol.~19, no.~7, pp.~385--394, 1976.
 
 \bibitem{boyer1975select}
-R.~S. Boyer, B.~Elspas, and K.~N. Levitt, ``Select—a formal system for
-  testing and debugging programs by symbolic execution,'' {\em ACM SigPlan
-  Notices}, vol.~10, no.~6, pp.~234--245, 1975.
+R.~S. Boyer, B.~Elspas, and K.~N. Levitt, ``{SELECT} - a formal system for
+  testing and debugging programs by symbolic execution,'' in {\em Proceedings
+  of the International Conference on Reliable Software}, (New York, NY, USA),
+  pp.~234--245, ACM, 1975.
 
 \bibitem{godefroid2008automated}
 P.~Godefroid, M.~Y. Levin, D.~A. Molnar, {\em et~al.}, ``Automated whitebox
   fuzz testing.,'' in {\em NDSS}, vol.~8, pp.~151--166, 2008.
 
 \bibitem{godefroid2005dart}
-P.~Godefroid, N.~Klarlund, and K.~Sen, ``Dart: directed automated random
-  testing,'' in {\em ACM Sigplan Notices}, vol.~40, pp.~213--223, ACM, 2005.
+P.~Godefroid, N.~Klarlund, and K.~Sen, ``{DART}: Directed automated random
+  testing,'' in {\em Proceedings of the 2005 ACM SIGPLAN Conference on
+  Programming Language Design and Implementation}, PLDI '05, (New York, NY,
+  USA), pp.~213--223, ACM, 2005.
 
 \bibitem{cadar2008exe}
-C.~Cadar, V.~Ganesh, P.~M. Pawlowski, D.~L. Dill, and D.~R. Engler, ``Exe:
+C.~Cadar, V.~Ganesh, P.~M. Pawlowski, D.~L. Dill, and D.~R. Engler, ``{EXE}:
   automatically generating inputs of death,'' {\em ACM Transactions on
   Information and System Security (TISSEC)}, vol.~12, no.~2, p.~10, 2008.
 
@@ -47,7 +55,9 @@ L.~De~Moura and N.~Bj{\o}rner, ``Satisfiability modulo theories: introduction
 
 \bibitem{godefroid2008grammar}
 P.~Godefroid, A.~Kiezun, and M.~Y. Levin, ``Grammar-based whitebox fuzzing,''
-  in {\em ACM Sigplan Notices}, vol.~43, pp.~206--215, ACM, 2008.
+  in {\em Proceedings of the {ACM} {SIGPLAN} 2008 Conference on Programming
+  Language Design and Implementation, Tucson, AZ, USA, June 7-13, 2008},
+  pp.~206--215, 2008.
 
 \bibitem{cadar2013symbolic}
 C.~Cadar and K.~Sen, ``Symbolic execution for software testing: three decades
@@ -59,12 +69,14 @@ K.~Sen, ``Concolic testing,'' in {\em Proceedings of the twenty-second IEEE/ACM
   ACM, 2007.
 
 \bibitem{sen2005cute}
-K.~Sen, D.~Marinov, and G.~Agha, ``Cute: a concolic unit testing engine for
-  c,'' in {\em ACM SIGSOFT Software Engineering Notes}, vol.~30, pp.~263--272,
-  ACM, 2005.
+K.~Sen, D.~Marinov, and G.~Agha, ``{CUTE:} a concolic unit testing engine for
+  {C},'' in {\em Proceedings of the 10th European Software Engineering
+  Conference held jointly with 13th {ACM} {SIGSOFT} International Symposium on
+  Foundations of Software Engineering, 2005, Lisbon, Portugal, September 5-9,
+  2005}, pp.~263--272, 2005.
 
 \bibitem{cadar2008klee}
-C.~Cadar, D.~Dunbar, D.~R. Engler, {\em et~al.}, ``Klee: Unassisted and
+C.~Cadar, D.~Dunbar, D.~R. Engler, {\em et~al.}, ``{KLEE}: Unassisted and
   automatic generation of high-coverage tests for complex systems programs.,''
   in {\em OSDI}, vol.~8, pp.~209--224, 2008.
 
@@ -84,16 +96,21 @@ R.~P. Jetley, P.~L. Jones, and P.~Anderson, ``Static analysis of medical device
   Static analysis}, pp.~22--29, ACM, 2008.
 
 \bibitem{smtwheredowegofromhere}
-C.~Barrett, ``Smt: Where do we go from here?.'' Presenttation, July 2014.
+C.~Barrett, ``{SMT}: Where do we go from here?.'' Presentation
+  \url{http://smt2014.it.uu.se/slides/barrett2.pdf}, July 2014.
 
 \bibitem{automatedreasoningbooklet2004}
 A.-J. Kaijanaho, ``Theory of automated reasoning: An introduction,'' 2004.
 
 \bibitem{turingchurchproof}
-A.~Pitts, ``Computation theory.''
+A.~Pitts, ``Computation theory.'' Presentation
+  \url{https://www.cl.cam.ac.uk/teaching/0910/CompTheory/lectures/lecture-1.pdf}.
 
 \bibitem{excapebarrettriseofsmt}
-C.~Barrett, ``The satisfiability revolution and the rise of {SMT},'' Mar. 2014.
+C.~Barrett, ``The satisfiability revolution and the rise of {SMT}.''
+  Presentation
+  \url{https://excape.cis.upenn.edu/documents/ClarkBarrettSlides.pdf}, Mar.
+  2014.
 
 \bibitem{Davis:1960:CPQ:321033.321034}
 M.~Davis and H.~Putnam, ``A computing procedure for quantification theory,''
@@ -128,13 +145,17 @@ C.~P. Gomes, H.~Kautz, A.~Sabharwal, and B.~Selman, ``Satisfiability solvers,''
   {\em Foundations of Artificial Intelligence}, vol.~3, pp.~89--134, 2008.
 
 \bibitem{sattosmt}
-C.~Barrett, ``From {SAT} to {SMT}: The {DPLL(T)} architecture.''
+C.~Barrett, ``From {SAT} to {SMT}: The {DPLL(T)} architecture.'' Presentation
+  \url{https://web.stanford.edu/class/cs357/lectures/lec9.pdf}.
 
 \bibitem{dpll-worksheet}
-``The {Davis-Putnam-Logemann-Loveland} procedure,'' 2011.
+``The {Davis-Putnam-Logemann-Loveland} procedure.''
+  \url{https://www.cs.utexas.edu/users/vl/teaching/lbai/dpll.pdf}, 2011.
+\newblock Accessed: 2018-03-22.
 
 \bibitem{dpll-method}
-A.~Farinell, ``{DPLL} method,'' 2010.
+A.~Farinell, ``{DPLL} method.'' Presentation
+  \url{http://profs.sci.univr.it/~farinelli/courses/ar/slides/DPLL.pdf}, 2010.
 
 \bibitem{nieuwenhuis2006solving}
 R.~Nieuwenhuis, A.~Oliveras, and C.~Tinelli, ``Solving {SAT} and {SAT} modulo
@@ -143,7 +164,8 @@ R.~Nieuwenhuis, A.~Oliveras, and C.~Tinelli, ``Solving {SAT} and {SAT} modulo
   2006.
 
 \bibitem{smtdpplt}
-A.~Oliveras, ``{SMT} theory and {DPLL(T)},'' July 2013.
+A.~Oliveras, ``{SMT} theory and {DPLL(T)}.'' Presentation
+  \url{http://sei.pku.edu.cn/~xiongyf04/SA/2014/5_SMT.pdf}, July 2013.
 
 \bibitem{ganzinger2004dpll}
 H.~Ganzinger, G.~Hagen, R.~Nieuwenhuis, A.~Oliveras, and C.~Tinelli, ``{DPLL
@@ -151,7 +173,8 @@ H.~Ganzinger, G.~Hagen, R.~Nieuwenhuis, A.~Oliveras, and C.~Tinelli, ``{DPLL
   Computer Aided Verification}, pp.~175--188, Springer, 2004.
 
 \bibitem{Torlak}
-E.~Torlak, ``Combining theories.''
+E.~Torlak, ``Combining theories.'' Presentation
+  \url{https://courses.cs.washington.edu/courses/cse507/14au/slides/L7.pdf}.
 
 \bibitem{manna2003combining}
 Z.~Manna and C.~G. Zarba, ``Combining decision procedures,'' in {\em Formal
@@ -163,16 +186,27 @@ R.~K. Dybvig, {\em The Scheme Programming Language: ANSI Scheme}.
 \newblock Prentice Hall PTR, 1996.
 
 \bibitem{popularityofjavascript}
-B.~Eich, ``Popularity,'' Apr. 2008.
+B.~Eich, ``Popularity.'' \url{https://brendaneich.com/2008/04/popularity/},
+  Apr. 2008.
+\newblock Accessed 2017-01-01.
 
 \bibitem{brendaneichtimetomakejscomment}
-``Every day i learn something new... and stupid.,'' Apr. 2011.
+``Every day {I} learn something new... and stupid.'' \url{
+  https://www.jwz.org/blog/2010/10/every-day-i-learn-something-new-and-stupid/#comment-1048},
+  Apr. 2011.
+\newblock Accessed 2017-12-01.
 
 \bibitem{briefhistoryofjavascript}
-B.~Eich, ``A brief history of {JavaScript},'' July 2010.
+B.~Eich, ``A brief history of {JavaScript}.''
+  \url{https://brendaneich.com/2010/07/a-brief-history-of-javascript/}, July
+  2010.
+\newblock Accessed 2017-12-01.
 
 \bibitem{newjavascriptmoduleowner}
-B.~Eich, ``New {JavaScript} engine module owner,'' June 2011.
+B.~Eich, ``New {JavaScript} engine module owner.''
+  \url{https://brendaneich.com/2011/06/new-javascript-engine-module-owner/},
+  June 2011.
+\newblock Accessed 2017-12-01.
 
 \bibitem{ISO/IEC16262:2011}
 I.~J.~S. 22, ``Information technology -- programming languages, their
@@ -181,37 +215,58 @@ I.~J.~S. 22, ``Information technology -- programming languages, their
   Geneva, CH, June 2011.
 
 \bibitem{ajax}
-J.~J. Garrett, ``Ajax: A new approach to web applications,'' Feb. 2005.
+J.~J. Garrett, ``Ajax: A new approach to web applications.''
+  \url{http://adaptivepath.org/ideas/ajax-new-approach-web-applications/}, Feb.
+  2005.
+\newblock Accessed 2017-12-01.
 
 \bibitem{historyofjquery}
-Jeresig, ``History of {jQuery}.,'' Oct. 2007.
+Jeresig, ``History of {jQuery}.''
+  \url{https://www.slideshare.net/jeresig/history-of-jquery}, Oct. 2007.
+\newblock Accessed 2017-01-01.
 
 \bibitem{stateofjquery}
-Jeresig, ``State of {jQuery} '08,'' Oct. 2008.
+Jeresig, ``State of {jQuery} '08.''
+  \url{https://www.slideshare.net/jeresig/state-of-jquery-08-presentation/2-Growth_Huge_growth_in_2008},
+  Oct. 2008.
+\newblock 2017-01-01.
 
 \bibitem{chromebenchmarks}
-R.~Goodwins, ``Google chrome - first benchmarks. summary: wow.,'' Sept. 2008.
+R.~Goodwins, ``{Google Chrome} - first benchmarks. summary: wow..''
+  \url{https://web.archive.org/web/20080903125550/http://community.zdnet.co.uk/blog/0%2C1000000567%2C10009139o-2000331777b%2C00.htm},
+  Sept. 2008.
+\newblock Accessed 2017-01-01.
 
 \bibitem{chromeengine}
-L.~Bak, ``{V8}: an open source {JavaScript} engine.'' Youtube, Sept. 2008.
+L.~Bak, ``{V8}: an open source {JavaScript} engine.'' Video
+  \url{https://www.youtube.com/watch?v=hWhMKalEicY}, Sept. 2008.
+\newblock Accessed 2017-12-01.
 
 \bibitem{chromeengine2}
-M.~S. Ager, ``Chrome: V8 engine,'' Nov. 2008.
+M.~S. Ager, ``Chrome: {V8} engine.'' Presentation
+  \url{https://www.youtube.com/watch?v=JxUvULKf6A4}, Nov. 2008.
 
 \bibitem{knowyourenginesmozilla}
-D.~Mandelin, ``Know your engines: How to make your {JavaScript} fast,'' June
-  2011.
+D.~Mandelin, ``Know your engines: How to make your {JavaScript} fast.''
+  \url{https://cdn.oreillystatic.com/en/assets/1/event/60/Know%20Your%20Engines_%20How%20to%20Make%20Your%20JavaScript%20Fast%20Presentation%201.pdf},
+  June 2011.
+\newblock Accessed: 2017-12-01.
 
 \bibitem{linkedinusesnode}
 J.~O'Dell, ``Exclusive: How {LinkedIn} used {Node.js} and {HTML5} to build a
-  better, faster app,'' Aug. 20111.
+  better, faster app.''
+  \url{https://venturebeat.com/2011/08/16/linkedin-node/}, Aug. 20111.
+\newblock Accessed: 2017-12-01.
 
 \bibitem{uberusesnode}
-C.~Chambers, ``Node.js meetup: Distributive web architectures - curtis
-  chambers,'' Dec. 2011.
+C.~Chambers, ``{Node.js} meetup: Distributive web architectures - curtis
+  chambers.'' Video \url{https://www.youtube.com/watch?v=Jups7FveC1E}, Dec.
+  2011.
+\newblock Accessed: 2017-12-01.
 
 \bibitem{npm}
-``Npm..''
+``{NPM}.'' \url{npmjs.com}.
+\newblock Accessed 2017-12-01.
 
 \bibitem{EcmaScript}
 {ECMA International}, {\em Standard {ECMA-262} - {ECMAScript} Language
@@ -240,9 +295,9 @@ S.~Wei and B.~G. Ryder, ``Practical blended taint analysis for {JavaScript},''
   and Analysis}, pp.~336--346, ACM, 2013.
 
 \bibitem{bierman2014understanding}
-G.~Bierman, M.~Abadi, and M.~Torgersen, ``Understanding {TypeScript},'' in {\em
-  European Conference on Object-Oriented Programming}, pp.~257--281, Springer,
-  2014.
+G.~M. Bierman, M.~Abadi, and M.~Torgersen, ``Understanding {TypeScript},'' in
+  {\em {ECOOP} 2014 - Object-Oriented Programming - 28th European Conference,
+  Uppsala, Sweden, July 28 - August 1, 2014. Proceedings}, pp.~257--281, 2014.
 
 \bibitem{richards2015concrete}
 G.~Richards, F.~Zappa~Nardelli, and J.~Vitek, ``Concrete types for
@@ -250,19 +305,24 @@ G.~Richards, F.~Zappa~Nardelli, and J.~Vitek, ``Concrete types for
   Informatics}, vol.~37, Schloss Dagstuhl-Leibniz-Zentrum fuer Informatik,
   2015.
 
-\bibitem{rastogi2015safe}
-A.~Rastogi, N.~Swamy, C.~Fournet, G.~Bierman, and P.~Vekris, ``Safe \&
-  efficient gradual typing for {TypeScript},'' {\em ACM SIGPLAN Notices},
-  vol.~50, no.~1, pp.~167--180, 2015.
+\bibitem{DBLP:conf/popl/2015}
+A.~Rastogi, N.~Swamy, C.~Fournet, G.~M. Bierman, and P.~Vekris, ``Safe {\&}
+  efficient gradual typing for {TypeScript},'' in {\em Proceedings of the 42nd
+  Annual {ACM} {SIGPLAN-SIGACT} Symposium on Principles of Programming
+  Languages, {POPL} 2015, Mumbai, India, January 15-17, 2015}, pp.~167--180,
+  2015.
 
 \bibitem{gardner2012towards}
-P.~A. Gardner, S.~Maffeis, and G.~D. Smith, ``Towards a program logic for
-  {JavaScript},'' in {\em ACM SIGPLAN Notices}, vol.~47, pp.~31--44, ACM, 2012.
+P.~Gardner, S.~Maffeis, and G.~D. Smith, ``Towards a program logic for
+  {JavaScript},'' in {\em Proceedings of the 39th {ACM} {SIGPLAN-SIGACT}
+  Symposium on Principles of Programming Languages, {POPL} 2012, Philadelphia,
+  Pennsylvania, USA, January 22-28, 2012}, pp.~31--44, 2012.
 
 \bibitem{park2015kjs}
-D.~Park, A.~Stef{\u{a}}nescu, and G.~Ro{\c{s}}u, ``{KJS}: A complete formal
-  semantics of {JavaScript},'' in {\em ACM SIGPLAN Notices}, vol.~50,
-  pp.~346--356, ACM, 2015.
+D.~Park, A.~Stefanescu, and G.~Rosu, ``{KJS:} a complete formal semantics of
+  javascript,'' in {\em Proceedings of the 36th {ACM} {SIGPLAN} Conference on
+  Programming Language Design and Implementation, Portland, OR, USA, June
+  15-17, 2015}, pp.~346--356, 2015.
 
 \bibitem{guha2010essence}
 A.~Guha, C.~Saftoiu, and S.~Krishnamurthi, ``The essence of {JavaScript},'' in
@@ -280,21 +340,34 @@ A.~Lamkanfi, S.~Demeyer, E.~Giger, and B.~Goethals, ``Predicting the severity
   IEEE Working Conference on}, pp.~1--10, IEEE, 2010.
 
 \bibitem{ergin-disclosure}
-L.~O. Ergin, ``The story behind “anyone can login as root” tweet,'' Nov.
-  2017.
+L.~O. Ergin, ``The story behind “anyone can login as root” tweet.''
+  \url{https://medium.com/@lemiorhan/the-story-behind-anyone-can-login-as-root-tweet-33731b5ded71},
+  Nov. 2017.
+\newblock Accessed: 2018-03-25.
 
 \bibitem{debating-full-disclosure}
-B.~Schneier, ``Debating full disclosure,'' Jan. 2007.
+B.~Schneier, ``Debating full disclosure.''
+  \url{https://www.schneier.com/blog/archives/2007/01/debating_full_d.html},
+  Jan. 2007.
+\newblock Accessed: 2018-03-25.
 
 \bibitem{responsibility-of-public-disclosure}
-T.~Hunt, ``The responsibility of public disclosure,'' May 2013.
+T.~Hunt, ``The responsibility of public disclosure.''
+  \url{https://www.troyhunt.com/the-responsibility-of-public-disclosure/}, May
+  2013.
+\newblock Accessed: 2018-03-27.
 
 \bibitem{kids-pass-responsible-disclosure}
-T.~Hunt, ``Kids pass just reminded us how hard responsible disclosure is,''
+T.~Hunt, ``{Kids Pass} just reminded us how hard responsible disclosure is.''
+  https://www.troyhunt.com/kids-pass-just-reminded-us-how-hard-responsible-disclosure-is/,
   July 2017.
+\newblock Accessed: 2018-03-25.
 
 \bibitem{project-zero-update-policy}
 {Google Project Zero}, ``Feedback and data-driven updates to {Google}’s
-  disclosure policy,'' Feb. 2015.
+  disclosure policy.''
+  \url{https://googleprojectzero.blogspot.co.uk/2015/02/feedback-and-data-driven-updates-to.html},
+  Feb. 2015.
+\newblock Accessed: 2018-03-25.
 
 \end{thebibliography}
