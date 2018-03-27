@@ -254,12 +254,11 @@ function unlikely_function (x, y, z){
 
 Symbolic execution can be used for a variety of purposes, for instance: generating test inputs, finding infeasible paths, finding equivalent (and therefore redundant code) but its typical application, and the focus of this project, is bug detection. 
 
-In classical symbolic execution, as no actual code is executed bugs must be detected through the use of logical assertions that are tested by the constraint solver. EFFIGY, described in~\cite{king1976symbolic} uses the concept of an input predicate and an output predicate to determine program correctness. If for all inputs which satisfy the input predicate also satisfy the output predicate then the program is said to be correct. These are implemented through the use of \lstinline{ASSERT}, \lstinline{ASSUME}, and \lstinline{PROVE} statements. In modern symbolic execution tools such as DART, rather than having to add additional assertions bugs are detected either when properties such as memory-safety are violated or runtime exceptions occur~\cite{godefroid2005dart}.
+In classical symbolic execution, as no actual code is executed bugs must be detected through the use of logical assertions that are tested by the constraint solver. EFFIGY, described in~\cite{king1976symbolic} uses the concept of an input predicate and an output predicate to determine program correctness. If for all inputs which satisfy the input predicate also satisfy the output predicate then the program is said to be correct. These are implemented through the use of \lstinline|ASSERT|, \lstinline|ASSUME|, and \lstinline|PROVE| statements. In modern symbolic execution tools such as DART, rather than having to add additional assertions bugs are detected either when properties such as memory-safety are violated or runtime exceptions occur~\cite{godefroid2005dart}.
 
 Symbolic execution offers a number advantages over typical testing techniques. Unit and integration testing are expensive and require a large amount of effort to reach 100\% coverage. In addition, they require a large amount of mock and driver code to be written, often exceeding the size of the program under test. Unit testing and integration often miss `corner case' bugs, which are not considered either when the program is developed or when the system is tested. Conversely, Symbolic Execution automatically generates inputs that will cover all paths, specifically targeting corner cases which are likely to be missed by developers. Although, symbolic execution may require some mocking and harness code to be written the amount and code, and effort required to write it, is significantly less than writing either a unit or integration test suite.
 
-%TODO CITE COVERITY AND CODESONAR
-Static analysis tools, such as Coverity and CodeSonar, are much cheaper to run but at the cost of precision. Static analysis often produces false reports and consequently also requires a large amount of time spent to identify actual faults. Additionally, static analysis often may struggle to identify subtle bugs due to the lack of information available outside of runtime, and will typically perform worse on weakly typed languages. Symbolic execution, unlike static analysis, does require effort on the part of the developer but has the advantage of not producing false positives and providing a valid test case for each bug found. Symbolic execution is also effective at finding edge case bugs and can also effectively analyse the behaviour of a program when it interacts with libraries for which the source code is not available.
+Static analysis tools, such as Coverity~\cite{almossawi2006analysis,Bessey:2010:FBL:1646353.1646374} and CodeSonar~\cite{jetley2008static}, are much cheaper to run but at the cost of precision. Static analysis often produces false reports and consequently also requires a large amount of time spent to identify actual faults. Additionally, static analysis often may struggle to identify subtle bugs due to the lack of information available outside of runtime, and will typically perform worse on weakly typed languages. Symbolic execution, unlike static analysis, does require effort on the part of the developer but has the advantage of not producing false positives and providing a valid test case for each bug found. Symbolic execution is also effective at finding edge case bugs and can also effectively analyse the behaviour of a program when it interacts with libraries for which the source code is not available.
 
 \chapter{Automated Decision Procedures}
 
@@ -282,15 +281,10 @@ In the 1970s, Stephen Cook and Leonid Levin showed the SAT problem was NP-comple
 Most SAT solvers, automated tools to produce solutions for a given SAT problem, use the Davis-Putnam-Logemann-Loveland (DPLL) backtracking search combined with Conflict-Driven-Clause-Learning (CDCL) to determine satisfiability~\cite{zhang2001efficient, gomes2008satisfiability}.
 
 \subsection{DPLL}
-DPLL is a depth-first search complete systematic process for finding a satisfying assignment or proving unsatisfiability for a given SAT problem. The algorithm, at first approximation, attempts to assign a variable a Boolean value, and checks the satisfiability of the problem (with the assigned values). If the problem is not unsatisfiable then another variable has a value assigned, otherwise the previously assigned value is negated. This process is repeated until all variables are assigned a value and either the formula is satisfiable or, no matter what variable is assigned, a value the formula is unsatisfiable~\cite{sattosmt}. Typically SAT problems are expressed in conjunctive-normal form (CNF), as a conjunction of one or more clauses which consist of the disjunction of one or more literals. 
-%TODO CITE Davis et al 1962 here %
-For any CNF formula $F$ and a literal $l$, $\mathit{F}|l$ represents the formula obtained by replacing all occurrences of $l$ in $F$ with $true$ and simplifying by removing all clauses containing $true$ and the terms $\lnot{true}$. 
+DPLL is a depth-first search complete systematic process for finding a satisfying assignment or proving unsatisfiability for a given SAT problem~\cite{Davis:1962:MPT:368273.368557}. The algorithm, at first approximation, attempts to assign a variable a Boolean value, and checks the satisfiability of the problem (with the assigned values). If the problem is not unsatisfiable then another variable has a value assigned, otherwise the previously assigned value is negated. This process is repeated until all variables are assigned a value and either the formula is satisfiable or, no matter what variable is assigned, a value the formula is unsatisfiable~\cite{sattosmt}. Typically SAT problems are expressed in conjunctive-normal form (CNF), as a conjunction of one or more clauses which consist of the disjunction of one or more literals. 
 
-DPLL relies on two main principles: simplification and case splitting. Simplification is achieved through unit propagation and pure literal deletion. If a CNF formula $\mathit{F}$ contains a clause $C$ which only contains a single literal $l$ then the clause `fixes' the value of $l$ in all other clauses which contain $l$, the procedure for applying unit propagation is shown in Figure \ref{fig:dppl-unit-propagate}. Pure literal deletion can be applied when there exists a literal $l$ in a CNF formula $\mathit{F}$ where $\lnot{l} \notin \mathit{F}$, all clauses containing the pure literal can be removed from the formula which has the effect of setting the pure literal's assignment to true. The procedure for applying pure literal deletion is shown in Figure \ref{fig:dppl-pure-literal}. Case splitting occurs in the recursive call to DPLL, a truth assignment is guessed and then satisfiability is recursively checked, if the assignment is unsatisfiable then then negation of that assignment is checked effectively splitting the problem into two simpler cases.
+For any CNF formula $F$ and literal $l$, $\mathit{F}|l$ represents the formula obtained by replacing all occurrences of $l$ in $F$ with $true$ and simplifying by removing all clauses containing $true$ and the terms $\lnot{true}$. DPLL relies on two main principles: simplification and case splitting. Simplification is achieved through unit propagation and pure literal deletion. If a CNF formula $\mathit{F}$ contains a clause $C$ which only contains a single literal $l$ then the clause `fixes' the value of $l$ in all other clauses which contain $l$, the procedure for applying unit propagation is shown in Figure \ref{fig:dppl-unit-propagate}. Pure literal deletion can be applied when there exists a literal $l$ in a CNF formula $\mathit{F}$ where $\lnot{l} \notin \mathit{F}$, all clauses containing the pure literal can be removed from the formula which has the effect of setting the pure literal's assignment to true. The procedure for applying pure literal deletion is shown in Figure \ref{fig:dppl-pure-literal}~\cite{dpll-worksheet,dpll-method}. Case splitting occurs in the recursive call to DPLL, a truth assignment is guessed and then satisfiability is recursively checked, if the assignment is unsatisfiable then then negation of that assignment is checked effectively splitting the problem into two simpler cases.
 
-% TODO CITE https://www.cs.utexas.edu/users/vl/teaching/lbai/dpll.pdf
-% TODO CITE http://profs.sci.univr.it/~farinelli/courses/ar/slides/DPLL.pdf
-% TODO CITE http://gki.informatik.uni-freiburg.de/teaching/ss14/gki/lectures/ai08.pdf
 \begin{figure}[t]
 \begin{algorithmic}
 \Function{UnitPropagate}{$\mathit{F}$, $U$}
@@ -304,8 +298,6 @@ DPLL relies on two main principles: simplification and case splitting. Simplific
 \caption{\label{fig:dppl-unit-propagate} Unit Propagation}
 \end{figure}
 
-
-% TODO CITE https://www.cs.utexas.edu/users/vl/teaching/lbai/dpll.pdf
 \begin{figure}[t]
 \begin{algorithmic}
 \Function{PureLiteral}{$\mathit{F}$, $U$}
@@ -335,32 +327,29 @@ DPLL relies on two main principles: simplification and case splitting. Simplific
 	\State \Call{DPLL}{$\mathit{F}|\lnot{L}$, $U \cup {\lnot{L}}$}
 \EndFunction    
 \end{algorithmic}
-\caption{\label{fig:dppl-classic-algo} DPLL Algorithm}
+\caption{\label{fig:dppl-classic-algo} DPLL Algorithm.}
 \end{figure}
 
 \textbf{Example}
 
-Consider the problem $F = (P \lor \lnot{Q} \lor R) \land (\lnot{P} \lor R) \land \lnot{P} \land \lnot{U} \land {R}$
+%TODO Rewrite this section with a better example and a blow by blow.
+Consider the problem $F = (P \lor \lnot{Q} \lor R) \land (\lnot{P} \lor R) \land \lnot{P} \land \lnot{U} \land (R \lor Q)$ and Table~\ref{table:dpll-results} which shows the result of applying the DPLL algorithm on the problem. Initially the unit clauses, $\lnot{U}$ and $\lnot{P}$, are propagated which reduces the problem to $(\lnot{Q} \lor R) \land (R \lor Q)) \land (R \lor Q)$. Then the pure literal rule can be applied to $R$ as its value is consistent across all clauses, which results in no remaining clauses and a satisfying assignment of $\lnot{U}$, $\lnot{P}, R$.
 
 \begin{table}[t]
 \centering
 \begin{tabular}{|p{2cm}|p{4.2cm}|p{9cm}|}
 \hline
 Model & $F$ & Rule Applied \\ \hline
-{} & $(P \lor \lnot{Q} \lor R) \land (\lnot{P} \lor R) \land \lnot{P} \land \lnot{U} \land {R}$ & UnitLiteral on $ \lnot{U}$   \\ \hline
-{$\lnot{U}$} & $(P \lor \lnot{Q} \lor R) \land (\lnot{P} \lor R) \land \lnot{P} \land {R}$ & UnitLiteral on $\lnot{P}$   \\ \hline
-{$\lnot{U}$, $\lnot{P}$} & $(\lnot{Q} \lor R) \land R \land R$ & UnitLiteral on $R$    \\ \hline
-{$\lnot{U}$, $\lnot{P}$, $R$} & $\lnot{Q}$ & UnitLiteral on $\lnot{Q}$     \\ \hline
-{$\lnot{U}$, $\lnot{P}$, $R$, $\lnot{Q}$ } & true &     \\ \hline
+{} & $(P \lor \lnot{Q} \lor R) \land (\lnot{P} \lor R \lor Q) \land \lnot{P} \land \lnot{U} \land (R \lor Q)$ & UnitPropagate on $\lnot{U}$   \\ \hline
+{$\lnot{U}$} & $(P \lor \lnot{Q} \lor R) \land (\lnot{P} \lor R \lor Q) \land \lnot{P} \land (R \lor Q)$ & UnitPropagate on $\lnot{P}$   \\ \hline
+{$\lnot{U}$, $\lnot{P}$} & $(\lnot{Q} \lor R) \land (R \lor Q)) \land (R \lor Q)$ & PureLiteral on $R$    \\ \hline
+{$\lnot{U}$, $\lnot{P}, R$} & $true$ &     \\ \hline
 \end{tabular}
 \caption{DPLL Results}
 \label{table:dpll-results}
 \end{table}
 
-
-%TODO Cite http://ctp.di.fct.unl.pt/~ramunas/slides/dpll(t).pdf
-It is also possible to model the algorithm as a series of states and transitions. States are described in the form $M || \mathit{F}$, where $M$ is a sequence of literals which are assigned the value true and $\mathit{F}$ is the problem in CNF form. The initial state of the algorithm is as $\emptyset || \mathit{F}$ and the final state is either a special state $unsat$ if $\mathit{F}$ is unsatisfiable, or $M || F'$, where $F'$ is a CNF formula equivalent to the initial problem $F$ and $M$ satisfies $F'$. The classical algorithm can be described by the four basic transitions, $M || \mathit{F} \implies M' || \mathit{F'} $, shown in Table \ref{table:classic-dpll-rules}: \textit{UnitPropagate}, \textit{Decide}, \textit{Fail}, and \textit{Backtrack} where $M \models C$ means that for every assignment $v$, $v(M) = true$ implies $v(C) = true$. These rules are applied to each state until a final state is achieved.
-
+It is also possible to model the algorithm as a series of states and transitions~\cite{nieuwenhuis2006solving}. States are described in the form $M || \mathit{F}$, where $M$ is a sequence of literals which are assigned the value true and $\mathit{F}$ is the problem in CNF form. The initial state of the algorithm is as $\emptyset || \mathit{F}$ and the final state is either a special state $unsat$ if $\mathit{F}$ is unsatisfiable, or $M || F'$, where $F'$ is a CNF formula equivalent to the initial problem $F$ and $M$ satisfies $F'$. The classical algorithm can be described by the four basic transitions, $M || \mathit{F} \implies M' || \mathit{F'} $, shown in Table \ref{table:classic-dpll-rules}: \textit{UnitPropagate}, \textit{Decide}, \textit{Fail}, and \textit{Backtrack} where $M \models C$ means that for every assignment $v$, $v(M) = true$ implies $v(C) = true$. These rules are applied to each state until a final state is achieved.
 
 \begin{table}[t]
 \centering

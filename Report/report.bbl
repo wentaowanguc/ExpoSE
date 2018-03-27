@@ -68,6 +68,21 @@ C.~Cadar, D.~Dunbar, D.~R. Engler, {\em et~al.}, ``Klee: Unassisted and
   automatic generation of high-coverage tests for complex systems programs.,''
   in {\em OSDI}, vol.~8, pp.~209--224, 2008.
 
+\bibitem{almossawi2006analysis}
+A.~Almossawi, K.~Lim, and T.~Sinha, ``Analysis tool evaluation: {Coverity}
+  prevent,'' {\em Pittsburgh, PA: Carnegie Mellon University}, pp.~7--11, 2006.
+
+\bibitem{Bessey:2010:FBL:1646353.1646374}
+A.~Bessey, K.~Block, B.~Chelf, A.~Chou, B.~Fulton, S.~Hallem, C.~Henri-Gros,
+  A.~Kamsky, S.~McPeak, and D.~Engler, ``A few billion lines of code later:
+  Using static analysis to find bugs in the real world,'' {\em Commun. ACM},
+  vol.~53, pp.~66--75, Feb. 2010.
+
+\bibitem{jetley2008static}
+R.~P. Jetley, P.~L. Jones, and P.~Anderson, ``Static analysis of medical device
+  software using {CodeSonar},'' in {\em Proceedings of the 2008 workshop on
+  Static analysis}, pp.~22--29, ACM, 2008.
+
 \bibitem{smtwheredowegofromhere}
 C.~Barrett, ``Smt: Where do we go from here?.'' Presenttation, July 2014.
 
@@ -114,6 +129,18 @@ C.~P. Gomes, H.~Kautz, A.~Sabharwal, and B.~Selman, ``Satisfiability solvers,''
 
 \bibitem{sattosmt}
 C.~Barrett, ``From {SAT} to {SMT}: The {DPLL(T)} architecture.''
+
+\bibitem{dpll-worksheet}
+``The {Davis-Putnam-Logemann-Loveland} procedure,'' 2011.
+
+\bibitem{dpll-method}
+A.~Farinell, ``{DPLL} method,'' 2010.
+
+\bibitem{nieuwenhuis2006solving}
+R.~Nieuwenhuis, A.~Oliveras, and C.~Tinelli, ``Solving {SAT} and {SAT} modulo
+  theories: From an abstract {Davis-Putnam-Logemann--Loveland} procedure to
+  {DPLL (T)},'' {\em Journal of the ACM (JACM)}, vol.~53, no.~6, pp.~937--977,
+  2006.
 
 \bibitem{smtdpplt}
 A.~Oliveras, ``{SMT} theory and {DPLL(T)},'' July 2013.
@@ -235,7 +262,7 @@ A.~Guha, C.~Saftoiu, and S.~Krishnamurthi, ``The essence of {JavaScript},'' in
   Springer, 2010.
 
 \bibitem{de2008z3}
-L.~De~Moura and N.~Bj{\o}rner, ``Z3: An efficient smt solver,'' in {\em
+L.~De~Moura and N.~Bj{\o}rner, ``{Z3}: An efficient {SMT} solver,'' in {\em
   International conference on Tools and Algorithms for the Construction and
   Analysis of Systems}, pp.~337--340, Springer, 2008.
 
@@ -259,7 +286,7 @@ T.~Hunt, ``Kids pass just reminded us how hard responsible disclosure is,''
   July 2017.
 
 \bibitem{project-zero-update-policy}
-{Google Project Zero}, ``Feedback and data-driven updates to google’s
+{Google Project Zero}, ``Feedback and data-driven updates to {Google}’s
   disclosure policy,'' Feb. 2015.
 
 \end{thebibliography}
