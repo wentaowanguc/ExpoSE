@@ -8,7 +8,6 @@
 \usepackage{amsmath}
 \usepackage{algpseudocode}
 
-\lstset{basicstyle=\ttfamily}
 \usepackage{color}
 \definecolor{lightgray}{rgb}{.9,.9,.9}
 \definecolor{darkgray}{rgb}{.4,.4,.4}
@@ -101,10 +100,9 @@ This will be written the day before the submission.
 %%% Introduction
 \chapter{Introduction}
 %%%%%%%%%%%%%%%%%%%%%% 
-%TODO PROOF READ
 Since its inception as a `glue' language for the web~\cite{AZProgrammingLanguages}, JavaScript's popularity has surged~\cite{stackoverflowsurvey,tiobeindex2017nov}, it is now a ubiquitous language that powers mobile, web, and server applications, however its dynamic nature and deceptive syntax often lead to subtle bugs and unintended behaviour which can be difficult to identify. Dynamic symbolic execution (DSE) is a technique that can be used to automatically identify bugs and generates tests for JavaScript however this requires modelling the semantics of the language in first order logic. JavaScript arrays, in particular, are an area of the language that requires trade-offs, difficult design decisions, and careful consideration of language semantics when modelling due to their atypical properties. JavaScript arrays are special cases of objects and as a result have a directly mutable length, can consist of multiple types, and are not necessarily indexed sequentially.
 
-My work extends ExpoSE~\cite{Loring_2017}, a tool for DSE, by describing an encoding for homogeneously typed JavaScript arrays in first order logic, implementing support in ExpoSE for symbolic arrays, and modelling a selection of prototype functions. I demonstrate that as a result of these extensions results in an increased test coverage of popular several popular JavaScript libraries and describe a new bug found in a popular Array ES6 polyfill.
+My work extends ExpoSE~\cite{Loring_2017}, a tool for DSE, by describing an encoding for homogeneously typed JavaScript arrays in first order logic, implementing support in ExpoSE for symbolic arrays, and modelling a selection of prototype functions. I demonstrate that as a result of these extensions results in an increased test coverage of two popular JavaScript libraries and describe a new bug found in a popular Array ES6 polyfill.
 
 I also present background information on symbolic execution, including considerations for constraint optimisations and its usage for bug detection, automated decision procedures, with an emphasis on techniques for SAT and SMT solving, and a brief overview of JavaScript's semantics, with a particular emphasis on the behaviour of arrays and their prototype functions. I then describe the details of the implementation of my extensions to ExpoSE, my experimental methodology, and draw conclusions about their effectiveness on testing real world applications.
 
@@ -331,8 +329,6 @@ For any CNF formula $F$ and literal $l$, $\mathit{F}|l$ represents the formula o
 \end{figure}
 
 \textbf{Example}
-
-%TODO Rewrite this section with a better example and a blow by blow.
 Consider the problem $F = (P \lor \lnot{Q} \lor R) \land (\lnot{P} \lor R) \land \lnot{P} \land \lnot{U} \land (R \lor Q)$ and Table~\ref{table:dpll-results} which shows the result of applying the DPLL algorithm on the problem. Initially the unit clauses, $\lnot{U}$ and $\lnot{P}$, are propagated which reduces the problem to $(\lnot{Q} \lor R) \land (R \lor Q)) \land (R \lor Q)$. Then the pure literal rule can be applied to $R$ as its value is consistent across all clauses, which results in no remaining clauses and a satisfying assignment of $\lnot{U}$, $\lnot{P}, R$.
 
 \begin{table}[t]
@@ -352,15 +348,14 @@ Model & $F$ & Rule Applied \\ \hline
 It is also possible to model the algorithm as a series of states and transitions~\cite{nieuwenhuis2006solving}. States are described in the form $M || \mathit{F}$, where $M$ is a sequence of literals which are assigned the value true and $\mathit{F}$ is the problem in CNF form. The initial state of the algorithm is as $\emptyset || \mathit{F}$ and the final state is either a special state $unsat$ if $\mathit{F}$ is unsatisfiable, or $M || F'$, where $F'$ is a CNF formula equivalent to the initial problem $F$ and $M$ satisfies $F'$. The classical algorithm can be described by the four basic transitions, $M || \mathit{F} \implies M' || \mathit{F'} $, shown in Table \ref{table:classic-dpll-rules}: \textit{UnitPropagate}, \textit{Decide}, \textit{Fail}, and \textit{Backtrack} where $M \models C$ means that for every assignment $v$, $v(M) = true$ implies $v(C) = true$. These rules are applied to each state until a final state is achieved.
 
 \begin{table}[t]
-\centering
-\begin{tabular}{|p{2cm}|p{3cm}||p{6cm}|p{9cm}|}
+\begin{tabular}{|p{2cm}|p{4cm}|p{4cm}|p{4cm}|}
 \hline
 Name & Rule & Conditions & Example \\ \hline
 Unit Propagation & $M|| F, C \lor l \implies M l || F, C \lor l$ & ​$M \models \lnot C $, $l$ is undefined in $M$ & $\emptyset || a \land (b \lor c) ) \land (d \lor e) \implies a || a \land (b \lor c) ) \land (d \lor e) $ \\ \hline
-Decide & $M|| F \implies M l^d || F$ & $l$ or $\lnot$ occurs in a clause of $F$ & $ \lnot b | \lnot b ||, a \land (\lnot b \lor c) \implies\lnot b \land c^d ||,a \land (\lnot b \lor c) $ \\ \hline
+Decide & $M|| F \implies M l^d || F$ & $l$ or $\lnot$ occurs in a clause of $F$ & $ \lnot b | \lnot b ||, a \land (\lnot b \lor c) \implies\lnot b \land c^d ||a \land (\lnot b \lor c) $ \\ \hline
 Fail & $M|| F, C \implies unsat$ & $M \models \lnot C$ $M$ contains no decision literals ($l^d$) & $ a \land \lnot a || \lnot a \land a \implies unsat $ \\ \hline
 Backtrack & $M l^d N|| F, C \implies M l' || F, C$ & $M l^d N \models \lnot C$ and there is a clause $C' \lor l'$ where $F, C \models C' \lor l'$ and $M \models \lnot C'$, $l'$ is undefined in $M$, and $l' or \lnot l'$ occurs in $F$ or in $M l^d N$ & TODO \\ \hline
-Pure Literal & $M|| F \implies Ml || F$ & $l$ occurs in some clause of $F$, $\lnot l$ occurs in no clause of $F$, $l$ is undefined in $M$ & $\emptyset || a \land (\lnot b \lor c) \implies \lnot b ||,a \land (\lnot b \lor c) $ \\ \hline
+Pure Literal & $M|| F \implies Ml || F$ & $l$ occurs in some clause of $F$, $\lnot l$ occurs in no clause of $F$, and $l$ is undefined in $M$ & $\emptyset || a \land (\lnot b \lor c) \implies \lnot b || a \land (\lnot b \lor c) $ \\ \hline
 \end{tabular}
 \caption{Classic DPLL Rules}
 \label{table:classic-dpll-rules}
@@ -369,24 +364,23 @@ Pure Literal & $M|| F \implies Ml || F$ & $l$ occurs in some clause of $F$, $\ln
 
 \begin{table}[t]
 \centering
+\begin{tabular}{|p{2cm}|p{5.5cm}|p{5.5cm}}
+\hline
+Name & Rule & Conditions  \\ \hline
+Learn & $M|| F \implies M || F, C$ & All atoms of $C$ occur in $F$, $F \models C$  \\ \hline
+Forget & $M|| F, C \implies M || F $ & $F \models C$  \\ \hline
+Restart & $M|| F \implies \emptyset || F$ &  \\ \hline
+\end{tabular}
 \caption{CDCL DPLL Rules}
 \label{table:cdcl-rules}
-\begin{tabular}{|p{2cm}|p{3cm}||p{6cm}|p{9cm}|}
-\hline
-Name & Rule & Conditions & Example \\ \hline
-Learn & $M|| F \implies,M || F, C$ & All atoms of $C$ occur in $F$, $F \models C$ & \\ \hline
-Forget & $M|| F, C \implies M || F $ & $F \models C$ & \\ \hline
-Restart & $M|| F \implies \emptyset || F$ & & \\ \hline
-\end{tabular}
 \end{table}
 
 \subsection{CDCL}
 As variables are assigned Boolean values during the DPLL algorithm, conflicts arise from the implications of such assignments. For instance consider the following problem in CNF:
 
-$(a \lor b \lor \lnot c) \land (a \lor \lnot d) \land (c \lor d \lor e) \land (\lnot{e} \lor \lnot f ) \land (g \lor \lnot{e} \lor \lnot h) \land (f \lor h)$
+$(a \lor b \lor \lnot c) \land (a \lor \lnot d) \land (c \lor d \lor \lnot{f}) \land \lnot{e} \land (g \lor e \lor \lnot h) \land (f \lor h)$
 
-With the assignments $g = \mathit{false}$, $a = \mathit{false}$, and $b = \mathit{false}$ the last clause, $ (f \lor h) $, becomes unsatisfiable as $\mathit{f} = \mathit{false}, h = \mathit{false}$ is implied as there... 
-%TODO explain why
+With the assignments $\lnot{g}, \lnot{a}, \lnot{b}$ the problem is unsatisfiable due to the final clause, $(f \lor h)$. In order for the first clause to be true $\lnot c$ must be assigned the value true, and likewise for the second clause to be true $\lnot d$ must be true, and for the third clause to be made true $\lnot{f}$ must be true. The unit clause $\lnot{e}$ must be assigned the value true as well, which results in the model $\lnot{g}, \lnot{a}, \lnot{b}, \lnot{c}, d, \lnot{f}, \lnot{e}$. With this model it becomes clear that the final two clauses, $(g \lor e \lor \lnot h) \land (f \lor h)$, cannot be assigned to to produce a satisfying result. The first clause, $(g \lor e \lor \lnot h)$ requires an assignment of $\lnot{h}$ but the last clause requires an assignment of $h$.
 
 CDCL attempts to identify the reason for the conflict and then use that information to jump several decisions back in the search to try a new assignment that will avoid that conflict. This process avoids exploring search spaces where there cannot be a solution. In order to do so, additional state transitions as described in Table \ref{table:cdcl-rules} are required: \textit{Learn}, \textit{Forget}, and \textit{Restart}.
 
@@ -396,14 +390,11 @@ In DPLL with CDCL, each assignment has a `decision level' which represents the n
 
 SMT solvers combine SAT solving with theory specific reasoning in order to tackle problems beyond simple Boolean formulas. While SAT solver problems are defined exclusively in propositional logic, SMT problems can be defined using first-order logic for any theories that the SMT solver supports. Commonly supported theories include the theory of uninterpreted functions, equality, bit vectors, arithmetic, and arrays. In practice these solvers look a lot like the automated reasoning machines that Hilbert and Leibniz imagined and can be applied to many domains such as program verification, scheduling, exploit generation, AI planning, and network analysis.
 
-SMT solvers can be classified into two distinct types: eager solvers and lazy solvers. Eager solvers attempt to transform the theory expression into a Boolean formula that can be passed to the SMT solver's underlying SAT solver. Lazy solvers instead rely on their theory solvers and pass information between the theory solvers and the SAT solver. Although eager solvers, or bit blasters, are still commonly used for problems that manipulate bit-vectors, most SMT solvers, including leading SMT solvers Z3, CVC4, and Yices, now use lazy solving.
-%TODO CITE http://smtcomp.sourceforge.net/2017/results-summary.shtml?v=1500632282 and http://homepage.cs.uiowa.edu/~tinelli/talks/SATSMT-12.pdf
- Lazy solvers attempt to take advantage of the domain-specific strength of the theory solvers and rely only on the SAT solver for the skeleton Boolean formula avoiding the expensive transformation step~\cite{sattosmt, smtdpplt}.
+SMT solvers can be classified into two distinct types: eager solvers and lazy solvers. Eager solvers attempt to transform the theory expression into a Boolean formula that can be passed to the SMT solver's underlying SAT solver. Lazy solvers instead rely on their theory solvers and pass information between the theory solvers and the SAT solver. Although eager solvers, or bit blasters, are still commonly used for problems that manipulate bit-vectors, most SMT solvers, including leading SMT solvers Z3, CVC4, and Yices, now use lazy solving~/cite{Tinelli2012,smt-comp-results}. Lazy solvers attempt to take advantage of the domain-specific strength of the theory solvers and rely only on the SAT solver for the skeleton Boolean formula avoiding the expensive transformation step~\cite{sattosmt, smtdpplt}.
 
-The adjustments that must be made to the state transition model of DPLL are as follows.  The final state is either $unsat$ or $M || F$ and $Solv _T(M)$ is satisfiable, where $Solv_T$ is a theory solver that can check theory satisfiability for $F$.
+The adjustments that must be made to the state transition model of DPLL are as follows. The final state is either $unsat$ or $M || F$ and $Solv _T(M)$ is satisfiable, where $Solv_T$ is a theory solver that can check theory satisfiability for $F$.
 
-We also have to amend the Theory Learn and Forget rules to prevent being stuck in a state where $M || F, M \models F$, and $Solv_T(M)$ is not satisfiable by ensuring that the backtrack rule can be applied. The backtrack rule has a condition that $M \models \lnot C$. In this unsatisfiable state $T \models \lnot{M}$ so any clause for which $T \models C$ will enable backtracking. Finally, the pure literal rule needs to be removed. Although in Boolean logic literals are independent of each other in first-order this may not be the case.
-
+We also have to amend the Theory Learn and Forget rules to prevent being stuck in a state where $M || F, M \models F$, and $Solv_T(M)$ is not satisfiable by ensuring that the backtrack rule can be applied. The backtrack rule has a condition that $M \models \lnot C$. In this unsatisfiable state $T \models \lnot{M}$ so any clause for which $T \models C$ will enable backtracking. Finally, the pure literal rule needs to be removed. Although in Boolean logic literals are independent of each other in first-order logic this may not be the case.
 
 \begin{table}[t]
 \centering
@@ -436,16 +427,13 @@ When a non-Boolean conflict occurs then the theory solver provides a conjunction
 %TODO EXAMPLE
 
 \subsection{Combining Theory Solvers}
-%TODO Make this clearer
 In many cases problems cannot be simply modelled by a single theory. For instance, modelling arrays requires at least the theory of arrays and the theory of arithmetic. It may be possible to use the union of the theories using the Nelson-Oppen combination~\cite{smtdpplt}. 
 
-%TODO CITE https://courses.cs.washington.edu/courses/cse507/14au/slides/L7.pdf
-In order for two or more theories to be combined they must meet Nelson-Oppen restrictions. The classical restrictions are that the theories $T_1, ..., T_n$ must have disjoint symbols (excluding~$=$), are convex, and are stably infinite. A theory is stably infinite if for every quantifier free satisfiable formula $F$ described by $T$ there is a $T-model$ that satisfies $F$ and which has an infinite model, examples of which include the theory of Arrays and EUF. A theory is convex if a formula T-implies a disjunction of equalities, it also T-implies at least one of those equalities separately. 
-% http://flolac.iis.sinica.edu.tw/flolac15/_media/deciding_a_combination_of_theories.pdf.
-There are variations of the Nelson-Oppen combination for non-convex theories and non-stably infinite theories that have other restrictions such as the Shostak method. %TODO cite http://www-step.stanford.edu/papers/fmcr03.pdf
+In order for two or more theories to be combined they must meet Nelson-Oppen restrictions. The classical restrictions are that the theories $T_1, ..., T_n$ must have disjoint symbols (excluding~$=$), are convex, and are stably infinite. A theory is stably infinite if for every quantifier free satisfiable formula $F$ described by $T$ there is a $T-model$ that satisfies $F$ and has an infinite model, examples of which include the theory of Arrays and EUF. A theory is convex if a formula T-implies a disjunction of equalities, it also T-implies at least one of those equalities separately~\cite{Torlak}.
 
-% TODO BETTER EXAMPLE AND EXPLAIN LIKE https://courses.cs.washington.edu/courses/cse507/14au/slides/L7.pdf
+There are variations of the Nelson-Oppen combination for non-convex theories and non-stably infinite theories that have other restrictions such as the Shostak method~\cite{manna2003combining}.
 
+%TODO BETTER EXAMPLE AND EXPLAIN LIKE https://courses.cs.washington.edu/courses/cse507/14au/slides/L7.pdf
 \textbf{Deterministic Nelson-Oppen}
 Given two disjoint theories $T_1$ and $T_2$, where the theories are stably-infinite and convex, and a set of literals $S$, the deterministic Nelson-Oppen algorithm has the following steps.
 
@@ -511,7 +499,6 @@ Object & Represents a collection of properties, each of which has a name and a v
 \label{type-system}
 \end{table}
 
-%%%%%%% TODO FIGURE OUT WHAT IS GOING ON HERE
 \section{Type System}
 JavaScript has six types, Table \ref{type-system}, that variables can be~\cite{EcmaScript}, but the types of variables are not explicitly declared at compile time. Instead, types are dynamic and can change over the course of a program: \lstinline{let foo = '1'; foo = foo * 2;}. Initially \lstinline{foo} is of type string but the type is implicitly coerced into a number by the \lstinline{*} operator. Coercion between types occurs when the type of an operand is not the type the operator is expecting. For instance, as shown in the example above the \lstinline{*} operator coerces all operands to numbers. This coercion is a source of error in programs as inputs of an invalid type can be coerced in unexpected ways.
 
@@ -627,7 +614,7 @@ As described above, arrays can have both properties and array elements. If the p
 let arr = []
 arr[0] = 'foo'; // array is 
 arr.length; // returns 1
-arr[4294967296] = 'bar'; // 4294967296 === 2\textasciicircum32-1, property not an element
+arr[4294967296] = 'bar'; // 4294967296 === 2^32-1, property not an element
 arr[-1] = 'baz'; // -1 < 0, property not an array element
 arr.length; // still returns 1
 \end{verbatim}
@@ -657,26 +644,25 @@ if (!Array.prototype.includes) {
 
 The array prototype has a large number of helper functions which developers frequently take advantage of, a number of which were added in the latest version of the EMCAScript standard~\cite{EcmaScript}. Table \ref{table:array-prototype} lists some of the more commonly used and interesting functions. As support for the latest ECMAScript standard varies between browsers it can be difficult to developers to judge when it is safe to use a new prototype function however using modern prototype functions typically makes reasoning about code easier. To resolve this tension, developers typically include \textit{polyfills} -- code which copies the behaviour of a prototype function and dynamically adds itself to the prototype if the function is undefined. Figure \ref{fig:naive-includes-polyfill} contains a naive example implementation of a \lstinline|Array.prototype.includes| polyfill.
 
-%TODO make calls to function have a consistent signature type
 \begin{table}[t]
 \centering
 \begin{tabular}{|p{2cm}|p{4.2cm}|p{9cm}|}
 \hline
 Function Name & Signature & Description \\ \hline
-indexOf & {\lstinline|indexOf(element)|} & Returns the first index of the array that contains {\lstinline|element|} or -1 if {\lstinline|element|} is not in the array \\ \hline
-lastIndexOf & {\lstinline|lastIndexOf(element)|} & Returns the last index of the array that contains {\lstinline|element|} or -1 if {\lstinline|element|} is not in the array \\ \hline
-slice & {\lstinline|slice(begin, end)|} & Returns a copy of the array with the elements from the index {\lstinline|begin|} up to the {\lstinline|end|} index. If {\lstinline|end|} is not provided it will slice from {\lstinline|begin|} to the last element of the array \\ \hline
-push & {\lstinline|push(element)|} & Increases the length of the array by one and adds {\lstinline|element|} to the end of the array \\ \hline
-pop & {\lstinline|pop()|} & Removes the last {\lstinline|element|} in the array and returns it \\ \hline
-unShift & {\lstinline|unShift(elementA, elementB, ...)|} & Adds one or more elements to the beginning of an array and returns the new length \\ \hline
-includes & {\lstinline|includes(element, startIndex)|} & Returns true if the array contains {\lstinline|element|} either starting from {\lstinline|startIndex|} or the start of the array if no {\lstinline|startIndex|} is provided \\ \hline
-reverse & {\lstinline|reverse()|} & Reverses the array in place and returns a reference to the array \\ \hline
-forEach & {\lstinline|forEach(func)|} & Calls {\lstinline|func|} on each element in the array. Calls {\lstinline|func|} with {\lstinline|(value, index, array)|} \\ \hline
-filter & {\lstinline|filter(func)|} & Returns a new array that contains elements that return true when {\lstinline|func|} is called on them. {\lstinline|func|} is called with {\lstinline|currentElement|} \\ \hline
-map & {\lstinline|map(func)|} & Returns a new array with the results of calling {\lstinline|func|} on each element in the array. {\lstinline|func|} is called with {\lstinline|(value, index, array)|} \\ \hline
-reduce & {\lstinline|reduce(func,initialValue)|} & Calls {\lstinline|func(accumulator, value, index, array)|} on every element in the array and returns the value of accumulator. If {\lstinline|initialValue|} is provided then the first time {\lstinline|func|} is called then {\lstinline|accumulator|} is set to the value of {\lstinline|initialValue|} \\ \hline
-some & {\lstinline|some(func)|} & Calls {\lstinline|func(element, index, array)|} for every element in the array. Returns true if {\lstinline|func|} returns true for at least one element in the array \\ \hline
-every & {\lstinline|every(func)|} & Calls {\lstinline|func(element, index, array)|} for every element in the array. Returns true if {\lstinline|func|} returns true for all elements in the array \\ \hline
+\lstinline|indexOf| & {\lstinline|indexOf(element)|} & Returns the first index of the array that contains {\lstinline|element|} or -1 if {\lstinline|element|} is not in the array \\ \hline
+\lstinline|lastIndexOf| & {\lstinline|lastIndexOf(element)|} & Returns the last index of the array that contains {\lstinline|element|} or -1 if {\lstinline|element|} is not in the array \\ \hline
+\lstinline|slice| & {\lstinline|slice(begin, end)|} & Returns a copy of the array with the elements from the index {\lstinline|begin|} up to the {\lstinline|end|} index. If {\lstinline|end|} is not provided it will slice \lstinline|from| {\lstinline|begin|} to the last element of the array \\ \hline
+\lstinline|push| & {\lstinline|push(element)|} & Increases the length of the array by one and adds {\lstinline|element|} to the end of the array \\ \hline
+\lstinline|pop| & {\lstinline|pop()|} & Removes the last {\lstinline|element|} in the array and returns it \\ \hline
+\lstinline|unShift| & {\lstinline|unShift(elementA, elementB, ...)|} & Adds one or more elements to the beginning of an array and returns the new length \\ \hline
+\lstinline|includes| & {\lstinline|includes(element, startIndex)|} & Returns true if the array contains {\lstinline|element|} either starting from {\lstinline|startIndex|} or the start of the array if no {\lstinline|startIndex|} is provided \\ \hline
+\lstinline|reverse| & {\lstinline|reverse()|} & Reverses the array in place and returns a reference to the array \\ \hline
+\lstinline|forEach| & {\lstinline|forEach(func)|} & Calls {\lstinline|func(value, index, array)|} on each element in the array. \\ \hline
+\lstinline|filter| & {\lstinline|filter(func)|} & Returns a new array that contains elements that return true when {\lstinline|func(currentElement)|} is called on them. \\ \hline
+\lstinline|map| & {\lstinline|map(func)|} & Returns a new array with the results of calling {\lstinline|func(value, index, array)|} on each element in the array. \\ \hline
+\lstinline|reduce| & {\lstinline|reduce(func,initialValue)|} & Calls {\lstinline|func(accumulator, value, index, array)|} on every element in the array and returns the value of accumulator. If {\lstinline|initialValue|} is provided then the first time {\lstinline|func|} is called then {\lstinline|accumulator|} is set to the value of {\lstinline|initialValue|} \\ \hline
+\lstinline|some| & {\lstinline|some(func)|} & Calls {\lstinline|func(element, index, array)|} for every element in the array. Returns true if {\lstinline|func|} returns true for at least one element in the array \\ \hline
+\lstinline|every| & {\lstinline|every(func)|} & Calls {\lstinline|func(element, index, array)|} for every element in the array. Returns true if {\lstinline|func|} returns true for all elements in the array \\ \hline
 \end{tabular}
 \caption{Array Prototype Functions.}
 \label{table:array-prototype}
@@ -743,17 +729,24 @@ When symbolic values are used in native prototype functions (such as those in \l
 
 ExpoSE has a framework for modelling prototype functions in the \lstinline|FunctionModel| module. Prototypes in the \lstinline|FunctionModel| module are exposed as a symbolic hook that concretely executes the prototype function and then if a condition is met also symbolically executes a model function if it exists. Below I provide a detailed look at some of the function models that have been implemented including for \lstinline|slice|, \lstinline|indexOf|, and \lstinline|push|.
 
-%TODO Update function model code and line numbers in description
 \textbf{slice}
 \begin{figure}[t]
 \begin{lstlisting}
 models[Array.prototype.slice] = symbolicHook(
-            (c, _f, base, args, _r) => c.state.isSymbolic(base) && c.state.getConcrete(base) instanceof Array
+            (c, _f, base, args, _r) => c.state.isSymbolic(base) && c.state.getConcrete(base) instanceof Array,
             (c, _f, base, args, result) => {
                 const ctx = c.state.ctx;
                 const array = c.state.asSymbolic(base);
-                const begin = args[0] ? c.state.asSymbolic(args[0]) : ctx.mkIntVal(0);
-                const end = args[1] ? c.state.asSymbolic(args[1]) : array.getLength();
+                let begin = args[0] ? c.state.asSymbolic(args[0]) : ctx.mkIntVal(0);
+                let end = args[1] ? c.state.asSymbolic(args[1]) : array.getLength();
+
+                // handle slice(-1)
+                // if begin is less than 0, begin equals 0 and end equals arg[0], else begin must be ge than 0
+                c.state.pushCondition(ctx.mkIte(
+                    ctx.mkLt(begin, ctx.mkIntVal(0)), 
+                    ctx.mkAnd(ctx.mkEq(begin, ctx.mkIntVal(0)), ctx.mkEq(end, c.state.asSymbolic(args[0]))),
+                    ctx.mkGe(begin, ctx.mkIntVal(0))
+                ));
 
                 // end cannot be greater than array length
                 c.state.pushCondition(ctx.mkLe(end, array.getLength()), true);
@@ -763,21 +756,20 @@ models[Array.prototype.slice] = symbolicHook(
                 const copiedArray = array.setAtIndex(noOpIndex, array.selectFromIndex(noOpIndex));
                 
                 const newLength = ctx.mkIntVar(`${array.getName()}_Length_${array.incrementLengthCounter()}`);
-
                 copiedArray.setLength(newLength);
                 copiedArray.increaseStartIndex(begin);
 
-                // The new length should be greater than or equal to 0 AND 
-                // IF end is positive, less than or equal to end's length -> slice(0, 4)
-                // ELSE, less than or equal to the old length-end -> slice(0, -1)
+                /* The new length should be greater than 0 AND 
+                   IF end is positive, less than or equal to end's length -> slice(0, 4)
+                   ELSE, less than or equal to the old length-end -> slice(0, -1) */
                 c.state.pushCondition(
                     ctx.mkAnd(
                         ctx.mkGe(newLength, ctx.mkIntVal(0)), 
                         ctx.mkIte(
                             ctx.mkGe(end, ctx.mkIntVal(0)), 
-                            ctx.mkLe(newLength, end),
+                            ctx.mkLe(newLength, ctx.mkSub(array.getLength(), end)),
                             // negative end indexing 
-                            ctx.mkLe(newLength, ctx.mkSub(array.getLength(), end))
+                            ctx.mkLe(newLength, ctx.mkSub(array.getLength(), ctx.mkAdd(end, begin)))
                         )
                     ),
                     true
@@ -791,11 +783,9 @@ models[Array.prototype.slice] = symbolicHook(
 
 \lstinline|Array.prototype.slice| returns a shallow copy of a subsection of array. It takes two optional parameters \lstinline|begin| which marks the start index for the shallow copy to begin from and \lstinline|end| which marks the first index in the array that should not be included in the shallow copy. Both parameters also accept negative indices which are interpreted as reverse indexing. If no \lstinline{begin} parameter is passed then \lstinline{slice} returns a full copy of the array.
 
-The function model for \lstinline{slice} is shown in Figure~\ref{fig:slice-func-model}. The first function passed to the \lstinline{symbolicHook} checks that the function the prototype is called on is a symbolic array as the \lstinline{slice} function can also be used on strings. The second function passed to the \lstinline{symbolicHook} models the function. Lines 4-10 check which arguments are passed to the function, set the default parameters if necessary, and perform validation. Lines 13-14 create a shallow copy of the array by performing a store with no effect and lines 16-18 create a new variable to represent the new array's length. Line 19 increases the \textit{start index} of the copied array - the start index is the pointer to the first index of the unbounded Z3 which should be considered part of the array that's being symbolically modelled. This methodology allows for an arbitrary number of slices to be made by continually incrementing the pointer. Both \lstinline{Expr.selectFromIndex()} and \lstinline{Expr.setAtIndex()} use the start index offset hiding the complexity of accounting for the start index pointer in most cases but in the \lstinline{FunctionModels} module, where the helper functions, the start index needs to be taken into account. Lines 24-35 describe assertions on the length of the new array. The length must be greater or equal to 0 and if \lstinline{end} is positive, the length of the copied array is $end - begin$, else the new array length is $oldArrayLength - (end + begin)$. %TODO Fix the formatting discrepancies here
+The function model for \lstinline|slice| is shown in Figure~\ref{fig:slice-func-model}. The first function passed to the \lstinline|symbolicHook| checks that the function the prototype is called on is a symbolic array as the \lstinline|slice| function can also be used on strings. The second function passed to the \lstinline|symbolicHook| models the function. Lines 4-18 check which arguments are passed to the function, set the default parameters if necessary, and perform validation. Validation is performed by asserting that if the first argument is negative that \lstinline|begin| should be 0 and \lstinline|end| should be set to the value of the first argument, as this is a negative indexing operation. Lines 21-22 create a shallow copy of the array by performing a store with no effect and lines 24-26 create a new variable to represent the new array's length. Line 26 increases the \textit{start index} of the copied array - the start index is the pointer to the first index of the unbounded Z3 which should be considered part of the array that's being symbolically modelled. This methodology allows for an arbitrary number of slices to be made by continually incrementing the pointer. Both \lstinline|Expr.selectFromIndex()| and \lstinline|Expr.setAtIndex()| use the start index offset hiding the complexity of accounting for the start index pointer in most cases but in the \lstinline|FunctionModels| module, where the helper functions, the start index needs to be taken into account. Lines 31-42 describe assertions on the length of the new array. The length must be greater or equal to 0 and if \lstinline|end| is positive, the length of the copied array is $end - start$, else the new array length is $oldArrayLength - (end + begin)$.
 
-This model allows for all but one of the acceptable signatures of \lstinline{slice} including \lstinline{slice()}, \lstinline{slice(-1)}, and \lstinline{slice(1, -2)} but excluding \lstinline{slice(4, 1)} -- which would return an empty array.
-
-%TODO Example
+This model allows for all but one of the acceptable signatures of \lstinline|slice| including \lstinline|slice()|, \lstinline|slice(-1)|, and \lstinline|slice(1, -2)| but excluding \lstinline|slice(4, 1)| -- which would return an empty array.
 
 \textbf{pop}
 \begin{figure}[t]
@@ -820,7 +810,7 @@ models[Array.prototype.pop] = symbolicHook(
 \caption{\label{fig:pop-func-model} Pop Function Model.}
 \end{figure}
 
-\lstinline{Array.prototype.pop} returns the element at the last index of the array and reduces its length by one. The function model for \lstinline{pop} is shown in Figure~\ref{fig:pop-func-model}. Line 2, included in every function model, checks that the \lstinline{base} argument is symbolic and an array - if so the second function starting on line 3 is called. Lines 4-8 create a new Z3 variable to store the new length, and create a temporary variable to store the old length. Line 10 fetches the value to be popped from the array and lines 11-13 set the new length to one less than the previous length and assign it to the array expression. The popped value is then returned.
+\lstinline|Array.prototype.pop| returns the element at the last index of the array and reduces its length by one. The function model for \lstinline|pop| is shown in Figure~\ref{fig:pop-func-model}. Line 2, included in every function model, checks that the \lstinline|base| argument is symbolic and an array - if so the second function starting on line 3 is called. Lines 4-8 create a new Z3 variable to store the new length, and create a temporary variable to store the old length. Line 10 fetches the value to be popped from the array and lines 11-13 set the new length to one less than the previous length and assign it to the array expression. The popped value is then returned.
 
 %TODO describe indexOf
 
@@ -868,22 +858,23 @@ Total Paths Explored & 7243 & 2015 & 2450 & 5101 \\ \hline
 \caption{Results.}
 \label{table:results}
 \end{table}
-%TODO Get graphs
 
-%TODO discuss more
-
+%TODO Get graphs and discuss more
 The results in Table \ref{table:results} show a clear difference in behaviour of the two libraries that are tested, although both have a net gain in coverage. \lstinline|Minimist| has a drastic jump in coverage with array support enabled which comes at the cost of total path count. The number of paths appears to be reduced as the execution was constrained by time, rather than a reduction in a number of feasible paths. The combination of a low path count and the high max and 90\textsuperscript{th} percentile test case duration indicates a small number of large queries which suggests that ExpoSE had large path constraints, potentially as a result of deeper exploration of the program. \lstinline|Lodash/array| exhibited different behaviour, whilst it only received a small bump in coverage it more than doubled the number of paths explored and spent on average ~30\% longer on each path. Examining why the jump in coverage was so small revealed that the majority of functions accept strings. The remaining uncovered areas of \lstinline|Lodash/array| mostly relate to internal functions which are unreachable from the \lstinline|Lodash/array| module and polyfill code. Both libraries have areas that concretise due to lack of Object support.
 
-Overall the increased cost in query time appears to be a reasonable trade-off for the net gain in terms of both coverage and additional paths to explore.
+Overall the increased cost in query time appears to be a reasonable trade-off for the net gain in terms of both coverage and additional paths to explore although there is reason to be concerned about the performance of arrays on particular deep paths with many assertions as demonstrated by the large increase (100s) in max test case duration of \lstinline|Minimist|.
 
 \subsection{Polyfill Verification}
 Array polyfills, as discussed in \ref{sec:array-prototype-functions}, attempt to mimic the behaviour of standard prototype functions for backwards compatibility purposes. By giving symbolic input to both a polyfill and the standard implementation function and comparing the result deviations in behaviour can be identified. Below I present an example harness and describe a bug found in a popular polyfill library.
 
-%TODO include harness
+\begin{figure}[t]
+\lstinputlisting{polyfill_harness.js}
+\caption{\label{fig:polyfill-test-harness} Polyfill Test Harness}
+\end{figure}
 
 The harness, shown in \ref{fig:polyfill-test-harness}, calls the function \lstinline|testPolyfill()| with the polyfill function under test, the matching standard function, a symbolic \lstinline|thisArg| argument, and an array of symbolic values. The \lstinline|thisArg| argument is the argument that represents the value that the prototype is being invoked from, the \lstinline|arr| in \lstinline|arr.includes(myValue, 0);|. The array of symbolic values are the values that should be passed to the function. \lstinline|testPolyfill()| then uses \lstinline|apply()| to call the two functions, using \lstinline|try| to prevent an exception from causing the test case to fail, and stores the results. If the results differ then an exception is thrown which contains a string representation of the two values and the key word alert to make the output easily to identify using \lstinline|grep|.
 
-\lstinline|js-polyfills| is a popular polyfill library with 970 stars on Github and 7,000 weekly downloads. It contains polyfills for many array functions including \lstinline|Array.includes|. Using the harness and techniques described above, ExpoSE identified that calling the \lstinline|includes| polyfill with an \lstinline|undefined| base type would cause the function to return \lstinline|false| whereas the standard prototype implementation throws an exception. %TODO convince the reader that this is a significant bug
+\lstinline|js-polyfills| is a popular polyfill library with 970 stars on Github and 7,000 weekly downloads. It contains polyfills for many array functions including \lstinline|Array.includes|. Using the harness and techniques described above, ExpoSE identified that calling the \lstinline|includes| polyfill with an \lstinline|undefined| base type would cause the function to return \lstinline|false| whereas the standard prototype implementation throws an exception. If a program used a pattern like \lstinline|try {array.includes(a)} catch (e) {...}| to do error handling in the case of being passed an undefined array then as a result of this bug the program would function differently in a polyfilled environment.
 
 \section{Conclusion}
 In this report I've presented an encoding of JavaScript arrays using the Z3 SMT solver. I also discussed the implementation of extensions to ExpoSE to support arrays including example models for popular array prototype functions. I also demonstrated that the extensions to ExpoSE are effective at increasing coverage on programs that use arrays with a reasonable increase in time spent solving and demonstrate a case where as a result of the implementation ExpoSE is able to find a bug in a popular polyfill library.

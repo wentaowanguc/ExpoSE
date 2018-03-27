@@ -655,13 +655,44 @@
 
 @Article{nieuwenhuis2006solving,
   author    = {Nieuwenhuis, Robert and Oliveras, Albert and Tinelli, Cesare},
-  title     = {Solving SAT and SAT modulo theories: From an abstract davis--putnam--logemann--loveland procedure to DPLL (T)},
+  title     = {Solving {SAT} and {SAT} modulo theories: From an abstract {Davis-Putnam-Logemann--Loveland} procedure to {DPLL (T)}},
   journal   = {Journal of the ACM (JACM)},
   year      = {2006},
   volume    = {53},
   number    = {6},
   pages     = {937--977},
   publisher = {ACM},
+}
+
+@Misc{smt-comp-results,
+  title        = {2017 {SMT} Comp Results},
+  howpublished = {\url{http://smtcomp.sourceforge.net/2017/results-summary.shtml?v=1500632282}},
+  year         = {2017},
+  note         = {Accessed: 2018-03-27},
+  url          = {http://smtcomp.sourceforge.net/2017/results-summary.shtml?v=1500632282},
+}
+
+@Misc{Tinelli2012,
+  author = {Cesare Tinelli},
+  title  = {Foundation of Lazy {SMT} and {DPLL (T)}},
+  month  = jun,
+  year   = {2012},
+  url    = {http://homepage.cs.uiowa.edu/~tinelli/talks/SATSMT-12.pdf},
+}
+
+@InCollection{manna2003combining,
+  author    = {Manna, Zohar and Zarba, Calogero G},
+  title     = {Combining decision procedures},
+  booktitle = {Formal Methods at the Crossroads. From Panacea to Foundational Support},
+  publisher = {Springer},
+  year      = {2003},
+  pages     = {381--422},
+}
+
+@Misc{Torlak,
+  author = {Emina Torlak},
+  title  = {Combining Theories},
+  url    = {https://courses.cs.washington.edu/courses/cse507/14au/slides/L7.pdf},
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}
