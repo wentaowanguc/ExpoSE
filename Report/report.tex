@@ -7,6 +7,7 @@
 \usepackage{pdflscape}
 \usepackage{amsmath}
 \usepackage{algpseudocode}
+\usepackage{minted}
 
 \usepackage{color}
 \definecolor{lightgray}{rgb}{.9,.9,.9}
@@ -940,10 +941,15 @@ My conclusion prompts the question: how can responsible disclosure be achieved i
 ExpoSE is a Node.js program and as such requires \lstinline|node| and \lstinline|npm| to be installed. It is recommended to use version 8.10.0. 
 
 The easiest way of installing the recommended \lstinline|node| version is using \lstinline|nvm| which can be achieved by running the commands below and following any directions given. ExpoSE's installation process also requires \lstinline|clang|, \lstinline|clang++|, \lstinline|gnuplot|, \lstinline|make|, and \lstinline|python2|.
-\begin{lstlisting}
+\begin{minted}{bash}
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 nvm install 8.10.0
-\end{lstlisting}
+\end{minted}
+
+After installing \lstinline|nvm| you may have to also run \lstinline|nvm use --delete-prefix v8.10.0| if prompted to.
 
 To install node navigate to the project directory and type \lstinline|npm start|. This process may take a while as ExpoSE compiles Z3 from source.
 
