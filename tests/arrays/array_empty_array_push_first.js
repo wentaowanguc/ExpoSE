@@ -5,6 +5,7 @@
 var p = symbolic UnderTest initial [];
 
 // Test that from an empty array an array of type String can be created by pushing a value
+// Expecting 3 paths, 2 from the outer if, else and a third produced due to the unreachable statement.
 if (p.length === 0) {
   p.push('a');
   p[2] = 'b';
