@@ -20,7 +20,6 @@ DS_Store
 *paper.synctex.gz
 *.aux
 *.log
-*.pdf
 z3.emscripten.js.mem
 libz3*
 .babelrc
