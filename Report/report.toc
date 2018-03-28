@@ -36,3 +36,7 @@
 \contentsline {chapter}{\numberline {7}Conclusion}{36}{chapter.7}
 \contentsline {chapter}{\numberline {8}Appendix}{42}{chapter.8}
 \contentsline {section}{\numberline {8.1}Professional Issues}{42}{section.8.1}
+\contentsline {section}{\numberline {8.2}Manual}{44}{section.8.2}
+\contentsline {subsection}{\numberline {8.2.1}Installation}{44}{subsection.8.2.1}
+\contentsline {subsection}{\numberline {8.2.2}Testing Programs}{44}{subsection.8.2.2}
+\contentsline {subsection}{\numberline {8.2.3}Testing Arrays}{44}{subsection.8.2.3}

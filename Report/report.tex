@@ -90,9 +90,7 @@ Signature: Arran France
 %%% Your Abstract here
 
 \begin{abstract}
-
-%TODO Write abstract
-
+Dynamic symbolic execution is a technique that can used on JavaScript to identify bugs and generate test cases, as the recent tool ExpoSE does. JavaScript arrays are an area of the language which have atypical behaviour and as a result are challenging to model. I present an encoding of homogeneously typed JavaScript arrays in first order logic and describe extensions to the symbolic execution tool ExpoSE which implement support for symbolic arrays and a selection of Array prototype functions. I demonstrate that these extensions lead to an increase in path count and coverage on two popular JavaScript libraries and describe a technique using ExpoSE which was used to identify a bug in a popular polyfill library.
 \end{abstract}
 \newpage
 
@@ -100,7 +98,7 @@ Signature: Arran France
 %%% Introduction
 \chapter{Introduction}
 %%%%%%%%%%%%%%%%%%%%%% 
-Since its inception as a `glue' language for the web~\cite{AZProgrammingLanguages} JavaScript's popularity has surged~\cite{stackoverflowsurvey,tiobeindex2017nov}. JavaScript is now a ubiquitous language that powers mobile, web, and server applications however its dynamic nature and deceptive syntax often lead to subtle bugs and unintended behaviour which can be difficult to identify. Dynamic symbolic execution (DSE) is a technique that can be used to automatically identify bugs and generates tests for JavaScript however this requires modelling the semantics of the language in first order logic. JavaScript arrays are an area of the language that requires trade-offs, difficult design decisions, and careful consideration of language semantics when modelling due to their atypical properties.
+Since its inception as a `glue' language for the web~\cite{AZProgrammingLanguages} JavaScript's popularity has surged~\cite{stackoverflowsurvey,tiobeindex2017nov}. JavaScript is now a ubiquitous language that powers mobile, web, and server applications however its dynamic nature and deceptive syntax often lead to subtle bugs and unintended behaviour which can be difficult to identify. Dynamic symbolic execution (DSE) is a technique that can be used to automatically identify bugs and generate tests for JavaScript however this requires modelling the semantics of the language in first order logic. JavaScript arrays are an area of the language that requires trade-offs, difficult design decisions, and careful consideration of language semantics when modelling due to their atypical properties.
 
 My work extends ExpoSE~\cite{DBLP:conf/spin/2017}, a tool for DSE, by describing an encoding for homogeneously typed JavaScript arrays in first order logic, implementing support in ExpoSE for symbolic arrays, and modelling a selection of prototype functions. I demonstrate that these extensions result in an increased test coverage of two popular JavaScript libraries and describe a new bug found in a popular Array ES6 polyfill.
 
@@ -222,7 +220,7 @@ Constraint solvers are used for two purposes in symbolic execution: determining 
 \section{Constraint Optimisations}
 Frequently constraints will need to be solved multiple times throughout the course of execution. Instead of calling the constraint solver multiple times for the same constraint, satisfying results can be stored in a map of constraints to satisfying results. Then, instead of calling the constraint solver directly, a cache lookup can be performed first to see if there is a satisfying result~\cite{cadar2008klee}.
 
-This caching process can be extended to evaluate the strength of formulas. If there is a satisfying result for a stronger constraint than the one being queried, then that satisfying result will be valid for the weak constraint. For instance, if the cache contains the following mapping $ (x > 3 \land y <1) \land (x < 10) \implies x = 5 \land y = -214$ then the satisfying result will be valid for the condition $x > 3 \land y < 1 $ . This caching scheme can also be used to cache unsatisfiable constraints~\cite{cadar2008klee}.
+This caching process can be extended to evaluate the strength of formulas. If there is a satisfying result for a stronger constraint than the one being queried, then that satisfying result will be valid for the weak constraint. For instance, if the cache contains the following mapping $ (x > 3 \land y <1) \land (x < 10) \implies x = 5 \land y = -214$ then the satisfying result will be valid for the condition $x > 3 \land y < 1 $. This caching scheme can also be used to cache unsatisfiable constraints~\cite{cadar2008klee}.
 
 In most cases, a branch's condition will not depend on all of the variables in a path constraint, allowing redundant constraints to be eliminated before passing the constraint to the constraint solver. Although, if this technique is applied, the constraint solver will only return satisfiable values for non-eliminated variables, the existing concrete values of the other variables can be used to produce a full set of inputs~\cite{cadar2013symbolic}.
 
@@ -740,8 +738,9 @@ SymbolicState.js has a number of functions that are called when a symbolic value
 When symbolic values are used in native %prototype functions (such as those in \lstinline{Array.prototype} described in Section \ref{sec:array-prototype-functions}) they leave the environment in which the program is being analysed and consequently become concretised preventing new paths from being explored from that point onwards in the program. This results in incomplete exploration and a reduction in code coverage. One solution to this problem is to clone the behaviour of functions in native JavaScript, Figure~\ref{fig:naive-includes} shows an example of how this might be achieved. Although this approach achieves the goal of obtaining a symbolic representation of the result of the function it also creates additional paths for each branching condition or loop inside the function. An alternative solution to this problem is to model the behaviour of the function. Doing this is typically more time consuming but has the advantage of avoiding path explosion and deferring the cost to the SMT solver.
 
 ExpoSE has a framework for modelling prototype functions in the \lstinline|FunctionModel| module. Prototypes in the \lstinline|FunctionModel| module are exposed as a symbolic hook that concretely executes the prototype function and then if a condition is met also symbolically executes a model function if it exists. 
-%TODO make it clear that these are not the only function models
-Below I provide a detailed look at some of the function models that have been implemented including for \lstinline|slice|, \lstinline|indexOf|, and \lstinline|push|.
+
+%TODO REWRITE
+Below I provide a detailed look at two of the function models that have been implemented \lstinline|slice| and \lstinline|pop|.
 
 \textbf{slice} \label{slice-function-model}
 \begin{figure}[t]
@@ -876,12 +875,8 @@ Total Paths Explored & 7243 & 2015 & 2450 & 5101 \\ \hline
 %TODO Get graphs and discuss more
 The results in Table \ref{table:results} show a clear difference in behaviour of the two libraries that are tested, although both have a net gain in coverage. \lstinline|Minimist| has a drastic jump in coverage with array support enabled which comes at the cost of total path count. The number of paths appears to be reduced as the execution was constrained by time, rather than a reduction in a number of feasible paths. The combination of a low path count and the high max and 90\textsuperscript{th} percentile test case duration indicates a small number of large queries which suggests that ExpoSE had large path constraints, potentially as a result of deeper exploration of the program. \lstinline|Lodash/array| exhibited different behaviour, whilst it only received a small bump in coverage it more than doubled the number of paths explored and spent on average ~30\% longer on each path. 
 
-
 % Section Concretisation
 Examining why the jump in coverage was so small revealed that the majority of functions accept strings. The remaining uncovered areas of \lstinline|Lodash/array| mostly relate to internal functions which are unreachable from the \lstinline|Lodash/array| module and polyfill code. Both libraries have areas that concretise due to lack of Object support.
-
-
-% Array performance
 
 % Limitations of methodology
 Overall the increased cost in query time appears to be a reasonable trade-off for the net gain in terms of both coverage and additional paths to explore although there is reason to be concerned about the performance of arrays on particular deep paths with many assertions as demonstrated by the large increase (100s) in max test case duration of \lstinline|Minimist|.
@@ -902,14 +897,10 @@ The harness, shown in \ref{fig:polyfill-test-harness}, calls the function \lstin
 In this report I have presented an encoding of JavaScript arrays using the Z3 SMT solver. I also discussed the implementation of extensions to ExpoSE to support arrays including example models for popular array prototype functions. I also demonstrated that the extensions to ExpoSE are effective at increasing coverage on programs that use arrays with a reasonable increase in time spent solving and demonstrate a case where as a result of the implementation ExpoSE is able to find a bug in a popular polyfill library.
 
 %section extensions
-There are many possible extensions to the work presented in this report. The most natural extension would be to explore supporting non-homogeneous arrays, which could be achieved through encoding an array as seven Z3 boolean arrays, one for each JavaScript type plus an additional array to encode which array an element exists in. This approach leans heavily on Z3 and would likely come with a large performance cost. Another extension would be to extend homogeneous arrays to support holes, a naive approach would be to store a `magic value' at indices that should contain a hole however this approach would only work for String and Number arrays. A more advanced approach could add an uninterpreted function to array expressions which would indicate the indices in the array that should contain holes. Another limitation of the current implementation is that pure symbols only attempt to use arrays of strings -- a more advanced implementation could attempt to use an array of each supported type and an empty array.
+There are many possible extensions to the work presented in this report. The most natural extension would be to explore supporting non-homogeneous arrays, which could be achieved through encoding an array as seven Z3 boolean arrays, one for each JavaScript type plus an additional array to encode which array an element exists in. This approach leans heavily on Z3 and would likely come with a large performance cost. Another possible extension would be to extend homogeneous arrays to support holes, a naive approach would be to store a `magic value' at indices that should contain a hole however this approach would only work for String and Number arrays. A more advanced approach could add an uninterpreted function to array expressions which would indicate the indices in the array that should contain holes. An additional avenue of future work could be to extend pure symbolic symbols to use an array of each supported type and an empty array as opposed to just an array of strings.
 
 %section challenges encountered
-
-%section reflection on areas of improvement
-I believe that if I was to tackle another project working with a symbolic execution engine I would approach it differently. Rather than relying exclusively on micro-programs for regression testing I would also write a number of real-world-esque programs in the region of 50-200 lines of code. I found that there were some bugs in my implementation that were not picked up early by my test cases and but became apparent testing \lstinline|Minimist|. I would also approach implementation differently - early on I was afraid to touch too many parts of the program for fear of breaking existing features however I came to realise that the combination of the way  ExpoSE is designed and arrays being a somewhat special case means that often the cleanest implementation of solutions sometimes require a change that spans across multiple modules. I would also write code more defensively and with more verbose logging. I encountered two major bugs which I invested several days into which could have been prevented if I had. The first bug was that \lstinline|Array.prototype.slice| is also used reused for strings however I was not checking in my prototype functions that the \lstinline|this| argument was actually an array, had I written my code more defensively then this would not have been an issue. Another bug I identified was that my put field method was silently failing to be called as it was being called with concrete arguments -- a more liberal use of logging would have made this much easier to track down. JavaScript is a language that has a lot of edge cases and  writing code assuming it may fail seems to be a good motto.
-
-The biggest challenge for me in the project, and a source of great frustration, was modelling functions in Z3's SMT-LIB syntax. I frequently made errors in my assumptions, misunderstood the way in which assertions interacted, and struggled with mixing quantifiers. Once I moved to modelling entirely in Z3JS I found the process much easier but I believe this may have been at the expense of a richer understanding of how SMT works.
+If I were to work on a similar project in the future I would attempt to use real-world-esque programs sooner in my analysis. Whilst throughout the project's lifespan I've had a number of small (5-15 line) test cases there were a number of bugs that did not become apparent until I tested my array implementation on a real world target. To combat this, I would write a number of non-trivial programs in the range of 50-200 lines of code that would have well defined expected behaviour. I would also write code more defensively and with more verbose logging. I encountered two major bugs which I invested several days into which could have been prevented if I had. The first bug was that \lstinline|Array.prototype.slice| is also used reused for strings however I was not checking in my prototype functions that the \lstinline|this| argument was actually an array, had I written my code more defensively then this would not have been an issue. Another bug I identified was that my put field method was silently failing to be called as it was being called with concrete arguments -- a more liberal use of logging would have made this much easier to track down. JavaScript is a language that has a lot of edge cases and writing code assuming it may fail seems to be the only sensible way to protect against unexpected behaviour.
 
 Overall I believe the project was a success and I am proud of the contributions I have presented.
 
@@ -942,6 +933,41 @@ Google's Project Zero, the security research team that initially identified the 
 In conclusion, when considering how to responsibly disclose I believe there are a number of factors that must be considered: the risk to users, the number of organisations that need to be involved, the vendor's history of compliance, and if there are known exploits for the vulnerability already being used. I reject the notion that there is a `one size fits all' approach to responsible disclosure and suggest that, whilst full disclosure should not be the default course of action, it warrants consideration in situations when disclosure would present no risk to users or when dealing with organisations or individuals who have a history of non-compliance.
 
 My conclusion prompts the question: how can responsible disclosure be achieved in the hypothetical world in which ExpoSE is deployed as an automated tool to discover bugs? I believe that every bug found would have to be treated as a possible vulnerability and be reported privately to the maintainer. I would provide a 90 day window for response, after which I would post the vulnerability to a public issue tracker and attempt to alert any public codebases which depended on that code.
+
+\section{Manual}
+
+\subsection{Installation}
+ExpoSE is a Node.js program and as such requires \lstinline|node| and \lstinline|npm| to be installed. It is recommended to use version 8.10.0. 
+
+The easiest way of installing the recommended \lstinline|node| version is using \lstinline|nvm| which can be achieved by running the commands below and following any directions given. ExpoSE's installation process also requires \lstinline|clang|, \lstinline|clang++|, \lstinline|gnuplot|, \lstinline|make|, and \lstinline|python2|.
+\begin{lstlisting}
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+nvm install 8.10.0
+\end{lstlisting}
+
+To install node navigate to the project directory and type \lstinline|npm start|. This process may take a while as ExpoSE compiles Z3 from source.
+
+\subsection{Testing Programs}
+ExpoSE is invoked from the command line through the \lstinline|expoSE| script, which is installed to the path on first run.
+
+ExpoSE extends JavaScript syntax with the additional keyword \lstinline|symbolic|, which when used \lstinline|var x = symbolic MyFirstSymbolicVariable;| marks the variable as a pure symbolic variable -- a symbolic variable which can be of any type. Symbolic variables can also be created with an initial value which fixes their type \lstinline|var x = symbolic X initial [1, 2, 3];|.
+
+Programs do not need to be rewritten if they have public functions which can be explored as ExpoSE has an automatic harness generator which is invoked with \lstinline|expoSE ahg myTarget.js|.
+
+ExpoSE also has a number of important environment variables. \lstinline|EXPOSE_PRINT_COVERAGE=1| prints out the program under test and indicates which lines are covered. \lstinline|EXPOSE_PRINT_PATHS=1| prints the output of each test case. \lstinline|EXPOSE_LOG_LEVEL| sets the log level between 0 (silent) and 3 (noisy) - I would set this no higher than 2. \lstinline|NO_COMPILE=1| stops ExpoSE from recompiling after each execution - use this!
+
+\subsection{Testing Arrays}
+There are a number of array specific tests in \lstinline|tests/arrays/|. They can be all run at once using \lstinline|scripts/array_tests| or they can be run individually as shown below:
+
+\lstinline|EXPOSE_PRINT_PATHS=1 EXPOSE_LOG_LEVEL=2 expoSE tests/arrays/array_index_get_or.js|.
+
+Useful tests to run as micro programs are:
+\begin{itemize}
+  \item \lstinline|array_length_numbers.js|
+  \item \lstinline|array_index_matches_non_symbolic_value.js|
+  \item \lstinline|array_index_matches_symbolic_value.js|
+  \item \lstinline|array_index_getter_is_symbolic.js|
+\end{itemize}
 
 \end{document}
 
