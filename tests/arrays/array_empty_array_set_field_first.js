@@ -1,0 +1,14 @@
+/* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
+
+"use strict";
+
+var p = symbolic UnderTest initial [];
+
+// Test that from an empty array an array of type String can be created by setting a field
+if (p.length === 0) {
+  p[0] = 'b';
+  p.push('a');
+  if (p.length <= 0) {
+      throw 'Unreachable';
+  }
+} 

@@ -583,10 +583,15 @@ function BuildModels() {
 
                 c.state.pushCondition(ctx.mkEq(newLength, ctx.mkAdd(oldLength, ctx.mkIntVal(1))), true);
                 
-                const newArray = array.setAtIndex(oldLength, value);
+                let newArray;
+                if (array.hasType()) {
+                    newArray = array.setAtIndex(oldLength, value);
+                } else {
+                    // Make array with type of args[0]
+                    newArray = c.state.makeArray(c.state.getConcrete(base), '_'+array.getName(), c.state.getConcrete(args[0]));
+                }
                 newArray.setLength(newLength);
 
-                // Can't use array here as we need to modify in place
                 base.symbolic = newArray;
                 return value;                
             }
