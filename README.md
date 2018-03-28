@@ -2,17 +2,19 @@
 
 ## Directory Structure
 
-`Report` contains my report source code. `Presentation` contains my presentation delivered in Term 1. `Documents` contains the final report PDF.
+`Report` contains my report source code. `Presentation` contains my presentation delivered in Term 1. `Documents` contains the final report PDF. `ExpoSE_Original_README.md` is the original README for the project. My experimental result logs can be found in `Report/Tests`. 
 
 ## Installation and Running
 
-For installation and usage instructions refer to the manual in the appendix of my report or `ExpoSE_Original_README.md` - in short you need `node` (8.10.0 recommended), `clang`, and  `npm`, `clang`, `clang++`, `gnuplot`, `make`, `python2` and then type `npm start` to start installation.
+For installation and usage instructions refer to the manual in the appendix of my report or `ExpoSE_Original_README.md` - in short you need `node` (8.10.0 recommended), `clang`, and  `npm`, `clang`, `clang++`, `gnuplot`, `make`, `python2` and then type `npm start` to start installation. It's suggested you use [nvm](https://github.com/creationix/nvm) to enable you to switch to 8.10.0.
 
 ## My Code Contributions
 
 My modifications to ExpoSE and Z3JS are deliniated by a comment `// AF Final Year Project` (excluding scripts) but I also indicate the functions that I have written or heavily modified below. The last commit hash from the main ExpoSE repo is `4f5690769d55771f049431c6cc8b4a384e1f767c`, my commits begin at `a8310cb38d7204d43de57507786b3bf5184e0851`.
 
-**Z3JS**:
+**Please be aware that some source code that I have modified is in another repository on a specific branch: https://github.com/ExpoSEJS/z3javascript/tree/af-array-support** The source code can be accessed after installation at `Analyser/node_modules/z3javascript`
+
+**z3javascript**:
 * `src/Expr.js`: Add getAstSortKind, selectFromIndex, toNumber, getAstSortName, copyProperties, incrementLengthCounter, getLengthCounter, setStartIndex, increaseStartIndex, getStartIndex, hasType, setType, getType, setName, getName, setLength, getLength, setAtIndex, and selectFromIndex. I also heavily modified asConstant including changing the function signature to pass the model to asConstant.. I also added context to the Expr object constructor (requiring simple interface changes in `src/Model`, `src/Context`, and `src/Expr`: https://github.com/ExpoSEJS/z3javascript/commit/2e22e18baf904f8053b53cbe033b8378e1b4c719).
 * `src/Context.js`: Added mkArray, mkArraySort, mkSeqSort, mkSelect, mkStore, mkConstArray, mkBound, mkForAllConst, mkExists, mkExistsConst, and mkPattern.
 * `src/Model.js`: Modified eval
