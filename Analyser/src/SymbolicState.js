@@ -188,9 +188,15 @@ class SymbolicState {
         }
     }
 
-    makeArray(concrete, name) {
-        // TODO (AF) Fix this to defer array reasoning for empty arrays
-        let sort = concrete.length > 0 ? this._getSort(concrete[0]) : this.realSort;
+    makeArray(concrete, name, value) {
+        let sort;
+        if (concrete.length > 0) {
+            sort = this._getSort(concrete[0]);
+        } else if (value) {
+            sort = this._getSort(value);
+        } else {
+            sort = null;
+        }
         return this.ctx.mkArray(name, sort);
     }
 
@@ -198,10 +204,11 @@ class SymbolicState {
 
         let symbolic;
         
-        // Keep our arrays homogenous for now
-        if (Config.arraysEnabled && concrete instanceof Array && (concrete.length === 0 || concrete.every(i => typeof i === typeof concrete[0]))) {
+        // Keep our arrays homogenous
+        if (Config.arraysEnabled && concrete instanceof Array && 
+            (concrete.length === 0 || concrete.every(i => typeof i === typeof concrete[0]))) {
             symbolic = this.makeArray(concrete, name);
-            // Array length is greater than 0
+            // array length is always greater than 0
             this.pushCondition(this.ctx.mkGe(symbolic.getLength(), this.ctx.mkIntVal(0)), true);
         } else {
             let sort = this._getSort(concrete);
@@ -353,7 +360,16 @@ class SymbolicState {
             Log.logMid(`Set Field with ${field_c} and ${val_c}`)
             // TODO Consider how to handle making arrays non-homogenous
             if (Number.isInteger(field_c) && field_c >= 0 && field_c < 4294967295 && base_s.getType() === typeof val_c) {
-                const newArray = array.setAtIndex(this.ctx.mkRealToInt(field_s), val_s);
+                
+                // Case handling for empty arrays
+                let newArray;
+                if (array.hasType()) {                
+                    newArray = array.setAtIndex(this.ctx.mkRealToInt(field_s), val_s);
+                } else {
+                    // Make array with type of val_c
+                    newArray = this.makeArray(base_c, '_'+array.getName(), val_c);
+                }
+
                 const newLength = this.ctx.mkIntVar(`${array.getName()}_Length_${array.incrementLengthCounter()}`);
                 newArray.setLength(newLength);
                 base_s.symbolic = newArray;

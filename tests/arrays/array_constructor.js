@@ -2,9 +2,11 @@
 
 "use strict";
 
+// Test that creating an array with the constructor produces a symbolic array of with the same length
+// Expecting 2 paths
 var size = symbolic Size initial 0;
 var a = new Array(size);
-// Expecting a path where the length is 2 and a path where it isn't 
+
 if (a.length === size) {
 	console.log('Success');
 } else {

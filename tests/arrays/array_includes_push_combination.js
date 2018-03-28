@@ -12,6 +12,4 @@ if (!q.includes(1)) {
 	} else {
 		console.log('Array includes 1')
 	}
-} else {
-  // Initial path
 }

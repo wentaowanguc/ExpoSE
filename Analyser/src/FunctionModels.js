@@ -468,8 +468,6 @@ function BuildModels() {
                 let result_s = ctx.mkIntVar('__INDEX_OF_' + indexOfCounter); 
                 
                 c.state.pushCondition(ctx.mkGe(result_s, ctx.mkIntVal(-1)), true);
-
-                // TODO AF check this condition is required
                 c.state.pushCondition(ctx.mkGt(array.getLength(), result_s), true);
 
                 // result_s should be in array slice or -1
@@ -585,10 +583,15 @@ function BuildModels() {
 
                 c.state.pushCondition(ctx.mkEq(newLength, ctx.mkAdd(oldLength, ctx.mkIntVal(1))), true);
                 
-                const newArray = array.setAtIndex(oldLength, value);
+                let newArray;
+                if (array.hasType()) {
+                    newArray = array.setAtIndex(oldLength, value);
+                } else {
+                    // Make array with type of args[0]
+                    newArray = c.state.makeArray(c.state.getConcrete(base), '_'+array.getName(), c.state.getConcrete(args[0]));
+                }
                 newArray.setLength(newLength);
 
-                // Can't use array here as we need to modify in place
                 base.symbolic = newArray;
                 return value;                
             }
@@ -642,7 +645,6 @@ function BuildModels() {
                 copiedArray.setLength(newLength);
                 copiedArray.increaseStartIndex(begin);
 
-                // TODO AF double check this constraint
                 // The new length should be greater than 0 AND 
                 // IF end is positive, less than or equal to end's length -> slice(0, 4)
                 // ELSE, less than or equal to the old length-end -> slice(0, -1)
