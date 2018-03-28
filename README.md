@@ -1,23 +1,31 @@
-Hey Johannes and my second market!
+# README
 
-I've implemented symoblic homogenous arrays! It does not support any array prototypes yet aside from `.length` and `.length` is not symbolically modifiable yet.  
+## Directory Structure
 
-I've put some test cases inside `/tests/arrays` which can be executed with a  test runner `./scripts/array_tests/`.
+`Report` contains my report source code. `Presentation` contains my presentation delivered in Term 1. `Documents` contains the final report PDF.
 
-For installation instructions see the `ExpoSE_Original_README.md` - in short you need `node` (7.5.0), `clang`, and  `npm`, `clang`, `clang++`, `gnuplot`, `make`, `python2` and then type `npm start`.
+## Installation and Running
 
-I've pointed z3js to the correct branch which is `af-array-support` but if that fails for any reason place that version of z3js (https://github.com/ExpoSEJS/z3javascript/tree/af-array-support) inside `Analyser/node_modules/z3javascript`. 
+For installation and usage instructions refer to the manual in the appendix of my report or `ExpoSE_Original_README.md` - in short you need `node` (8.10.0 recommended), `clang`, and  `npm`, `clang`, `clang++`, `gnuplot`, `make`, `python2` and then type `npm start` to start installation.
 
-My modifications to ExpoSE and z3javascript are as follows:
+## My Code Contributions
 
-**z3javascript**:
+My modifications to ExpoSE and Z3JS are deliniated by a comment `// AF Final Year Project` (excluding scripts) but I also indicate the functions that I have written or heavily modified below. The last commit hash from the main ExpoSE repo is `4f5690769d55771f049431c6cc8b4a384e1f767c`, my commits begin at `a8310cb38d7204d43de57507786b3bf5184e0851`.
 
-* `src/Expr.js`: Add getAstSortKind (L79), selectFromIndex (L89), toNumber(L74), getAstSortName(L83), and I heavily modified asConstant (L93) including passing the model to asConstant (changes interface). I also added context to the Expr object constructor (requiring simple interface changes in `src/Model`, `src/Context`, and `src/Expr`: https://github.com/ExpoSEJS/z3javascript/commit/2e22e18baf904f8053b53cbe033b8378e1b4c719).
-* `src/post_em_bindings.js` and `src/post_ref_bindings.js`: I added a (currently redundant) sort const for `Z3.SEQ_SORT`.
-* `src/Context.js`: Added mkArray (L103), mkArraySort(L218), and the now redundant mkSeqSort (L223)
+**Z3JS**:
+* `src/Expr.js`: Add getAstSortKind, selectFromIndex, toNumber, getAstSortName, copyProperties, incrementLengthCounter, getLengthCounter, setStartIndex, increaseStartIndex, getStartIndex, hasType, setType, getType, setName, getName, setLength, getLength, setAtIndex, and selectFromIndex. I also heavily modified asConstant including changing the function signature to pass the model to asConstant.. I also added context to the Expr object constructor (requiring simple interface changes in `src/Model`, `src/Context`, and `src/Expr`: https://github.com/ExpoSEJS/z3javascript/commit/2e22e18baf904f8053b53cbe033b8378e1b4c719).
+* `src/Context.js`: Added mkArray, mkArraySort, mkSeqSort, mkSelect, mkStore, mkConstArray, mkBound, mkForAllConst, mkExists, mkExistsConst, and mkPattern.
+* `src/Model.js`: Modified eval
+* `src/post_em_bindings.js` and `src/post_ref_bindings.js`: I added a sort const for `Z3.SEQ_SORT`.
+* `src/Z3Utils.js`: Add astArray
 
 **ExpoSE**:
+* `tests/arrays/*`: All array tests
+* `Analyser/src/Config`: Add flag to disable array support
+* `Analyser/src/SymbolicExecution`: Heavily modify putField
+* `Analyser/src/SymbolicState`: Modify and refactor symbolicField. Add _symbolicFieldArrayLookup, _isFieldAccessWithinBounds, _symbolicFieldSeqLookup, symbolicSetField, makeArray.
+* `Analyser/src/FunctionModels`: models[Array], models[Array.prototype.indexOf], models[Array.prototype.lastIndexOf], models[Array.prototype.includes],  models[Array.prototype.push],  models[Array.prototype.pop], models[Array.prototype.slice]. 
+* Alter `asConstant` to use model L84-85, L91, L95, and L101 in `Analyser/src/FunctionModels` and L222 in `Analyser/src/SymbolicState`
 
-* `tests/arrays/*` - all array tests
-* `/src/Analyser/SymbolicState` Refactor to extract sort checking logic: L169-185 and L192-195. Extend to support arrays in  L345-357, L367-369
-* Alter `asConstant` to use model L84-85, L91, L95, and L101 in `Analyser/src/FunctionModels` and L222 in `/src/Analyser/SymbolicState`
+**Scripts**
+`scripts/array_tests`, `report/polyfill_harness`, `report/Tests/extract_time_taken.py`

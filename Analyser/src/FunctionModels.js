@@ -432,6 +432,7 @@ function BuildModels() {
         }
     );
 
+    // AF Final Year Project START
     if (Config.arraysEnabled) {
         /**
          * Model for the Array constructor: either Array(el0, el1, el2, ..., eln), Array(size), or Array()
@@ -664,6 +665,7 @@ function BuildModels() {
             }
         );
     }
+    // AF Final Year Project END
 
     models[Array.prototype.keys] = NoOp();
     models[Array.prototype.concat] = NoOp();

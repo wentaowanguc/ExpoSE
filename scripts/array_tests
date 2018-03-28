@@ -1,3 +1,5 @@
+cd "$(dirname "${BASH_SOURCE[0]}")"
+cd ..
 if [ -z ${NO_COMPILE} ]; then
 	./scripts/build/build_analyser
 	if [ $? -ne 0 ]; then

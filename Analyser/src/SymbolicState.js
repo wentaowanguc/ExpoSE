@@ -188,6 +188,8 @@ class SymbolicState {
         }
     }
 
+
+    // AF Final Year Project START
     makeArray(concrete, name, value) {
         let sort;
         if (concrete.length > 0) {
@@ -199,6 +201,7 @@ class SymbolicState {
         }
         return this.ctx.mkArray(name, sort);
     }
+    // AF Final Year Project END
 
     createSymbolicValue(name, concrete) {
 
@@ -354,6 +357,7 @@ class SymbolicState {
         return result;
     }
 
+    // AF Final Year Project START
     symbolicSetField(base_c, base_s, field_c, field_s, val_c, val_s) {
         if (Config.arraysEnabled && base_c instanceof Array ) {
             const array = base_s;
@@ -361,6 +365,8 @@ class SymbolicState {
             // TODO Consider how to handle making arrays non-homogenous
             if (Number.isInteger(field_c) && field_c >= 0 && field_c < 4294967295 && base_s.getType() === typeof val_c) {
                 
+                // TODO AF Refactor this into a function
+
                 // Case handling for empty arrays
                 let newArray;
                 if (array.hasType()) {                
@@ -388,11 +394,14 @@ class SymbolicState {
             }
         }
     }
+     // AF Final Year Project END
     
     _symbolicFieldSeqLookup(base_c, base_s, field_c, field_s) {
         return this.ctx.mkSeqAt(base_s, this.ctx.mkRealToInt(field_s));
     }
 
+
+    // AF Final Year Project START
     /**
      * Pushes symbolic condition for valid array access based on concrete result and returns concrete result
      */
@@ -431,6 +440,7 @@ class SymbolicState {
             return this._symbolicFieldSeqLookup(base_c, base_s, field_c, field_s);
         } else if (Config.arraysEnabled && base_c instanceof Array && typeof field_c === "number") {
             return this._symbolicFieldArrayLookup(base_c, base_s, field_c, field_s);
+            // AF Final Year Project END
         } else {           
                 switch (field_c) {
                 case 'length':                

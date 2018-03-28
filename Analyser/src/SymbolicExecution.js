@@ -299,7 +299,8 @@ class SymbolicExecution {
             skip: false,
         };
     }
-
+    
+    // AF Final Year Project START
     putField(iid, base, offset, val, isComputed, isOpAssign) {
         this.state.coverage.touch(iid);
         Log.logHigh(`Put value ${val} at field ${ObjectHelper.asString(base)}.${ObjectHelper.asString(offset)} at ${this._location(iid)}`);
@@ -319,6 +320,7 @@ class SymbolicExecution {
             result: val
         };
     }
+    // AF Final Year Project END
 
     read(iid, name, val, isGlobal, isScriptLocal) {
         this.state.coverage.touch(iid);
