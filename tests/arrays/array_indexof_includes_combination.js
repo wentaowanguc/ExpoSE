@@ -10,12 +10,12 @@ if (q.indexOf(1) === -1) {
 	if (q.includes(1)) {
 		throw 'array_indexof_includes_combination: Unreachable';
 	} else {
-		console.log('Array includes 1')
+		console.log('Array includes 1');
 	}
 } else {
 	if (!q.includes(1)) {
 		throw 'array_indexof_includes_combination: Unreachable';
 	} else {
-		console.log('Array includes 1')
+		console.log('Array includes 1');
 	}
 }

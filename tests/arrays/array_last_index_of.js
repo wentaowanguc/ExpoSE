@@ -10,6 +10,6 @@ if (q.length === 1 && q[0] === 5) {
 	if (q.lastIndexOf(5) !== -1) {
 		console.log('lastIndexOf Success');
 	} else {
-		throw 'Unreachable: array_last_index_of.js'
+		throw 'Unreachable: array_last_index_of.js';
 	}
 }

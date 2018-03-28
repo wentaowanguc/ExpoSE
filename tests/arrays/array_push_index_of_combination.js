@@ -15,6 +15,4 @@ if (q.indexOf(5) === -1 && q.length === 2) {
   if (q[2] !== 5) {
 		throw 'array_push_index_of_combination: Unreachable. Index has incorrect value';
   }
-} else {
-  // Initial path
 }

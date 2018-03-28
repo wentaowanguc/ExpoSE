@@ -11,6 +11,4 @@ if (q.indexOf(5) === 1 && q.length === 1) {
 	if (q.indexOf(5) !== -1) {
 		throw 'array_pop_index_of_combination: Unreachable. indexOf found a value in the array';
   }
-} else {
-  // Initial path
-}
+} 
