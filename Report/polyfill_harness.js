@@ -26,5 +26,5 @@ function testPolyfill(testFunction, prototypeFunction, base, args) {
     } 
   };
 
-var from = require('array-from');
-testPolyfill(from, Array.from, symbolic thisArg, [symbolic Needle]);
+var includes = require('includes');
+testPolyfill(includes, Array.prototype.includes, symbolic thisArg, [symbolic Needle]);

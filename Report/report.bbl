@@ -163,6 +163,17 @@ R.~Nieuwenhuis, A.~Oliveras, and C.~Tinelli, ``Solving {SAT} and {SAT} modulo
   {DPLL (T)},'' {\em Journal of the ACM (JACM)}, vol.~53, no.~6, pp.~937--977,
   2006.
 
+\bibitem{Tinelli2012}
+C.~Tinelli, ``Foundation of lazy {SMT} and {DPLL (T)}.''
+  \url{http://homepage.cs.uiowa.edu/~tinelli/talks/SATSMT-12.pdf}, June 2012.
+\newblock Accessed: 2018-03-21.
+
+\bibitem{smt-comp-results}
+``2017 {SMT} comp results.''
+  \url{http://smtcomp.sourceforge.net/2017/results-summary.shtml?v=1500632282},
+  2017.
+\newblock Accessed: 2018-03-27.
+
 \bibitem{smtdpplt}
 A.~Oliveras, ``{SMT} theory and {DPLL(T)}.'' Presentation
   \url{http://sei.pku.edu.cn/~xiongyf04/SA/2014/5_SMT.pdf}, July 2013.
