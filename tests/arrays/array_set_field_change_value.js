@@ -2,12 +2,9 @@
 
 "use strict";
 
-//
-
+// Test that setting an index changes the value of the index
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
 
-// Clone the length
-var length = q.length;
 if (q.length === 3 && q[2] !== 12) {
   q[2] = 12;
   if (q[2] === 12) {

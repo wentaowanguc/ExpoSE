@@ -2,6 +2,8 @@
 
 "use strict";
 
+// Test that includes finds elements in an array
+
 // Expecting three paths: a test case where array includes 9, case where it doesn't, and one where the length > 1
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
 
@@ -10,11 +12,11 @@ if (q.length === 1) {
 		if (q.includes(9)) {
 			console.log('Includes 9');
 		} else {
-			throw 'Unreachable. array_includes.js'
+			throw 'Unreachable. array_includes.js';
 		}
 	} else {
 		if (q.includes(9)) {
-			throw 'Unreachable. array_includes.js'
+			throw 'Unreachable. array_includes.js';
 		} else {
 			console.log('Doesn\'t Include 9');
 		}

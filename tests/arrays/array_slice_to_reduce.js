@@ -2,6 +2,7 @@
 
 "use strict";
 
+// Test that an array can be sliced to reduce its size
 var q = symbolic UnderTest initial ['a', 'b'];
 
 if (q.length === 2 && q[0] === 'a' && q[1] === 'b') {

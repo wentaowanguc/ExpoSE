@@ -2,9 +2,9 @@
 
 "use strict";
 
+// Tests that setting to an index results means that the value is in the array and that includes can find it
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
 
-// Expecting TODO
 if (!q.includes(5) && q.length === 1) {
   q[0] = 5;
 	if (!q.includes(5)) {

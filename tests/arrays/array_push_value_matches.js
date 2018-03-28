@@ -2,6 +2,7 @@
 
 "use strict";
 
+// Test that pushing a value adds it to the array
 var q = symbolic UnderTest initial [0, 1];
 
 if (q.length === 1) {

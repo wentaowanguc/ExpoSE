@@ -4,12 +4,13 @@
 
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
 
-// Expecting: 2 paths: initial path and a path where q initial doesn't contain 1 and then does after the pop
+// Test combining push and includes prototypes
+// Expecting: 2 paths: initial path and a path where q initial doesn't contain 1 and then does after the push
 if (!q.includes(1)) {
   q.push(1);
 	if (!q.includes(1)) {
 		throw 'array_index_of_push_combination: Unreachable';
 	} else {
-		console.log('Array includes 1')
+		console.log('Array includes 1');
 	}
 }

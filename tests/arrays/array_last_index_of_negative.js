@@ -2,11 +2,9 @@
 
 "use strict";
 
+// Test that last index of can never be lower than -1
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
 
-// Expecting: A single path where the last index of 1 is less than -1
 if (q.lastIndexOf(1) < -1) {
   throw 'array_last_index_of_negative: Unreachable';
-} else {
-  // Initial path
 }

@@ -2,12 +2,9 @@
 
 "use strict";
 
-//
-
+//Tests that setting the length of the array does indeed mutate the length
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
 
-// Clone the length
-var length = q.length;
 if (q.length === 3) {
   q.length = 42;
   if (q.length === 42) {

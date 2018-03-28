@@ -2,7 +2,7 @@
 
 "use strict";
 
-// Expected number of paths: TODO
+// Test that popping a value from the array decreases the length of the array
 
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
 // copy the length

@@ -2,11 +2,10 @@
 
 "use strict";
 
+// Test index of does not return negative values
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
 
 // Expecting: A single path where the index of 1 is less than -1
 if (q.indexOf(1) < -1) {
   throw 'array_index_of_negative: Unreachable';
-} else {
-  // Initial path
 }

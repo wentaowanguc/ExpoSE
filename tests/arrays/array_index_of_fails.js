@@ -2,6 +2,7 @@
 
 "use strict";
 
+// Test that indexOf returns -1 if the element is not in the array
 var q = symbolic UnderTest initial [0, 1];
 
 // Expecting three paths: an array of [0], an array of [0] where the if branch cannot be flipped, and any other array
@@ -11,6 +12,4 @@ if (q.length === 1 && q[0] === 1) {
   } else {
     throw 'array_index_of_fails.js: Unreachable path';
   }
-} else {
-  console.log('Else branch');
 }

@@ -2,6 +2,7 @@
 
 "use strict";
  
+// Test that arrays are only homogeneous
 // Expecting three paths
 var q = symbolic UnderTest initial ['a', 'b'];
 

@@ -2,11 +2,12 @@
 
 "use strict";
 
+// Test that if an array contains an element that index of returns the correct index
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
 
 // Expecting a path where indexOf succeeds and a path where indexOf fails
-if (q.indexOf(5)) {
-	console.log('indexOf Success');
-} else {
-	console.log('indexOf Fail');
+if (q.length === 1 && q[0] === 5) {
+	if (q.indexOf(5) !== 0) {
+		throw 'Unreachable: array_index_of'
+	}
 }

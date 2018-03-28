@@ -3,9 +3,11 @@
 var d = symbolic Integer initial 5;
 var q = symbolic UnderTest initial [0, 1];
 
+// Test that ExpoSE generates paths with a symbolic index
+
 // Expecting the initial case where q[d] is not 0 and a case where q[d] is 0
 if (q[d] === 0) {
-	console.log('q[d] === 0')
+	console.log('q[d] === 0');
 } else {
-	console.log('q[d] !== 0')
+	console.log('q[d] !== 0');
 }

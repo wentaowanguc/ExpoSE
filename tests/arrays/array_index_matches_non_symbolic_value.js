@@ -2,9 +2,11 @@
 
 var q = symbolic UnderTest initial [0, 1];
 
+
+// Test that ExpoSE generates paths with a non-symbolic index
 // Expecting a case where q[0] is 19 and a the initial case where it isn't
 if (q[0] === 19) {
 	console.log('q[0] is 19');
 } else {
-	console.log('q[0] is not 19')
+	console.log('q[0] is not 19');
 }

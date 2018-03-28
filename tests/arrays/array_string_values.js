@@ -2,6 +2,7 @@
 
 "use strict";
  
+// Test the behaviour of an array of strings
 // Expecting three paths
 var q = symbolic UnderTest initial ['a', 'b', 'c'];
 

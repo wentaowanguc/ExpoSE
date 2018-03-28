@@ -2,9 +2,9 @@
 
 "use strict";
 
-//
-
+// Test that pushing to the array increases its length
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
+
 // Clone the length
 var length = q.length;
 q.push(99);

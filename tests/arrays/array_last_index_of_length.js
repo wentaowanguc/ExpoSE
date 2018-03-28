@@ -2,11 +2,10 @@
 
 "use strict";
 
+// Test that last index of can never be greater than or equal to array length
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
 
 // Expecting: A single path
-if (q.lastIndexOf(1) > q.length) {
+if (q.lastIndexOf(1) >= q.length) {
   throw 'array_last_index_of_length: Unreachable index is greater than length';
-} else {
-  // Initial path
 }

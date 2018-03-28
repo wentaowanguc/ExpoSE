@@ -2,12 +2,9 @@
 
 "use strict";
 
-//
-
+// Tests that setting an index outside of the existing length of the array increases the length of the array
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
 
-// Clone the length
-var length = q.length;
 if (q.length === 3) {
   q[3] = 12;
   if (q.length === 4) {

@@ -2,8 +2,9 @@
 
 "use strict";
 
+// Test that ExpoSE generates a path based on array length
 var q = symbolic UnderTest initial [0, 1];
 
 if (q.length === 3) {
-	console.log('YES');
+	console.log('Success');
 }

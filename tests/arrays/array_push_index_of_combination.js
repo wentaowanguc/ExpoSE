@@ -4,6 +4,7 @@
 
 var q = symbolic UnderTest initial [0, 1, 1, 4, 4, 1];
 
+// Test that index of finds a value in the array after it is pushed
 // Expecting: 2 paths: initial path and a path where q initially doesn't contain 1 and then does after the push
 if (q.indexOf(5) === -1 && q.length === 2) {
   q.push(5);

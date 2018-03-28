@@ -4,6 +4,7 @@
 
 var q = symbolic UnderTest initial [0, 1];
 
+// Test that the value popped from an array matches the value that was removed
 if (q.length === 1 && q[0] === 3) {
   var poppedValue = q.pop();
   if (poppedValue === 3) {

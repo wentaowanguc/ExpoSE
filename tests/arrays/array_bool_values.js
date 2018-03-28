@@ -2,6 +2,7 @@
 
 "use strict";
  
+// Test that an initial boolean array stays boolean
 // Expecting three paths
 var q = symbolic UnderTest initial [false];
 

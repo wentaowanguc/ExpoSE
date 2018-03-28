@@ -2,6 +2,7 @@
 
 "use strict";
 
+// Test that pushing a value returns the value that was pushed
 var q = symbolic UnderTest initial [0, 1];
 var p = symbolic Value initial 5;
 
