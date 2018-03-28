@@ -1,0 +1,29 @@
+\BOOKMARK [0][-]{toc.0}{Table of Contents}{}% 1
+\BOOKMARK [0][-]{chapter*.2}{Abstract}{}% 2
+\BOOKMARK [0][-]{chapter.1}{Introduction}{}% 3
+\BOOKMARK [0][-]{chapter.2}{Symbolic Execution}{}% 4
+\BOOKMARK [1][-]{section.2.1}{Overview}{chapter.2}% 5
+\BOOKMARK [1][-]{section.2.2}{Finding and Choosing Paths}{chapter.2}% 6
+\BOOKMARK [1][-]{section.2.3}{Constraint Optimisations}{chapter.2}% 7
+\BOOKMARK [1][-]{section.2.4}{Bug Detection}{chapter.2}% 8
+\BOOKMARK [0][-]{chapter.3}{Automated Decision Procedures}{}% 9
+\BOOKMARK [1][-]{section.3.1}{A Short History of Automated Reasoning}{chapter.3}% 10
+\BOOKMARK [1][-]{section.3.2}{SAT}{chapter.3}% 11
+\BOOKMARK [1][-]{section.3.3}{SMT}{chapter.3}% 12
+\BOOKMARK [0][-]{chapter.4}{JavaScript}{}% 13
+\BOOKMARK [1][-]{section.4.1}{History}{chapter.4}% 14
+\BOOKMARK [1][-]{section.4.2}{Type System}{chapter.4}% 15
+\BOOKMARK [1][-]{section.4.3}{Objects and Prototypal Inheritance}{chapter.4}% 16
+\BOOKMARK [1][-]{section.4.4}{Arrays}{chapter.4}% 17
+\BOOKMARK [1][-]{section.4.5}{Ensuring Correctness}{chapter.4}% 18
+\BOOKMARK [0][-]{chapter.5}{Implementation}{}% 19
+\BOOKMARK [1][-]{section.5.1}{JavaScript Array Encoding}{chapter.5}% 20
+\BOOKMARK [1][-]{section.5.2}{Array Support Architecture}{chapter.5}% 21
+\BOOKMARK [0][-]{chapter.6}{Evaluation}{}% 22
+\BOOKMARK [1][-]{section.6.1}{Methodology}{chapter.6}% 23
+\BOOKMARK [1][-]{section.6.2}{Results}{chapter.6}% 24
+\BOOKMARK [1][-]{section.6.3}{Polyfill Verification}{chapter.6}% 25
+\BOOKMARK [0][-]{chapter.7}{Conclusion}{}% 26
+\BOOKMARK [0][-]{chapter.8}{Appendix}{}% 27
+\BOOKMARK [1][-]{section.8.1}{Professional Issues}{chapter.8}% 28
+\BOOKMARK [1][-]{section.8.2}{Manual}{chapter.8}% 29
