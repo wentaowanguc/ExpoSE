@@ -2,7 +2,7 @@
 
 ## Directory Structure
 
-`Report` contains my report source code. `Presentation` contains my presentation delivered in Term 1. `Documents` contains the final report PDF. `ExpoSE_Original_README.md` is the original README for the project. The logs of my experiments can be found in `Report/Tests`.
+`Report` contains my report source code. `Presentation` contains my presentation delivered in Term 1. `Documents` contains the final report PDF. `ExpoSE_Original_README.md` is the original README for the project. The logs of my experiments can be found in `Report/Tests`. The remaining files and folders are related to ExpoSE, the project which I am extending. For an overview of their structure see Chapter 5 of my report, or if you are just interested in the files in which I have worked see the end of this README.
 
 ## Installation and Running
 
