@@ -1,0 +1,981 @@
+Setup Done exists, not setting up
+Set Default Z3_PATH to ./node_modules/z3javascript/bin/libz3.so
+Number of CPU cores: 4
+Defaulting to 4 concurrent test cases
+ExpoSE Master: /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js max concurrent: 4 max paths: 1000000
+Setting timeout to 900000
+*** [0 done /0 queued / 1 running / 0 errors / 0% coverage ] ****** [0 done /0 queued / 1 running / 0 errors / 0% coverage ] ***ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"_bound":0}
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+Traits not present
+Base undefined, args 
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Uncaught exception Alert -> Error: polyfill: 'false' prototype: 'undefined'
+ExpoSE: Finished play with PC Expr {(= Base_type 0.0)},Expr {(= Needle_type 0.0)}
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(assert (not (= Base_type 0.0)))
+}
+Base_type -> 1.0
+
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 0.0))
+(assert (not (= Needle_type 0.0)))
+}
+Base_type -> 0.0
+Needle_type -> 1.0
+
+ExpoSE: Wrote final coverage to /tmp/tmp-23120MfzbuR80phZO.tmp
+ExpoSE: Wrote final output to /tmp/tmp-231207JzIu1kMf0zh.tmp
+*** [1 done /1 queued / 1 running / 1 errors / 40% coverage ] ****** [1 done /0 queued / 2 running / 1 errors / 40% coverage ] ****** [1 done /0 queued / 2 running / 1 errors / 40% coverage ] ***ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":1,"Needle_type":0,"_bound":1}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":0,"Needle_type":1,"_bound":2}
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+Traits not present
+Traits not present
+Base null, args 
+ExpoSE: WARNING: Concretizing model for apply
+Base undefined, args 
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Uncaught exception Alert -> Error: polyfill: 'false' prototype: 'undefined'
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(= Base_type 1.0)},Expr {(= Needle_type 0.0)}
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Uncaught exception Alert -> Error: polyfill: 'false' prototype: 'undefined'
+ExpoSE: Finished play with PC Expr {(= Base_type 0.0)},Expr {(not (= Needle_type 0.0))},Expr {(= Needle_type 1.0)}
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(assert (not (= Base_type 0.0)))
+(assert (not (= Base_type 1.0)))
+}
+Base_type -> 2.0
+
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (not (= Base_type 0.0)))
+(assert (= Base_type 1.0))
+(assert (not (= Needle_type 0.0)))
+}
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 0.0))
+(assert (not (= Needle_type 0.0)))
+(assert (not (= Needle_type 1.0)))
+}
+Base_type -> 1.0
+Needle_type -> 2.0
+
+Base_type -> 0.0
+Needle_type -> 2.0
+
+ExpoSE: Wrote final coverage to /tmp/tmp-23120YxtY0ltr4VyZ.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120nyvrlsyXOiEK.tmp
+ExpoSE: Wrote final coverage to /tmp/tmp-23120FyuCZRnjURb5.tmp
+ExpoSE: Wrote final output to /tmp/tmp-231209JPXy1G5O7DF.tmp
+*** [2 done /1 queued / 2 running / 2 errors / 40% coverage ] ****** [2 done /0 queued / 3 running / 2 errors / 40% coverage ] ****** [2 done /0 queued / 3 running / 2 errors / 40% coverage ] ****** [3 done /0 queued / 3 running / 3 errors / 40% coverage ] ****** [3 done /0 queued / 3 running / 3 errors / 40% coverage ] ***ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":0,"Needle_type":2,"_bound":3}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":1,"Needle_type":2,"_bound":3}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":2,"Needle_type":0,"_bound":2}
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+Traits not present
+Base undefined, args Concolic(0, Expr {Needle_int}, )
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Uncaught exception Alert -> Error: polyfill: 'false' prototype: 'undefined'
+ExpoSE: Finished play with PC Expr {(= Base_type 0.0)},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(= Needle_type 2.0)}
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 0.0))
+(assert (not (= Needle_type 0.0)))
+(assert (not (= Needle_type 1.0)))
+(assert (not (= Needle_type 2.0)))
+}
+Base_type -> 0.0
+Needle_type -> 3.0
+
+ExpoSE: Wrote final coverage to /tmp/tmp-23120eVgO7WNPFUjv.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120hM1B2oYAjXGl.tmp
+*** [4 done /0 queued / 3 running / 4 errors / 41% coverage ] ****** [4 done /0 queued / 3 running / 4 errors / 41% coverage ] ***Traits not present
+Base null, args Concolic(0, Expr {Needle_int}, )
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Uncaught exception Alert -> Error: polyfill: 'false' prototype: 'undefined'
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(= Base_type 1.0)},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(= Needle_type 2.0)}
+Traits not present
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 1.0))
+(assert (not (= Needle_type 0.0)))
+(assert (= Needle_type 1.0))
+}
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , 0) (string, number)
+Base 0, args 
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (0, null) (number, object)
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (0, undefined) (number, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+Base_type -> 1.0
+Needle_type -> 1.0
+
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(= Base_type 2.0)},Expr {(= Needle_type 0.0)}
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 1.0))
+(assert (not (= Needle_type 0.0)))
+(assert (not (= Needle_type 1.0)))
+(assert (not (= Needle_type 2.0)))
+}
+ExpoSE: Checks length 0
+Base_type -> 1.0
+Needle_type -> 3.0
+
+Solver {
+(declare-fun Base_type () Real)
+(assert (not (= Base_type 0.0)))
+(assert (not (= Base_type 1.0)))
+(assert (not (= Base_type 2.0)))
+}
+Base_type -> 3.0
+
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (not (= Base_type 0.0)))
+(assert (not (= Base_type 1.0)))
+(assert (= Base_type 2.0))
+(assert (not (= Needle_type 0.0)))
+}
+Base_type -> 2.0
+Needle_type -> 3.0
+
+ExpoSE: Wrote final coverage to /tmp/tmp-23120LQsrtD9WavHd.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120Nh7hzgdYvvR0.tmp
+ExpoSE: Wrote final coverage to /tmp/tmp-23120UaaGfk5YaxBd.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120rRdDxneGhWwZ.tmp
+*** [5 done /1 queued / 3 running / 5 errors / 41% coverage ] ****** [5 done /0 queued / 4 running / 5 errors / 41% coverage ] ****** [5 done /0 queued / 4 running / 5 errors / 41% coverage ] ****** [6 done /1 queued / 4 running / 5 errors / 41% coverage ] ****** [6 done /1 queued / 4 running / 5 errors / 41% coverage ] ***ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":0,"Needle_type":3,"Needle_int":0,"_bound":4}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":3,"Base_int":0,"Needle_type":0,"_bound":3}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":1,"Needle_type":1,"Needle_int":0,"_bound":4}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":1,"Needle_type":3,"Needle_int":0,"_bound":5}
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+Traits not present
+Base undefined, args Concolic(PureString, Expr {Needle_string}, )
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Uncaught exception Alert -> Error: polyfill: 'false' prototype: 'undefined'
+ExpoSE: Finished play with PC Expr {(= Base_type 0.0)},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(not (= Needle_type 2.0))},Expr {(= Needle_type 3.0)}
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 0.0))
+(assert (not (= Needle_type 0.0)))
+(assert (not (= Needle_type 1.0)))
+(assert (not (= Needle_type 2.0)))
+(assert (not (= Needle_type 3.0)))
+}
+Base_type -> 0.0
+Needle_type -> 4.0
+
+ExpoSE: Wrote final coverage to /tmp/tmp-23120xN3IHeD1SrDQ.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120g4zFBQLUe7XF.tmp
+*** [7 done /1 queued / 4 running / 6 errors / 42% coverage ] ****** [7 done /1 queued / 4 running / 6 errors / 42% coverage ] ***Traits not present
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base PureString, args , [undefined]) (string, object)
+Base PureString, args 
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (PureString, null) (string, object)
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (PureString, undefined) (string, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(not (= Base_type 2.0))},Expr {(= Base_type 3.0)},Expr {(= Needle_type 0.0)}
+Traits not present
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(assert (not (= Base_type 0.0)))
+(assert (not (= Base_type 1.0)))
+(assert (not (= Base_type 2.0)))
+(assert (not (= Base_type 3.0)))
+}
+Base null, args Concolic(PureString, Expr {Needle_string}, )
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Uncaught exception Alert -> Error: polyfill: 'false' prototype: 'undefined'
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(= Base_type 1.0)},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(not (= Needle_type 2.0))},Expr {(= Needle_type 3.0)}
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 1.0))
+(assert (not (= Needle_type 0.0)))
+(assert (not (= Needle_type 1.0)))
+(assert (not (= Needle_type 2.0)))
+(assert (not (= Needle_type 3.0)))
+}
+Base_type -> 4.0
+
+Base_type -> 1.0
+Needle_type -> 4.0
+
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (not (= Base_type 0.0)))
+(assert (not (= Base_type 1.0)))
+(assert (not (= Base_type 2.0)))
+(assert (= Base_type 3.0))
+(assert (not (= Needle_type 0.0)))
+}
+Traits not present
+ExpoSE: Wrote final coverage to /tmp/tmp-23120PxTNU13N4kqg.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120T12caESgmWoT.tmp
+Base_type -> 3.0
+Needle_type -> 4.0
+
+Base null, args 
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Uncaught exception Alert -> Error: polyfill: 'false' prototype: 'undefined'
+*** [8 done /1 queued / 4 running / 7 errors / 42% coverage ] ****** [8 done /1 queued / 4 running / 7 errors / 42% coverage ] ***ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(= Base_type 1.0)},Expr {(not (= Needle_type 0.0))},Expr {(= Needle_type 1.0)}
+ExpoSE: Wrote final coverage to /tmp/tmp-23120DCe44aHGiSmr.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120mBFAvjR37iru.tmp
+*** [9 done /2 queued / 4 running / 7 errors / 47% coverage ] ****** [9 done /2 queued / 4 running / 7 errors / 47% coverage ] ***ExpoSE: Wrote final coverage to /tmp/tmp-23120PC8vbXXbl2zl.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120j6iZpTqJVAe1.tmp
+*** [10 done /1 queued / 4 running / 8 errors / 47% coverage ] ****** [10 done /1 queued / 4 running / 8 errors / 47% coverage ] ***ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":0,"Needle_type":4,"Needle_string":"","_bound":5}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":3,"Base_string":"","Needle_type":4,"_bound":5}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":1,"Needle_type":4,"Needle_string":"","_bound":6}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":4,"Base_string":"","Needle_type":0,"_bound":4}
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+Traits not present
+Base undefined, args Concolic(a,b,c, Expr {Needle_array}, )
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Uncaught exception Alert -> Error: polyfill: 'false' prototype: 'undefined'
+ExpoSE: Finished play with PC Expr {(= Base_type 0.0)},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(not (= Needle_type 2.0))},Expr {(not (= Needle_type 3.0))},Expr {(= Needle_type 4.0)},Expr {(>= Needle_array_Length_0 0)}
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 0.0))
+(assert (not (= Needle_type 0.0)))
+(assert (not (= Needle_type 1.0)))
+(assert (not (= Needle_type 2.0)))
+(assert (not (= Needle_type 3.0)))
+(assert (not (= Needle_type 4.0)))
+}
+Base_type -> 0.0
+Needle_type -> 5.0
+
+ExpoSE: Wrote final coverage to /tmp/tmp-23120i0VC7QIHEbQo.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120eAOdsnndTptc.tmp
+*** [11 done /1 queued / 4 running / 9 errors / 49% coverage ] ****** [11 done /1 queued / 4 running / 9 errors / 49% coverage ] ***Traits not present
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , args , [Concolic(a,b,c, Expr {Needle_array}, )]) (string, object)
+Base , args Concolic(a,b,c, Expr {Needle_array}, )
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (, null) (string, object)
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (, undefined) (string, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(not (= Base_type 2.0))},Expr {(= Base_type 3.0)},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(not (= Needle_type 2.0))},Expr {(not (= Needle_type 3.0))},Expr {(= Needle_type 4.0)},Expr {(>= Needle_array_Length_0 0)}
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 3.0))
+(assert (not (= Needle_type 0.0)))
+(assert (= Needle_type 1.0))
+}
+Base_type -> 3.0
+Needle_type -> 1.0
+
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 3.0))
+(assert (not (= Needle_type 0.0)))
+(assert (not (= Needle_type 1.0)))
+(assert (= Needle_type 2.0))
+}
+Base_type -> 3.0
+Needle_type -> 2.0
+
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 3.0))
+(assert (not (= Needle_type 0.0)))
+(assert (not (= Needle_type 1.0)))
+(assert (not (= Needle_type 2.0)))
+(assert (= Needle_type 3.0))
+}
+Base_type -> 3.0
+Needle_type -> 3.0
+
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 3.0))
+(assert (not (= Needle_type 0.0)))
+(assert (not (= Needle_type 1.0)))
+(assert (not (= Needle_type 2.0)))
+(assert (not (= Needle_type 3.0)))
+(assert (not (= Needle_type 4.0)))
+}
+Base_type -> 3.0
+Needle_type -> 5.0
+
+ExpoSE: Wrote final coverage to /tmp/tmp-23120jII06hzgtdOI.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120iuClKN22dijI.tmp
+Traits not present
+Base null, args Concolic(a,b,c, Expr {Needle_array}, )
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Uncaught exception Alert -> Error: polyfill: 'false' prototype: 'undefined'
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(= Base_type 1.0)},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(not (= Needle_type 2.0))},Expr {(not (= Needle_type 3.0))},Expr {(= Needle_type 4.0)},Expr {(>= Needle_array_Length_0 0)}
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 1.0))
+(assert (not (= Needle_type 0.0)))
+(assert (not (= Needle_type 1.0)))
+(assert (not (= Needle_type 2.0)))
+(assert (not (= Needle_type 3.0)))
+(assert (not (= Needle_type 4.0)))
+}
+Base_type -> 1.0
+Needle_type -> 5.0
+
+ExpoSE: Wrote final coverage to /tmp/tmp-23120MAwazuTcpb0M.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120cw5HEtN7Al0x.tmp
+Traits not present
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , [a, b, c]) (string, object)
+Base a,b,c, args 
+ExpoSE: Symbolic expressions with object literals not yet supported.
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. ([a, b, c], undefined) (object, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(not (= Base_type 2.0))},Expr {(not (= Base_type 3.0))},Expr {(= Base_type 4.0)},Expr {(>= Base_array_Length_0 0)},Expr {(= Needle_type 0.0)}
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(assert (not (= Base_type 0.0)))
+(assert (not (= Base_type 1.0)))
+(assert (not (= Base_type 2.0)))
+(assert (not (= Base_type 3.0)))
+(assert (not (= Base_type 4.0)))
+}
+Base_type -> 5.0
+
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Base_array_Length_0 () Int)
+(declare-fun Needle_type () Real)
+(assert (not (= Base_type 0.0)))
+(assert (not (= Base_type 1.0)))
+(assert (not (= Base_type 2.0)))
+(assert (not (= Base_type 3.0)))
+(assert (= Base_type 4.0))
+(assert (>= Base_array_Length_0 0))
+(assert (not (= Needle_type 0.0)))
+}
+Base_type -> 4.0
+Base_array_Length_0 -> 0
+Needle_type -> 5.0
+
+ExpoSE: Wrote final coverage to /tmp/tmp-23120FAWvdVFusQzJ.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120oqipWmbRQiYX.tmp
+*** [12 done /2 queued / 4 running / 9 errors / 49% coverage ] ****** [12 done /2 queued / 4 running / 9 errors / 49% coverage ] ****** [13 done /2 queued / 4 running / 10 errors / 49% coverage ] ****** [13 done /2 queued / 4 running / 10 errors / 49% coverage ] ****** [14 done /5 queued / 4 running / 10 errors / 49% coverage ] ****** [14 done /5 queued / 4 running / 10 errors / 49% coverage ] ***ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":0,"Needle_type":5,"Needle_array":[],"_bound":6}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":4,"Base_array":[],"Needle_type":5,"_bound":7}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":1,"Needle_type":5,"Needle_array":[],"_bound":7}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":5,"Base_array":[],"Needle_type":0,"_bound":5}
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+Traits not present
+Base null, args Concolic(false, Expr {Needle_bool}, )
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Uncaught exception Alert -> Error: polyfill: 'false' prototype: 'undefined'
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(= Base_type 1.0)},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(not (= Needle_type 2.0))},Expr {(not (= Needle_type 3.0))},Expr {(not (= Needle_type 4.0))}
+ExpoSE: Wrote final coverage to /tmp/tmp-23120jle5cGtqh8uU.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120N34NSI6qpJLZ.tmp
+*** [15 done /4 queued / 4 running / 11 errors / 50% coverage ] ****** [15 done /4 queued / 4 running / 11 errors / 50% coverage ] ***Traits not present
+Base undefined, args Concolic(false, Expr {Needle_bool}, )
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Uncaught exception Alert -> Error: polyfill: 'false' prototype: 'undefined'
+ExpoSE: Finished play with PC Expr {(= Base_type 0.0)},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(not (= Needle_type 2.0))},Expr {(not (= Needle_type 3.0))},Expr {(not (= Needle_type 4.0))}
+Traits not present
+Traits not present
+ExpoSE: Wrote final coverage to /tmp/tmp-23120wSwHm0Dy5kul.tmp
+ExpoSE: Wrote final output to /tmp/tmp-231205SrlntD84irH.tmp
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , []) (string, object)
+Base , args Concolic(false, Expr {Needle_bool}, )
+ExpoSE: Symbolic expressions with object literals not yet supported.
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. ([], undefined) (object, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(not (= Base_type 2.0))},Expr {(not (= Base_type 3.0))},Expr {(= Base_type 4.0)},Expr {(>= Base_array_Length_0 0)},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(not (= Needle_type 2.0))},Expr {(not (= Needle_type 3.0))},Expr {(not (= Needle_type 4.0))}
+*** [16 done /3 queued / 4 running / 12 errors / 50% coverage ] ****** [16 done /3 queued / 4 running / 12 errors / 50% coverage ] ***ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Base_array_Length_0 () Int)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 4.0))
+(assert (>= Base_array_Length_0 0))
+(assert (not (= Needle_type 0.0)))
+(assert (= Needle_type 1.0))
+}
+Base_type -> 4.0
+Base_array_Length_0 -> 0
+Needle_type -> 1.0
+
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , false) (string, boolean)
+Base false, args 
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (false, null) (boolean, object)
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (false, undefined) (boolean, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(not (= Base_type 2.0))},Expr {(not (= Base_type 3.0))},Expr {(not (= Base_type 4.0))},Expr {(= Needle_type 0.0)}
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Base_array_Length_0 () Int)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 4.0))
+(assert (>= Base_array_Length_0 0))
+(assert (not (= Needle_type 0.0)))
+(assert (not (= Needle_type 1.0)))
+(assert (= Needle_type 2.0))
+}
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (not (= Base_type 0.0)))
+(assert (not (= Base_type 1.0)))
+(assert (not (= Base_type 2.0)))
+(assert (not (= Base_type 3.0)))
+(assert (not (= Base_type 4.0)))
+(assert (not (= Needle_type 0.0)))
+}
+Base_type -> 4.0
+Base_array_Length_0 -> 0
+Needle_type -> 2.0
+
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Base_array_Length_0 () Int)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 4.0))
+(assert (>= Base_array_Length_0 0))
+(assert (not (= Needle_type 0.0)))
+(assert (not (= Needle_type 1.0)))
+(assert (not (= Needle_type 2.0)))
+(assert (= Needle_type 3.0))
+}
+Base_type -> 4.0
+Base_array_Length_0 -> 0
+Needle_type -> 3.0
+
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Base_array_Length_0 () Int)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 4.0))
+(assert (>= Base_array_Length_0 0))
+(assert (not (= Needle_type 0.0)))
+(assert (not (= Needle_type 1.0)))
+(assert (not (= Needle_type 2.0)))
+(assert (not (= Needle_type 3.0)))
+(assert (= Needle_type 4.0))
+}
+Base_type -> 5.0
+Needle_type -> 6.0
+
+Base_type -> 4.0
+Base_array_Length_0 -> 0
+Needle_type -> 4.0
+
+ExpoSE: Wrote final coverage to /tmp/tmp-23120PWJxFGz7lQEp.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120sDQHMWddZNJi.tmp
+ExpoSE: Wrote final coverage to /tmp/tmp-23120MeWtEdzmdJ21.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120ZGrrNcYOL7le.tmp
+*** [17 done /6 queued / 4 running / 12 errors / 50% coverage ] ****** [17 done /6 queued / 4 running / 12 errors / 50% coverage ] ****** [18 done /6 queued / 4 running / 12 errors / 50% coverage ] ****** [18 done /6 queued / 4 running / 12 errors / 50% coverage ] ***ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":3,"Base_string":"","Needle_type":5,"Needle_array":[],"_bound":9}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":2,"Base_int":0,"Needle_type":3,"_bound":4}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":4,"Base_array":[],"Needle_type":4,"Needle_bool":false,"_bound":11}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":4,"Base_array":[],"Needle_type":1,"Needle_bool":false,"_bound":8}
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+Traits not present
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , args , [Concolic(false, Expr {Needle_bool}, )]) (string, object)
+Base , args Concolic(false, Expr {Needle_bool}, )
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (, null) (string, object)
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (, undefined) (string, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(not (= Base_type 2.0))},Expr {(= Base_type 3.0)},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(not (= Needle_type 2.0))},Expr {(not (= Needle_type 3.0))},Expr {(not (= Needle_type 4.0))}
+ExpoSE: Wrote final coverage to /tmp/tmp-23120T5jd9qlg22U0.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120sT4YxtIFACmr.tmp
+*** [19 done /5 queued / 4 running / 12 errors / 50% coverage ] ****** [19 done /5 queued / 4 running / 12 errors / 50% coverage ] ***Traits not present
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , 0) (string, number)
+Base 0, args Concolic(PureString, Expr {Needle_string}, )
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (0, null) (number, object)
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (0, undefined) (number, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(= Base_type 2.0)},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(not (= Needle_type 2.0))},Expr {(= Needle_type 3.0)}
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 2.0))
+(assert (not (= Needle_type 0.0)))
+(assert (= Needle_type 1.0))
+}
+Base_type -> 2.0
+Needle_type -> 1.0
+
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 2.0))
+(assert (not (= Needle_type 0.0)))
+(assert (not (= Needle_type 1.0)))
+(assert (= Needle_type 2.0))
+}
+Base_type -> 2.0
+Needle_type -> 2.0
+
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 2.0))
+(assert (not (= Needle_type 0.0)))
+(assert (not (= Needle_type 1.0)))
+(assert (not (= Needle_type 2.0)))
+(assert (not (= Needle_type 3.0)))
+}
+Base_type -> 2.0
+Needle_type -> 4.0
+
+ExpoSE: Wrote final coverage to /tmp/tmp-23120L7babuhyB3sf.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120szodIWfd1eQL.tmp
+Traits not present
+*** [20 done /7 queued / 4 running / 12 errors / 50% coverage ] ****** [20 done /7 queued / 4 running / 12 errors / 50% coverage ] ***ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , []) (string, object)
+Base , args Concolic(a,b,c, Expr {Needle_array}, )
+ExpoSE: Symbolic expressions with object literals not yet supported.
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. ([], undefined) (object, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(not (= Base_type 2.0))},Expr {(not (= Base_type 3.0))},Expr {(= Base_type 4.0)},Expr {(>= Base_array_Length_0 0)},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(not (= Needle_type 2.0))},Expr {(not (= Needle_type 3.0))},Expr {(= Needle_type 4.0)},Expr {(>= Needle_array_Length_0 0)}
+ExpoSE: Wrote final coverage to /tmp/tmp-23120vNvgtIJ8LYJ5.tmp
+ExpoSE: Wrote final output to /tmp/tmp-231200sfiM37nBjwJ.tmp
+*** [21 done /6 queued / 4 running / 12 errors / 50% coverage ] ****** [21 done /6 queued / 4 running / 12 errors / 50% coverage ] ***Traits not present
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , []) (string, object)
+Base , args 
+ExpoSE: Symbolic expressions with object literals not yet supported.
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. ([], undefined) (object, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(not (= Base_type 2.0))},Expr {(not (= Base_type 3.0))},Expr {(= Base_type 4.0)},Expr {(>= Base_array_Length_0 0)},Expr {(not (= Needle_type 0.0))},Expr {(= Needle_type 1.0)}
+ExpoSE: Wrote final coverage to /tmp/tmp-23120J3LCqpfn79gf.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120KDws9AjCbPwD.tmp
+*** [22 done /5 queued / 4 running / 12 errors / 50% coverage ] ****** [22 done /5 queued / 4 running / 12 errors / 50% coverage ] ***ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":4,"Base_array":[],"Needle_type":2,"Needle_bool":false,"_bound":9}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":3,"Base_string":"","Needle_type":1,"Needle_array":[],"_bound":6}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":3,"Base_string":"","Needle_type":2,"Needle_array":[],"_bound":7}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":2,"Base_int":0,"Needle_type":4,"Needle_string":"","_bound":7}
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+Traits not present
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , []) (string, object)
+Base , args Concolic(0, Expr {Needle_int}, )
+ExpoSE: Symbolic expressions with object literals not yet supported.
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. ([], undefined) (object, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(not (= Base_type 2.0))},Expr {(not (= Base_type 3.0))},Expr {(= Base_type 4.0)},Expr {(>= Base_array_Length_0 0)},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(= Needle_type 2.0)}
+ExpoSE: Wrote final coverage to /tmp/tmp-23120EtQi91nuM7QD.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120Zy0xIBnDpcwr.tmp
+*** [23 done /4 queued / 4 running / 12 errors / 50% coverage ] ****** [23 done /4 queued / 4 running / 12 errors / 50% coverage ] ***Traits not present
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , args , [null]) (string, object)
+Base , args 
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (, null) (string, object)
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (, undefined) (string, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(not (= Base_type 2.0))},Expr {(= Base_type 3.0)},Expr {(not (= Needle_type 0.0))},Expr {(= Needle_type 1.0)}
+ExpoSE: Wrote final coverage to /tmp/tmp-23120ejJ3CkQfz4ie.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120g6p4H15a7Y0S.tmp
+*** [24 done /3 queued / 4 running / 12 errors / 50% coverage ] ****** [24 done /3 queued / 4 running / 12 errors / 50% coverage ] ***Traits not present
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , 0) (string, number)
+Base 0, args Concolic(a,b,c, Expr {Needle_array}, )
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (0, null) (number, object)
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (0, undefined) (number, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(= Base_type 2.0)},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(not (= Needle_type 2.0))},Expr {(not (= Needle_type 3.0))},Expr {(= Needle_type 4.0)},Expr {(>= Needle_array_Length_0 0)}
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (= Base_type 2.0))
+(assert (not (= Needle_type 0.0)))
+(assert (not (= Needle_type 1.0)))
+(assert (not (= Needle_type 2.0)))
+(assert (not (= Needle_type 3.0)))
+(assert (not (= Needle_type 4.0)))
+}
+Traits not present
+Base_type -> 2.0
+Needle_type -> 5.0
+
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , args , [Concolic(0, Expr {Needle_int}, )]) (string, object)
+Base , args Concolic(0, Expr {Needle_int}, )
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (, null) (string, object)
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (, undefined) (string, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(not (= Base_type 2.0))},Expr {(= Base_type 3.0)},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(= Needle_type 2.0)}
+ExpoSE: Wrote final coverage to /tmp/tmp-23120Y33BfBskr0jr.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120LPVjX8gq4xmR.tmp
+*** [25 done /3 queued / 4 running / 12 errors / 50% coverage ] ****** [25 done /3 queued / 4 running / 12 errors / 50% coverage ] ***ExpoSE: Wrote final coverage to /tmp/tmp-23120sIdLtxc8nX0S.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120qLMkQZHuBdXj.tmp
+*** [26 done /2 queued / 4 running / 12 errors / 50% coverage ] ****** [26 done /2 queued / 4 running / 12 errors / 50% coverage ] ***ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":4,"Base_array":[],"Needle_type":3,"Needle_bool":false,"_bound":10}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":2,"Base_int":0,"Needle_type":2,"Needle_string":"","_bound":6}
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":2,"Base_int":0,"Needle_type":1,"Needle_string":"","_bound":5}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":2,"Base_int":0,"Needle_type":5,"Needle_array":[],"_bound":8}
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+Traits not present
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , []) (string, object)
+Base , args Concolic(PureString, Expr {Needle_string}, )
+ExpoSE: Symbolic expressions with object literals not yet supported.
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. ([], undefined) (object, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(not (= Base_type 2.0))},Expr {(not (= Base_type 3.0))},Expr {(= Base_type 4.0)},Expr {(>= Base_array_Length_0 0)},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(not (= Needle_type 2.0))},Expr {(= Needle_type 3.0)}
+ExpoSE: Wrote final coverage to /tmp/tmp-23120tzdy6SeaolMG.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120nwiVFoBKM5sr.tmp
+*** [27 done /1 queued / 4 running / 12 errors / 50% coverage ] ****** [27 done /1 queued / 4 running / 12 errors / 50% coverage ] ***Traits not present
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , 0) (string, number)
+Base 0, args Concolic(0, Expr {Needle_int}, )
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (0, null) (number, object)
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (0, undefined) (number, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(= Base_type 2.0)},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(= Needle_type 2.0)}
+ExpoSE: Wrote final coverage to /tmp/tmp-23120sC5IYOEy4hcQ.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120AQ3iDH75Cusr.tmp
+*** [28 done /0 queued / 4 running / 12 errors / 50% coverage ] ****** [28 done /0 queued / 4 running / 12 errors / 50% coverage ] ***Traits not present
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , 0) (string, number)
+Base 0, args 
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (0, null) (number, object)
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (0, undefined) (number, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(= Base_type 2.0)},Expr {(not (= Needle_type 0.0))},Expr {(= Needle_type 1.0)}
+ExpoSE: Wrote final coverage to /tmp/tmp-23120jipQa9OmSiZL.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120thOIBx2ISYcf.tmp
+*** [29 done /0 queued / 3 running / 12 errors / 50% coverage ] ***Traits not present
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":3,"Base_string":"","Needle_type":3,"Needle_array":[],"_bound":8}
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , 0) (string, number)
+Base 0, args Concolic(false, Expr {Needle_bool}, )
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (0, null) (number, object)
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (0, undefined) (number, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(= Base_type 2.0)},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(not (= Needle_type 2.0))},Expr {(not (= Needle_type 3.0))},Expr {(not (= Needle_type 4.0))}
+ExpoSE: Wrote final coverage to /tmp/tmp-23120D0ggGgZV7ADR.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120b4100f6VZSvS.tmp
+*** [30 done /0 queued / 2 running / 12 errors / 50% coverage ] ***ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":5,"Base_bool":false,"Needle_type":6,"_bound":6}
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+Traits not present
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , args , [Concolic(PureString, Expr {Needle_string}, )]) (string, object)
+Base , args Concolic(PureString, Expr {Needle_string}, )
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (, null) (string, object)
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (, undefined) (string, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(not (= Base_type 2.0))},Expr {(= Base_type 3.0)},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(not (= Needle_type 2.0))},Expr {(= Needle_type 3.0)}
+ExpoSE: Wrote final coverage to /tmp/tmp-23120B2z20lkkxWk5.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120e8aboMaaXGzr.tmp
+*** [31 done /0 queued / 1 running / 12 errors / 50% coverage ] ***Traits not present
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , false) (string, boolean)
+Base false, args Concolic(false, Expr {Needle_bool}, )
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (false, null) (boolean, object)
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (false, undefined) (boolean, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(not (= Base_type 2.0))},Expr {(not (= Base_type 3.0))},Expr {(not (= Base_type 4.0))},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(not (= Needle_type 2.0))},Expr {(not (= Needle_type 3.0))},Expr {(not (= Needle_type 4.0))}
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (not (= Base_type 0.0)))
+(assert (not (= Base_type 1.0)))
+(assert (not (= Base_type 2.0)))
+(assert (not (= Base_type 3.0)))
+(assert (not (= Base_type 4.0)))
+(assert (not (= Needle_type 0.0)))
+(assert (= Needle_type 1.0))
+}
+Base_type -> 5.0
+Needle_type -> 1.0
+
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (not (= Base_type 0.0)))
+(assert (not (= Base_type 1.0)))
+(assert (not (= Base_type 2.0)))
+(assert (not (= Base_type 3.0)))
+(assert (not (= Base_type 4.0)))
+(assert (not (= Needle_type 0.0)))
+(assert (not (= Needle_type 1.0)))
+(assert (= Needle_type 2.0))
+}
+Base_type -> 5.0
+Needle_type -> 2.0
+
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (not (= Base_type 0.0)))
+(assert (not (= Base_type 1.0)))
+(assert (not (= Base_type 2.0)))
+(assert (not (= Base_type 3.0)))
+(assert (not (= Base_type 4.0)))
+(assert (not (= Needle_type 0.0)))
+(assert (not (= Needle_type 1.0)))
+(assert (not (= Needle_type 2.0)))
+(assert (= Needle_type 3.0))
+}
+Base_type -> 5.0
+Needle_type -> 3.0
+
+ExpoSE: Checks length 0
+Solver {
+(declare-fun Base_type () Real)
+(declare-fun Needle_type () Real)
+(assert (not (= Base_type 0.0)))
+(assert (not (= Base_type 1.0)))
+(assert (not (= Base_type 2.0)))
+(assert (not (= Base_type 3.0)))
+(assert (not (= Base_type 4.0)))
+(assert (not (= Needle_type 0.0)))
+(assert (not (= Needle_type 1.0)))
+(assert (not (= Needle_type 2.0)))
+(assert (not (= Needle_type 3.0)))
+(assert (= Needle_type 4.0))
+}
+Base_type -> 5.0
+Needle_type -> 4.0
+
+ExpoSE: Wrote final coverage to /tmp/tmp-23120yGxuVISER1Rf.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120BjEbTI19eXE5.tmp
+*** [32 done /3 queued / 1 running / 12 errors / 50% coverage ] ****** [32 done /2 queued / 2 running / 12 errors / 50% coverage ] ****** [32 done /1 queued / 3 running / 12 errors / 50% coverage ] ****** [32 done /0 queued / 4 running / 12 errors / 50% coverage ] ****** [32 done /0 queued / 4 running / 12 errors / 50% coverage ] ***ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":5,"Base_bool":false,"Needle_type":4,"Needle_bool":false,"_bound":10}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":5,"Base_bool":false,"Needle_type":3,"Needle_bool":false,"_bound":9}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":5,"Base_bool":false,"Needle_type":1,"Needle_bool":false,"_bound":7}
+ExpoSE: Built with BASE logging enabled
+ExpoSE: Intial Input{"Base_type":5,"Base_bool":false,"Needle_type":2,"Needle_bool":false,"_bound":8}
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: ====== ENTERING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+Traits not present
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , false) (string, boolean)
+Base false, args Concolic(a,b,c, Expr {Needle_array}, )
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (false, null) (boolean, object)
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (false, undefined) (boolean, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(not (= Base_type 2.0))},Expr {(not (= Base_type 3.0))},Expr {(not (= Base_type 4.0))},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(not (= Needle_type 2.0))},Expr {(not (= Needle_type 3.0))},Expr {(= Needle_type 4.0)},Expr {(>= Needle_array_Length_0 0)}
+Traits not present
+ExpoSE: Wrote final coverage to /tmp/tmp-23120SM8BcBc8LAYw.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120Iu4h8igsWQbD.tmp
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , false) (string, boolean)
+Base false, args 
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (false, null) (boolean, object)
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (false, undefined) (boolean, undefined)
+*** [33 done /0 queued / 3 running / 12 errors / 50% coverage ] ***ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(not (= Base_type 2.0))},Expr {(not (= Base_type 3.0))},Expr {(not (= Base_type 4.0))},Expr {(not (= Needle_type 0.0))},Expr {(= Needle_type 1.0)}
+ExpoSE: Wrote final coverage to /tmp/tmp-2312052h0PJXUFi5G.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120c2KQPnwiHHTg.tmp
+Traits not present
+*** [34 done /0 queued / 2 running / 12 errors / 50% coverage ] ***Traits not present
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , false) (string, boolean)
+Base false, args Concolic(PureString, Expr {Needle_string}, )
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (false, null) (boolean, object)
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (false, undefined) (boolean, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(not (= Base_type 2.0))},Expr {(not (= Base_type 3.0))},Expr {(not (= Base_type 4.0))},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(not (= Needle_type 2.0))},Expr {(= Needle_type 3.0)}
+ExpoSE: Concretizing binary + on operands of differing types. Type coercion not yet implemented symbolically. (Base , false) (string, boolean)
+Base false, args Concolic(0, Expr {Needle_int}, )
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (false, null) (boolean, object)
+ExpoSE: Concretizing binary === on operands of differing types. Type coercion not yet implemented symbolically. (false, undefined) (boolean, undefined)
+ExpoSE: WARNING: Concretizing model for apply
+ExpoSE: ====== EXITING SCRIPT /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js depth 0 ======
+ExpoSE: Finished play with PC Expr {(not (= Base_type 0.0))},Expr {(not (= Base_type 1.0))},Expr {(not (= Base_type 2.0))},Expr {(not (= Base_type 3.0))},Expr {(not (= Base_type 4.0))},Expr {(not (= Needle_type 0.0))},Expr {(not (= Needle_type 1.0))},Expr {(= Needle_type 2.0)}
+ExpoSE: Wrote final coverage to /tmp/tmp-23120aLp35bd20xXL.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120TlciB1ERqa2t.tmp
+ExpoSE: Wrote final coverage to /tmp/tmp-23120JZEA4TJIYvzn.tmp
+ExpoSE: Wrote final output to /tmp/tmp-23120cmdoKp5TJvLl.tmp
+*** [35 done /0 queued / 1 running / 12 errors / 50% coverage ] ****** [36 done /0 queued / 0 running / 12 errors / 50% coverage ] ***
+*-- Stat Module Output --*
+*-- concretizations: ["defineProperty","bound consoleCall","Object","Number","isNaN","stringify","abs","floor","min"]
+*-- Stat Module Done --*
+*-- Test Case {"_bound":0,"Base_type":0,"Needle_type":0} start 0.0053 took 0.521s
+*-- Errors occured in test {"_bound":0,"Base_type":0,"Needle_type":0}
+* Error: Alert -> Error: polyfill: 'false' prototype: 'undefined'
+*-- Replay with NO_COMPILE=1 expoSE replay '/home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js' '{"_bound":0}'
+*-- Test Case {"Base_type":1,"Needle_type":0,"_bound":1} start 0.5345 took 0.6659s
+*-- Errors occured in test {"Base_type":1,"Needle_type":0,"_bound":1}
+* Error: Alert -> Error: polyfill: 'false' prototype: 'undefined'
+*-- Replay with NO_COMPILE=1 expoSE replay '/home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js' '{"Base_type":1,"Needle_type":0,"_bound":1}'
+*-- Test Case {"Base_type":0,"Needle_type":1,"_bound":2} start 0.5377 took 0.663s
+*-- Errors occured in test {"Base_type":0,"Needle_type":1,"_bound":2}
+* Error: Alert -> Error: polyfill: 'false' prototype: 'undefined'
+*-- Replay with NO_COMPILE=1 expoSE replay '/home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js' '{"Base_type":0,"Needle_type":1,"_bound":2}'
+*-- Test Case {"Base_type":0,"Needle_type":2,"_bound":3,"Needle_int":0} start 1.2342 took 0.8503s
+*-- Errors occured in test {"Base_type":0,"Needle_type":2,"_bound":3,"Needle_int":0}
+* Error: Alert -> Error: polyfill: 'false' prototype: 'undefined'
+*-- Replay with NO_COMPILE=1 expoSE replay '/home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js' '{"Base_type":0,"Needle_type":2,"_bound":3}'
+*-- Test Case {"Base_type":1,"Needle_type":2,"_bound":3,"Needle_int":0} start 1.2207 took 0.9234s
+*-- Errors occured in test {"Base_type":1,"Needle_type":2,"_bound":3,"Needle_int":0}
+* Error: Alert -> Error: polyfill: 'false' prototype: 'undefined'
+*-- Replay with NO_COMPILE=1 expoSE replay '/home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js' '{"Base_type":1,"Needle_type":2,"_bound":3}'
+*-- Test Case {"Base_type":2,"Needle_type":0,"_bound":2,"Base_int":0} start 1.2043 took 0.9538s
+*-- Test Case {"Base_type":0,"Needle_type":3,"Needle_int":0,"_bound":4,"Needle_string":"PureString"} start 2.0909 took 1.1306s
+*-- Errors occured in test {"Base_type":0,"Needle_type":3,"Needle_int":0,"_bound":4,"Needle_string":"PureString"}
+* Error: Alert -> Error: polyfill: 'false' prototype: 'undefined'
+*-- Replay with NO_COMPILE=1 expoSE replay '/home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js' '{"Base_type":0,"Needle_type":3,"Needle_int":0,"_bound":4}'
+*-- Test Case {"Base_type":1,"Needle_type":3,"Needle_int":0,"_bound":5,"Needle_string":"PureString"} start 2.1565 took 1.1663s
+*-- Errors occured in test {"Base_type":1,"Needle_type":3,"Needle_int":0,"_bound":5,"Needle_string":"PureString"}
+* Error: Alert -> Error: polyfill: 'false' prototype: 'undefined'
+*-- Replay with NO_COMPILE=1 expoSE replay '/home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js' '{"Base_type":1,"Needle_type":3,"Needle_int":0,"_bound":5}'
+*-- Test Case {"Base_type":3,"Base_int":0,"Needle_type":0,"_bound":3,"Base_string":"PureString"} start 2.1638 took 1.1749s
+*-- Test Case {"Base_type":1,"Needle_type":1,"Needle_int":0,"_bound":4} start 2.1486 took 1.204s
+*-- Errors occured in test {"Base_type":1,"Needle_type":1,"Needle_int":0,"_bound":4}
+* Error: Alert -> Error: polyfill: 'false' prototype: 'undefined'
+*-- Replay with NO_COMPILE=1 expoSE replay '/home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js' '{"Base_type":1,"Needle_type":1,"Needle_int":0,"_bound":4}'
+*-- Test Case {"Base_type":0,"Needle_type":4,"Needle_string":"","_bound":5,"Needle_array":["a","b","c"]} start 3.2337 took 1.1797s
+*-- Errors occured in test {"Base_type":0,"Needle_type":4,"Needle_string":"","_bound":5,"Needle_array":["a","b","c"]}
+* Error: Alert -> Error: polyfill: 'false' prototype: 'undefined'
+*-- Replay with NO_COMPILE=1 expoSE replay '/home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js' '{"Base_type":0,"Needle_type":4,"Needle_string":"","_bound":5}'
+*-- Test Case {"Base_type":4,"Base_string":"","Needle_type":0,"_bound":4,"Base_array":["a","b","c"]} start 3.3449 took 1.1628s
+*-- Test Case {"Base_type":1,"Needle_type":4,"Needle_string":"","_bound":6,"Needle_array":["a","b","c"]} start 3.3327 took 1.175s
+*-- Errors occured in test {"Base_type":1,"Needle_type":4,"Needle_string":"","_bound":6,"Needle_array":["a","b","c"]}
+* Error: Alert -> Error: polyfill: 'false' prototype: 'undefined'
+*-- Replay with NO_COMPILE=1 expoSE replay '/home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js' '{"Base_type":1,"Needle_type":4,"Needle_string":"","_bound":6}'
+*-- Test Case {"Base_type":3,"Base_string":"","Needle_type":4,"_bound":5,"Needle_array":["a","b","c"]} start 3.358 took 1.1498s
+*-- Test Case {"Base_type":1,"Needle_type":5,"Needle_array":[],"_bound":7,"Needle_bool":false} start 4.5156 took 1.1078s
+*-- Errors occured in test {"Base_type":1,"Needle_type":5,"Needle_array":[],"_bound":7,"Needle_bool":false}
+* Error: Alert -> Error: polyfill: 'false' prototype: 'undefined'
+*-- Replay with NO_COMPILE=1 expoSE replay '/home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js' '{"Base_type":1,"Needle_type":5,"Needle_array":[],"_bound":7}'
+*-- Test Case {"Base_type":0,"Needle_type":5,"Needle_array":[],"_bound":6,"Needle_bool":false} start 4.5054 took 1.1764s
+*-- Errors occured in test {"Base_type":0,"Needle_type":5,"Needle_array":[],"_bound":6,"Needle_bool":false}
+* Error: Alert -> Error: polyfill: 'false' prototype: 'undefined'
+*-- Replay with NO_COMPILE=1 expoSE replay '/home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js' '{"Base_type":0,"Needle_type":5,"Needle_array":[],"_bound":6}'
+*-- Test Case {"Base_type":4,"Base_array":[],"Needle_type":5,"_bound":7,"Needle_bool":false} start 4.5222 took 1.2228s
+*-- Test Case {"Base_type":5,"Base_array":[],"Needle_type":0,"_bound":5,"Base_bool":false} start 4.5109 took 1.2408s
+*-- Test Case {"Base_type":3,"Base_string":"","Needle_type":5,"Needle_array":[],"_bound":9,"Needle_bool":false} start 5.6308 took 1.0909s
+*-- Test Case {"Base_type":2,"Base_int":0,"Needle_type":3,"_bound":4,"Needle_string":"PureString"} start 5.6931 took 1.1404s
+*-- Test Case {"Base_type":4,"Base_array":[],"Needle_type":4,"Needle_bool":false,"_bound":11,"Needle_array":["a","b","c"]} start 5.7568 took 1.1151s
+*-- Test Case {"Base_type":4,"Base_array":[],"Needle_type":1,"Needle_bool":false,"_bound":8} start 5.75 took 1.1929s
+*-- Test Case {"Base_type":4,"Base_array":[],"Needle_type":2,"Needle_bool":false,"_bound":9,"Needle_int":0} start 6.7288 took 1.1085s
+*-- Test Case {"Base_type":3,"Base_string":"","Needle_type":1,"Needle_array":[],"_bound":6} start 6.8612 took 1.1715s
+*-- Test Case {"Base_type":2,"Base_int":0,"Needle_type":4,"Needle_string":"","_bound":7,"Needle_array":["a","b","c"]} start 6.9471 took 1.1495s
+*-- Test Case {"Base_type":3,"Base_string":"","Needle_type":2,"Needle_array":[],"_bound":7,"Needle_int":0} start 6.8771 took 1.2323s
+*-- Test Case {"Base_type":4,"Base_array":[],"Needle_type":3,"Needle_bool":false,"_bound":10,"Needle_string":"PureString"} start 7.8428 took 1.0891s
+*-- Test Case {"Base_type":2,"Base_int":0,"Needle_type":2,"Needle_string":"","_bound":6,"Needle_int":0} start 8.0394 took 1.1222s
+*-- Test Case {"Base_type":2,"Base_int":0,"Needle_type":1,"Needle_string":"","_bound":5} start 8.1162 took 1.0952s
+*-- Test Case {"Base_type":2,"Base_int":0,"Needle_type":5,"Needle_array":[],"_bound":8,"Needle_bool":false} start 8.1015 took 1.2186s
+*-- Test Case {"Base_type":3,"Base_string":"","Needle_type":3,"Needle_array":[],"_bound":8,"Needle_string":"PureString"} start 8.9379 took 0.7517s
+*-- Test Case {"Base_type":5,"Base_bool":false,"Needle_type":6,"_bound":6,"Needle_bool":false} start 9.1668 took 0.6788s
+*-- Test Case {"Base_type":5,"Base_bool":false,"Needle_type":4,"Needle_bool":false,"_bound":10,"Needle_array":["a","b","c"]} start 9.8519 took 1.1081s
+*-- Test Case {"Base_type":5,"Base_bool":false,"Needle_type":1,"Needle_bool":false,"_bound":7} start 9.8618 took 1.1194s
+*-- Test Case {"Base_type":5,"Base_bool":false,"Needle_type":3,"Needle_bool":false,"_bound":9,"Needle_string":"PureString"} start 9.849 took 1.1554s
+*-- Test Case {"Base_type":5,"Base_bool":false,"Needle_type":2,"Needle_bool":false,"_bound":8,"Needle_int":0} start 9.8551 took 1.1525s
+*-- Coverage Data
+*- File /home/arran/projects/ExpoSEFullUnitTests/inexorabletash/includes.js. Coverage (Term): 64% Coverage (LOC): 63%
+*- File /home/arran/projects/ExpoSE/lib/S$/bin/symbols.js. Coverage (Term): 26% Coverage (LOC): 44%
+*- Re-run with EXPOSE_PRINT_COVERAGE=1 to print line by line coverage information
+** ExpoSE Finished. 36 paths with 12 errors **
